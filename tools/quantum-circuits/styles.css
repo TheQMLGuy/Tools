@@ -1,0 +1,452 @@
+/* ============================================
+   Quantum Circuit Playground - Styles
+   ============================================ */
+
+/* Layout Adjustments */
+.app-container.three-column {
+    grid-template-columns: 250px 1fr 220px;
+}
+
+/* Gate Palette */
+.gate-palette-panel {
+    flex: 2;
+}
+
+.info-panel {
+    flex: 1;
+    min-height: 150px;
+}
+
+.gate-category {
+    margin-bottom: 16px;
+}
+
+.gate-category h3 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.gate-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.gate-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    cursor: grab;
+    transition: all var(--transition-fast);
+}
+
+.gate-item:hover {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.3);
+    transform: translateY(-2px);
+}
+
+.gate-item.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.gate-symbol {
+    font-size: 1.4rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--accent-primary);
+    margin-bottom: 4px;
+}
+
+.gate-name {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.gate-item.gate-multi .gate-symbol {
+    color: #10b981;
+}
+
+.gate-item.gate-measure .gate-symbol {
+    color: #f59e0b;
+}
+
+/* Gate Info */
+.gate-info-content {
+    padding: 8px;
+}
+
+.gate-info-content h4 {
+    font-size: 1rem;
+    color: var(--accent-primary);
+    margin-bottom: 8px;
+}
+
+.gate-info-content p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.gate-matrix {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    background: var(--bg-secondary);
+    padding: 8px;
+    border-radius: 4px;
+    white-space: pre;
+    overflow-x: auto;
+}
+
+/* Circuit Container */
+.circuit-panel {
+    flex: 2;
+}
+
+.circuit-container {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    position: relative;
+}
+
+.circuit-grid {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    min-width: 100%;
+}
+
+.qubit-row {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.qubit-row:last-child {
+    border-bottom: none;
+}
+
+.qubit-label {
+    width: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+}
+
+.qubit-wire {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    position: relative;
+    min-height: 60px;
+}
+
+.qubit-wire::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 2px;
+    background: var(--border-color);
+}
+
+.gate-slot {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    margin: 0 5px;
+}
+
+.gate-slot.empty {
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.gate-slot.empty:hover {
+    border-color: var(--accent-primary);
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.gate-slot.drop-target {
+    border-color: var(--accent-primary);
+    background: rgba(99, 102, 241, 0.2);
+}
+
+.placed-gate {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-card);
+    border: 2px solid var(--accent-primary);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--accent-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.placed-gate:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+}
+
+.placed-gate.multi-gate {
+    border-color: #10b981;
+    color: #10b981;
+}
+
+.placed-gate.measure-gate {
+    border-color: #f59e0b;
+    color: #f59e0b;
+}
+
+/* Control line for CNOT, etc. */
+.control-line {
+    position: absolute;
+    width: 2px;
+    background: var(--accent-primary);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 0;
+}
+
+.control-dot {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+/* Add Gate Button */
+.add-column-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    margin-left: 10px;
+}
+
+.add-column-btn:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+/* State Display */
+.state-panel {
+    flex: 1;
+}
+
+.state-display {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+}
+
+.state-vector,
+.probabilities {
+    flex: 1;
+    padding: 10px;
+}
+
+.state-vector h3,
+.probabilities h3 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.amplitudes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+}
+
+.amplitude-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    border-radius: 6px;
+    min-width: 60px;
+}
+
+.amplitude-basis {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-primary);
+    margin-bottom: 4px;
+}
+
+.amplitude-value {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.amplitude-phase {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+}
+
+/* Probability Bars */
+.prob-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.prob-bar-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.prob-label {
+    width: 50px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.prob-bar-track {
+    flex: 1;
+    height: 20px;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.prob-bar-fill {
+    height: 100%;
+    background: var(--accent-gradient);
+    transition: width 0.3s ease;
+}
+
+.prob-value {
+    width: 50px;
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-primary);
+}
+
+/* Bloch Sphere */
+.bloch-panel {
+    flex: 0 0 auto;
+}
+
+.bloch-panel .panel-body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    padding: 10px;
+}
+
+#bloch-canvas {
+    background: transparent;
+    display: block;
+}
+
+/* Parameters Panel */
+.qubit-counter,
+.depth-counter {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent-primary);
+    padding: 8px 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px 0;
+}
+
+.checkbox-label input {
+    accent-color: var(--accent-primary);
+}
+
+/* Measurement Result */
+.measurement-result {
+    background: var(--bg-secondary);
+    padding: 12px;
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-mono);
+    text-align: center;
+}
+
+.result-placeholder {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.result-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .app-container.three-column {
+        grid-template-columns: 200px 1fr 180px;
+    }
+}
+
+@media (max-width: 900px) {
+    .app-container.three-column {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+    }
+
+    .left-panel,
+    .right-panel {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+}
