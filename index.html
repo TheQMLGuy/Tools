@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEM Visualization Hub</title>
+    <meta name="description"
+        content="Interactive visualization tools for Math, Machine Learning, Deep Learning, and Quantum Computing">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/shared.css">
+    <link rel="stylesheet" href="styles/hub.css">
+</head>
+
+<body>
+    <!-- Landing Page - Category Selector -->
+    <div id="landing-page" class="landing-page">
+        <div class="landing-content">
+            <div class="hub-header">
+                <span class="hub-icon">🚀</span>
+                <h1 class="landing-title">STEM Visualization Hub</h1>
+            </div>
+            <p class="landing-subtitle">Interactive tools for exploring Math, Machine Learning, Deep Learning & Quantum
+                Computing</p>
+
+            <div class="category-cards" id="category-cards">
+                <!-- Math Card -->
+                <div class="category-card" data-category="math">
+                    <div class="card-glow"></div>
+                    <div class="card-icon">📐</div>
+                    <h2>Mathematics</h2>
+                    <p>Explore operators, functions, and visualizations in mathematical spaces.</p>
+                    <ul class="card-features">
+                        <li>Operators As Matrices</li>
+                        <li>Parallel Axes Visualizer</li>
+                        <li>Function Analyzer</li>
+                        <li>CylinderViz Plotter</li>
+                    </ul>
+                    <div class="card-badge">4 Tools</div>
+                    <button class="btn btn-primary card-start">Explore →</button>
+                </div>
+
+                <!-- Machine Learning Card -->
+                <div class="category-card" data-category="ml">
+                    <div class="card-glow"></div>
+                    <div class="card-icon">🤖</div>
+                    <h2>Machine Learning</h2>
+                    <p>Classic ML algorithms with interactive visualizations and decision boundaries.</p>
+                    <ul class="card-features">
+                        <li>Regression Analysis</li>
+                        <li>Classification</li>
+                    </ul>
+                    <div class="card-badge">2 Tools</div>
+                    <button class="btn btn-primary card-start">Explore →</button>
+                </div>
+
+                <!-- Deep Learning Card -->
+                <div class="category-card" data-category="dl">
+                    <div class="card-glow"></div>
+                    <div class="card-icon">🧠</div>
+                    <h2>Deep Learning</h2>
+                    <p>Neural network architectures from feedforward to transformers.</p>
+                    <ul class="card-features">
+                        <li>RNN & LSTM Networks</li>
+                        <li>Transformer Attention</li>
+                        <li>CNN Feature Maps</li>
+                    </ul>
+                    <div class="card-badge">5 Tools</div>
+                    <button class="btn btn-primary card-start">Explore →</button>
+                </div>
+
+                <!-- Quantum Card -->
+                <div class="category-card" data-category="quantum">
+                    <div class="card-glow"></div>
+                    <div class="card-icon">⚛️</div>
+                    <h2>Quantum Computing</h2>
+                    <p>Design quantum circuits and visualize qubit states on Bloch spheres.</p>
+                    <ul class="card-features">
+                        <li>Circuit Designer</li>
+                        <li>Bloch Sphere Visualization</li>
+                        <li>Gate Operations</li>
+                    </ul>
+                    <div class="card-badge">1 Tool</div>
+                    <button class="btn btn-primary card-start">Explore →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sub-category Page -->
+    <div id="subcategory-page" class="subcategory-page hidden">
+        <div class="subcategory-header">
+            <button id="back-to-home" class="btn btn-ghost">← Back</button>
+            <div class="category-title">
+                <span id="category-icon" class="category-icon">📐</span>
+                <h2 id="category-name">Mathematics</h2>
+            </div>
+        </div>
+
+        <div class="subcategory-content">
+            <div class="tool-cards" id="tool-cards">
+                <!-- Tool cards will be populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Tool Viewer (iframe container) -->
+    <div id="tool-viewer" class="tool-viewer hidden">
+        <div class="tool-header">
+            <button id="close-tool" class="btn btn-ghost">✕ Close</button>
+            <span id="tool-name" class="tool-name">Tool Name</span>
+            <button id="open-new-tab" class="btn btn-ghost" title="Open in new tab">↗</button>
+        </div>
+        <div class="tool-iframe-container">
+            <div id="loading-overlay" class="loading-overlay">
+                <div class="loading-spinner"></div>
+                <span>Loading tool...</span>
+            </div>
+            <iframe id="tool-iframe" src="" frameborder="0"></iframe>
+        </div>
+    </div>
+
+    <script src="js/hub-app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Function Analyzer</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.0/math.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.29.1.min.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Function<span class="highlight">Analyzer</span></h1>
+            <p class="subtitle">Explore the stories told by mathematics</p>
+        </header>
+
+        <main>
+            <section class="controls-panel glass-panel">
+                <div class="mode-tabs">
+                    <button class="mode-btn active" data-mode="2d">2D Graph</button>
+                    <button class="mode-btn" data-mode="3d">3D Surface</button>
+                    <button class="mode-btn" data-mode="complex">Complex</button>
+                </div>
+
+                <!-- 2D CONTROLS -->
+                <div id="controls-2d" class="mode-controls">
+                    <div class="input-group">
+                        <label for="function-input">f(x) =</label>
+                        <input type="text" id="function-input" value="sin(x) + x/2" placeholder="e.g., x^2, sin(x)">
+                    </div>
+
+                    <div class="control-grid">
+                        <div class="control-item">
+                            <label>Range (x)</label>
+                            <div class="range-inputs">
+                                <input type="number" id="x-min" value="-10">
+                                <span>to</span>
+                                <input type="number" id="x-max" value="10">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="toggles">
+                        <label class="toggle-container">
+                            <input type="checkbox" id="show-derivative" checked>
+                            <span class="toggle-track"></span>
+                            <span class="toggle-label">Derivative f'(x) (Slope)</span>
+                        </label>
+
+                        <label class="toggle-container">
+                            <input type="checkbox" id="show-integral">
+                            <span class="toggle-track"></span>
+                            <span class="toggle-label">Definite Integral (Area)</span>
+                        </label>
+
+                        <label class="toggle-container">
+                            <input type="checkbox" id="show-indefinite-integral">
+                            <span class="toggle-track"></span>
+                            <span class="toggle-label">Indefinite Integral F(x) (Curve)</span>
+                        </label>
+
+                        <label class="toggle-container">
+                            <input type="checkbox" id="show-taylor">
+                            <span class="toggle-track"></span>
+                            <span class="toggle-label">Taylor Series</span>
+                        </label>
+                    </div>
+
+                    <div id="integral-controls" class="sub-controls hidden">
+                        <h3>Integral Bounds</h3>
+                        <div class="range-inputs">
+                            <input type="number" id="int-min" value="0">
+                            <span>to</span>
+                            <input type="number" id="int-max" value="2">
+                        </div>
+                        <div class="result-display">
+                            Area: <span id="area-result">0</span>
+                        </div>
+                    </div>
+
+                    <div id="taylor-controls" class="sub-controls hidden">
+                        <h3>Taylor Expansion</h3>
+                        <div class="input-group">
+                            <label>Center (a)</label>
+                            <input type="number" id="taylor-center" value="0">
+                        </div>
+                        <div class="input-group">
+                            <label>Order (n)</label>
+                            <input type="range" id="taylor-order" min="0" max="10" value="3">
+                            <span id="taylor-order-val">3</span>
+                        </div>
+                        <div class="taylor-polynomial-display">
+                            <label>Polynomial:</label>
+                            <div id="taylor-polynomial" class="polynomial-text">P(x) = ...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3D CONTROLS -->
+                <div id="controls-3d" class="mode-controls hidden">
+                    <div class="input-group">
+                        <label for="function-3d">f(x, y) =</label>
+                        <input type="text" id="function-3d" value="sin(sqrt(x^2 + y^2))" placeholder="e.g., x^2 + y^2">
+                    </div>
+                    <div class="control-grid">
+                        <div class="control-item">
+                            <label>Range (x)</label>
+                            <div class="range-inputs">
+                                <input type="number" id="x3d-min" value="-10">
+                                <span>to</span>
+                                <input type="number" id="x3d-max" value="10">
+                            </div>
+                        </div>
+                        <div class="control-item">
+                            <label>Range (y)</label>
+                            <div class="range-inputs">
+                                <input type="number" id="y3d-min" value="-10">
+                                <span>to</span>
+                                <input type="number" id="y3d-max" value="10">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COMPLEX CONTROLS -->
+                <div id="controls-complex" class="mode-controls hidden">
+                    <p class="info-text">Plots magnitude |f(z)| as height and phase arg(f(z)) as color.</p>
+                    <div class="input-group">
+                        <label for="function-complex">f(z) =</label>
+                        <input type="text" id="function-complex" value="(z^2 - 1) * (z - 2 - i)^2 / (z^2 + 2 + 2i)"
+                            placeholder="e.g., z^2 + 1">
+                    </div>
+                    <div class="control-grid">
+                        <div class="control-item">
+                            <label>Real Axis (Re)</label>
+                            <div class="range-inputs">
+                                <input type="number" id="cre-min" value="-3">
+                                <span>to</span>
+                                <input type="number" id="cre-max" value="3">
+                            </div>
+                        </div>
+                        <div class="control-item">
+                            <label>Imaginary Axis (Im)</label>
+                            <div class="range-inputs">
+                                <input type="number" id="cim-min" value="-3">
+                                <span>to</span>
+                                <input type="number" id="cim-max" value="3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <section class="viz-panel glass-panel">
+                <div id="plot-container"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Network Visualizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Landing Page - Problem Type Selector -->
+    <div id="landing-page" class="landing-page">
+        <div class="landing-content">
+            <h1 class="landing-title">Neural Network Playground</h1>
+            <p class="landing-subtitle">Interactive visualization of neural network learning</p>
+
+            <div class="problem-cards">
+                <!-- Regression Card -->
+                <div class="problem-card" data-mode="regression">
+                    <div class="problem-icon">📈</div>
+                    <h2>Regression</h2>
+                    <p>Fit curves to continuous functions like sine, cosine, polynomials and more.</p>
+                    <ul class="problem-features">
+                        <li>100+ target functions</li>
+                        <li>Multi-output support</li>
+                        <li>Activation decomposition</li>
+                    </ul>
+                    <button class="btn btn-primary problem-start">Start →</button>
+                </div>
+
+                <!-- Classification Card -->
+                <div class="problem-card" data-mode="classification">
+                    <div class="problem-icon">🎯</div>
+                    <h2>Classification</h2>
+                    <p>Classify 2D points and visualize decision boundaries in real-time.</p>
+                    <ul class="problem-features">
+                        <li>Interactive data creation</li>
+                        <li>Decision boundary viz</li>
+                        <li>Preset datasets (XOR, spiral)</li>
+                    </ul>
+                    <button class="btn btn-primary problem-start">Start →</button>
+                </div>
+
+                <!-- RNN Card -->
+                <div class="problem-card" data-mode="rnn">
+                    <div class="problem-icon">🔄</div>
+                    <h2>Recurrent Neural Network</h2>
+                    <p>Learn sequences and predict patterns using hidden state memory across timesteps.</p>
+                    <ul class="problem-features">
+                        <li>Sequence prediction</li>
+                        <li>Hidden state visualization</li>
+                        <li>Backprop through time (BPTT)</li>
+                    </ul>
+                    <button class="btn btn-primary problem-start">Start →</button>
+                </div>
+
+                <!-- LSTM Card -->
+                <div class="problem-card" data-mode="lstm">
+                    <div class="problem-icon">🧠</div>
+                    <h2>LSTM Network</h2>
+                    <p>Advanced RNN with gates to control information flow and solve vanishing gradients.</p>
+                    <ul class="problem-features">
+                        <li>Forget, input, output gates</li>
+                        <li>Cell state visualization</li>
+                        <li>Long-term dependencies</li>
+                    </ul>
+                    <button class="btn btn-primary problem-start">Start →</button>
+                </div>
+
+                <!-- Transformer Card -->
+                <div class="problem-card" data-mode="transformer">
+                    <div class="problem-icon">⚡</div>
+                    <h2>Transformer</h2>
+                    <p>Self-attention mechanism for parallel sequence processing without recurrence.</p>
+                    <ul class="problem-features">
+                        <li>Attention weight heatmaps</li>
+                        <li>Positional encoding</li>
+                        <li>Feed-forward blocks</li>
+                    </ul>
+                    <button class="btn btn-primary problem-start">Start →</button>
+                </div>
+
+                <!-- CNN Card -->
+                <div class="problem-card" data-mode="cnn">
+                    <div class="problem-icon">🖼️</div>
+                    <h2>CNN</h2>
+                    <p>Convolutional neural network for spatial pattern recognition in images.</p>
+                    <ul class="problem-features">
+                        <li>Draw your own patterns</li>
+                        <li>Feature map visualization</li>
+                        <li>Filter learning</li>
+                    </ul>
+                    <button class="btn btn-primary problem-start">Start →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mode Header (shown when in a mode) -->
+    <div id="mode-header" class="mode-header hidden">
+        <button id="back-to-home" class="btn btn-ghost">← Back</button>
+        <span id="mode-title" class="mode-title">Regression</span>
+    </div>
+
+    <!-- REGRESSION MODE (existing content) -->
+    <div id="regression-mode" class="mode-container hidden">
+        <div class="app-container three-column">
+            <!-- LEFT: Network Views -->
+            <aside class="left-panel">
+                <section id="network-panel" class="panel network-panel">
+                    <div class="panel-header compact">
+                        <h2>Network</h2>
+                        <div class="header-right">
+                            <span id="weight-count" class="badge">0 weights</span>
+                            <button id="btn-fullscreen-network" class="btn btn-xs btn-fullscreen"
+                                title="Fullscreen">⛶</button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <canvas id="network-canvas"></canvas>
+                        <div id="tooltip" class="tooltip"></div>
+                        <!-- Layer Controls Overlay -->
+                        <div id="layer-controls" class="layer-controls-overlay">
+                            <button id="add-layer-visual" class="ctrl-btn ctrl-add-layer"
+                                title="Add hidden layer">+L</button>
+                            <button id="remove-layer-visual" class="ctrl-btn ctrl-remove-layer"
+                                title="Remove hidden layer">−L</button>
+                        </div>
+                        <!-- Node controls rendered dynamically per layer -->
+                        <div id="node-controls-container"></div>
+                        <!-- Output layer controls (add/remove + function dropdowns) -->
+                        <div id="output-controls-container"></div>
+                    </div>
+                </section>
+
+                <section id="forward-pass-panel" class="panel forward-pass-panel">
+                    <div class="panel-header compact">
+                        <h2>Forward Pass</h2>
+                        <div class="header-right">
+                            <label class="input-label">
+                                x: <input type="number" id="calc-input" class="input input-xs" value="0.5" step="0.1"
+                                    min="-1" max="1">
+                            </label>
+                            <button id="btn-fullscreen-forward" class="btn btn-xs btn-fullscreen"
+                                title="Fullscreen">⛶</button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <canvas id="forward-pass-canvas"></canvas>
+                        <div id="magnifier" class="magnifier hidden"></div>
+                    </div>
+                </section>
+                <div class="resize-handle resize-left-mid" id="resize-left"></div>
+            </aside>
+
+            <!-- MIDDLE: Graphs -->
+            <main class="middle-panel">
+                <section id="curve-panel" class="panel curve-panel">
+                    <div class="panel-header compact">
+                        <h2>Curve Fitting</h2>
+                        <div class="header-right">
+                            <span class="legend-compact">
+                                <span class="dot target"></span>Target
+                                <span class="dot result"></span>Output
+                            </span>
+                            <button id="btn-fullscreen-curve" class="btn btn-xs btn-fullscreen"
+                                title="Fullscreen">⛶</button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <canvas id="curve-canvas"></canvas>
+                    </div>
+                </section>
+
+                <div class="metrics-row">
+                    <section class="panel metric-panel">
+                        <div class="panel-header compact">
+                            <h2>Loss</h2>
+                            <span id="current-loss" class="badge loss-badge" title="Right-click to log">0.0000</span>
+                        </div>
+                        <div class="panel-body">
+                            <canvas id="loss-canvas"></canvas>
+                        </div>
+                    </section>
+
+                    <section class="panel metric-panel">
+                        <div class="panel-header compact">
+                            <h2>Accuracy</h2>
+                            <span id="current-accuracy" class="badge accuracy-badge">0.00%</span>
+                        </div>
+                        <div class="panel-body">
+                            <canvas id="accuracy-canvas"></canvas>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Training controls at bottom of middle -->
+                <div class="training-bar">
+                    <div class="epoch-badge">
+                        Epoch <span id="epoch-counter">0</span>
+                    </div>
+                    <button id="play-btn" class="btn btn-primary">▶ Play</button>
+                    <button id="step-btn" class="btn">⏭ Step</button>
+                    <button id="reset-btn" class="btn btn-danger">↺ Reset</button>
+                    <button id="add-observation" class="btn btn-success" title="Log observation">+</button>
+                    <button id="open-observations" class="btn" title="View observations">
+                        📋 <span id="obs-count">0</span>
+                    </button>
+                </div>
+            </main>
+
+            <!-- RIGHT: Parameters -->
+            <aside class="right-panel">
+                <div class="params-header">
+                    <span>Parameters</span>
+                </div>
+
+                <!-- Architecture controls moved to visual interface -->
+
+                <div class="param-group">
+                    <label>Activation</label>
+                    <select id="activation-select" class="select">
+                        <option value="sigmoid">Sigmoid</option>
+                        <option value="tanh">Tanh</option>
+                        <option value="relu">ReLU</option>
+                        <option value="leaky_relu">Leaky ReLU</option>
+                        <option value="elu">ELU</option>
+                        <option value="swish">Swish</option>
+                        <option value="gelu">GELU</option>
+                        <option value="selu">SELU</option>
+                        <option value="mish">Mish</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label>Loss Function</label>
+                    <select id="loss-select" class="select">
+                        <option value="mse">MSE</option>
+                        <option value="mae">MAE</option>
+                        <option value="huber">Huber</option>
+                        <option value="log_cosh">Log-Cosh</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label>Optimizer</label>
+                    <select id="optimizer-select" class="select">
+                        <option value="sgd">SGD</option>
+                        <option value="momentum">Momentum</option>
+                        <option value="rmsprop">RMSprop</option>
+                        <option value="adam" selected>Adam</option>
+                        <option value="adagrad">AdaGrad</option>
+                        <option value="nadam">Nadam</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label>Weight Init</label>
+                    <select id="init-select" class="select">
+                        <option value="xavier" selected>Xavier</option>
+                        <option value="he">He</option>
+                        <option value="lecun">LeCun</option>
+                        <option value="uniform">Uniform</option>
+                        <option value="normal">Normal</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label>Learning Rate</label>
+                    <input type="number" id="learning-rate" class="input" value="0.01" min="0.0001" max="1"
+                        step="0.001">
+                </div>
+
+                <div class="param-group">
+                    <label>Target Function</label>
+                    <input type="text" id="target-search" class="input" placeholder="Search...">
+                    <select id="target-function" class="select"></select>
+                </div>
+
+                <div class="param-group">
+                    <label>Step Size</label>
+                    <select id="step-size" class="select">
+                        <option value="1">1</option>
+                        <option value="5" selected>5</option>
+                        <option value="10">10</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                        <option value="1000">1000</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label>Dropout Rate <span id="dropout-rate-value" class="param-value">0%</span></label>
+                    <input type="range" id="dropout-rate" class="slider" min="0" max="0.8" step="0.1" value="0">
+                </div>
+
+                <div class="param-group">
+                    <label>Visualization</label>
+                    <div class="viz-mode-btns">
+                        <button id="viz-mode-default" class="btn btn-xs viz-mode-btn active"
+                            data-mode="default">Normal</button>
+                        <button id="viz-mode-gradient" class="btn btn-xs viz-mode-btn"
+                            data-mode="gradient-heatmap">Gradient</button>
+                        <button id="viz-mode-backprop" class="btn btn-xs viz-mode-btn"
+                            data-mode="backprop-animation">Backprop</button>
+                    </div>
+                </div>
+
+                <div class="param-group">
+                    <label>Model</label>
+                    <div class="model-btns">
+                        <button id="export-model" class="btn btn-xs">📥 Export</button>
+                        <button id="import-model-btn" class="btn btn-xs">📤 Import</button>
+                        <input type="file" id="import-model-file" accept=".json" hidden>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Observations Modal -->
+        <div id="observations-modal" class="modal hidden">
+            <div class="modal-content modal-wide">
+                <div class="modal-header">
+                    <h3>📋 Observation Log</h3>
+                    <div class="modal-actions">
+                        <button id="export-csv" class="btn btn-primary btn-sm">📥 Export CSV</button>
+                        <button id="btn-fullscreen-obs" class="btn btn-sm btn-fullscreen" title="Fullscreen">⛶</button>
+                        <button id="clear-observations" class="btn btn-danger btn-sm">Clear</button>
+                        <button id="close-observations" class="btn btn-sm">✕</button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <p class="hint">Click + button to log current state</p>
+                    <table id="observations-table" class="observations-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Layers</th>
+                                <th>Act</th>
+                                <th>Loss</th>
+                                <th>Opt</th>
+                                <th>LR</th>
+                                <th>Epoch</th>
+                                <th>Loss Val</th>
+                                <th>Acc</th>
+                            </tr>
+                        </thead>
+                        <tbody id="observations-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Modal -->
+        <div id="edit-modal" class="modal hidden">
+            <div class="modal-content">
+                <h3 id="modal-title">Edit Value</h3>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Initial Value</label>
+                        <input type="number" id="edit-initial" class="input" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Current Value</label>
+                        <input type="number" id="edit-current" class="input" step="0.01" disabled>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="modal-cancel" class="btn">Cancel</button>
+                    <button id="modal-save" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div><!-- end regression-mode -->
+
+    <!-- CLASSIFICATION MODE -->
+    <div id="classification-mode" class="mode-container hidden">
+        <div class="app-container classification-layout">
+            <!-- LEFT: Network -->
+            <aside class="left-panel">
+                <section class="panel network-panel">
+                    <div class="panel-header compact">
+                        <h2>Network</h2>
+                        <div class="header-right">
+                            <span id="cls-weight-count" class="badge">0 weights</span>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <canvas id="cls-network-canvas"></canvas>
+                        <div id="cls-tooltip" class="tooltip"></div>
+                        <div id="cls-layer-controls" class="layer-controls-overlay">
+                            <button id="cls-add-layer" class="ctrl-btn ctrl-add-layer"
+                                title="Add hidden layer">+L</button>
+                            <button id="cls-remove-layer" class="ctrl-btn ctrl-remove-layer"
+                                title="Remove hidden layer">−L</button>
+                        </div>
+                        <div id="cls-node-controls-container"></div>
+                    </div>
+                </section>
+            </aside>
+
+            <!-- MIDDLE: Classification Visualizer -->
+            <main class="middle-panel">
+                <section class="panel classification-panel">
+                    <div class="panel-header compact">
+                        <h2>Decision Boundary</h2>
+                        <div class="header-right">
+                            <label class="cls-class-selector">
+                                Class:
+                                <select id="cls-current-class" class="select select-sm">
+                                    <option value="0">🔴 Red</option>
+                                    <option value="1">🔵 Blue</option>
+                                </select>
+                            </label>
+                            <button id="cls-clear-points" class="btn btn-xs btn-danger">Clear</button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <canvas id="classification-canvas"></canvas>
+                    </div>
+                </section>
+
+                <div class="metrics-row">
+                    <section class="panel metric-panel">
+                        <div class="panel-header compact">
+                            <h2>Loss</h2>
+                            <span id="cls-current-loss" class="badge loss-badge">0.0000</span>
+                        </div>
+                        <div class="panel-body">
+                            <canvas id="cls-loss-canvas"></canvas>
+                        </div>
+                    </section>
+
+                    <section class="panel metric-panel">
+                        <div class="panel-header compact">
+                            <h2>Accuracy</h2>
+                            <span id="cls-current-accuracy" class="badge accuracy-badge">0.00%</span>
+                        </div>
+                        <div class="panel-body">
+                            <canvas id="cls-accuracy-canvas"></canvas>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Metrics Panel -->
+                <div class="metrics-panel">
+                    <div class="metrics-badges">
+                        <div class="metric-badge">
+                            <span class="metric-label">Precision</span>
+                            <span id="cls-precision" class="metric-value">0.0%</span>
+                        </div>
+                        <div class="metric-badge">
+                            <span class="metric-label">Recall</span>
+                            <span id="cls-recall" class="metric-value">0.0%</span>
+                        </div>
+                        <div class="metric-badge">
+                            <span class="metric-label">F1 Score</span>
+                            <span id="cls-f1" class="metric-value">0.0%</span>
+                        </div>
+                    </div>
+                    <div id="cls-confusion-matrix" class="confusion-matrix-container"></div>
+                </div>
+
+                <div class="training-bar">
+                    <div class="epoch-badge">
+                        Epoch <span id="cls-epoch-counter">0</span>
+                    </div>
+                    <button id="cls-play-btn" class="btn btn-primary">▶ Play</button>
+                    <button id="cls-step-btn" class="btn">⏭ Step</button>
+                    <button id="cls-reset-btn" class="btn btn-danger">↺ Reset</button>
+                </div>
+            </main>
+
+            <!-- RIGHT: Parameters -->
+            <aside class="right-panel">
+                <div class="params-header">
+                    <span>Parameters</span>
+                </div>
+
+                <div class="param-group">
+                    <label>Preset Dataset</label>
+                    <select id="cls-dataset" class="select">
+                        <option value="xor">XOR</option>
+                        <option value="circle">Circle</option>
+                        <option value="spiral">Spiral</option>
+                        <option value="gaussian">Gaussian</option>
+                        <option value="custom" selected>Custom (click to add)</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label>Activation</label>
+                    <select id="cls-activation-select" class="select">
+                        <option value="sigmoid">Sigmoid</option>
+                        <option value="tanh" selected>Tanh</option>
+                        <option value="relu">ReLU</option>
+                        <option value="leaky_relu">Leaky ReLU</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label>Optimizer</label>
+                    <select id="cls-optimizer-select" class="select">
+                        <option value="sgd">SGD</option>
+                        <option value="adam" selected>Adam</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label>Learning Rate</label>
+                    <input type="number" id="cls-learning-rate" class="input" value="0.03" min="0.001" max="1"
+                        step="0.001">
+                </div>
+
+                <div class="param-group">
+                    <label>Step Size</label>
+                    <select id="cls-step-size" class="select">
+                        <option value="1">1</option>
+                        <option value="5" selected>5</option>
+                        <option value="10">10</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label>Dropout Rate <span id="cls-dropout-rate-value" class="param-value">0%</span></label>
+                    <input type="range" id="cls-dropout-rate" class="slider" min="0" max="0.8" step="0.1" value="0">
+                </div>
+
+                <div class="param-group">
+                    <label>Visualization</label>
+                    <div class="viz-mode-btns">
+                        <button id="cls-viz-mode-default" class="btn btn-xs viz-mode-btn active"
+                            data-mode="default">Normal</button>
+                        <button id="cls-viz-mode-gradient" class="btn btn-xs viz-mode-btn"
+                            data-mode="gradient-heatmap">Gradient</button>
+                        <button id="cls-viz-mode-backprop" class="btn btn-xs viz-mode-btn"
+                            data-mode="backprop-animation">Backprop</button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div><!-- end classification-mode -->
+
+    <!-- RNN MODE -->
+    <div id="rnn-mode" class="mode-container hidden">
+        <div class="app-container rnn-layout">
+            <!-- LEFT: Network -->
+            <aside class="left-panel">
+                <section class="panel network-panel">
+                    <div class="panel-header compact">
+                        <h2>RNN Network</h2>
+                        <div class="header-right">
+                            <span id="rnn-weight-count" class="badge">0 weights</span>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <canvas id="rnn-network-canvas"></canvas>
+                    </div>
+                </section>
+
+                <section class="panel hidden-state-panel">
+                    <div class="panel-header compact">
+                        <h2>Hidden State</h2>
+                    </div>
+                    <div class="panel-body">
+                        <canvas id="rnn-hidden-canvas"></canvas>
+                    </div>
+                </section>
+            </aside>
+
+            <!-- MIDDLE: Sequence Visualization -->
+            <main class="middle-panel">
+                <section class="panel sequence-panel">
+                    <div class="panel-header compact">
+                        <h2>Sequence Prediction</h2>
+                        <div class="header-right">
+                            <span class="legend-compact">
+                                <span class="dot input-dot"></span>Input
+                                <span class="dot target-dot"></span>Target
+                                <span class="dot predicted-dot"></span>Predicted
+                            </span>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <canvas id="rnn-sequence-canvas"></canvas>
+                    </div>
+                </section>
+
+                <div class="metrics-row">
+                    <section class="panel metric-panel">
+                        <div class="panel-header compact">
+                            <h2>Loss</h2>
+                            <span id="rnn-current-loss" class="badge loss-badge">0.0000</span>
+                        </div>
+                        <div class="panel-body">
+                            <canvas id="rnn-loss-canvas"></canvas>
+                        </div>
+                    </section>
+
+                    <section class="panel metric-panel">
+                        <div class="panel-header compact">
+                            <h2>Accuracy</h2>
+                            <span id="rnn-current-accuracy" class="badge accuracy-badge">0.00%</span>
+                        </div>
+                        <div class="panel-body">
+                            <canvas id="rnn-accuracy-canvas"></canvas>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="training-bar">
+                    <div class="epoch-badge">
+                        Epoch <span id="rnn-epoch-counter">0</span>
+                    </div>
+                    <button id="rnn-play-btn" class="btn btn-primary">▶ Play</button>
+                    <button id="rnn-step-btn" class="btn">⏭ Step</button>
+                    <button id="rnn-reset-btn" class="btn btn-danger">↺ Reset</button>
+                </div>
+            </main>
+
+            <!-- RIGHT: Parameters -->
+            <aside class="right-panel">
+                <div class="params-header">
+                    <span>Parameters</span>
+                </div>
+
+                <div class="param-group">
+                    <label>Dataset</label>
+                    <select id="rnn-dataset" class="select">
+                        <option value="sineWave" selected>Sine Wave</option>
+                        <option value="squareWave">Square Wave</option>
+                        <option value="echo">Echo (delay=3)</option>
+                        <option value="adding">Adding Problem</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label>Hidden Units</label>
+                    <select id="rnn-hidden-size" class="select">
+                        <option value="4">4</option>
+                        <option value="8" selected>8</option>
+                        <option value="16">16</option>
+                        <option value="32">32</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label>Sequence Length</label>
+                    <select id="rnn-seq-length" class="select">
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                        <option value="20" selected>20</option>
+                        <option value="30">30</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label>Activation</label>
+                    <select id="rnn-activation-select" class="select">
+                        <option value="tanh" selected>Tanh</option>
+                        <option value="sigmoid">Sigmoid</option>
+                        <option value="relu">ReLU</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label>Optimizer</label>
+                    <select id="rnn-optimizer-select" class="select">
+                        <option value="sgd">SGD</option>
+                        <option value="adam" selected>Adam</option>
+                    </select>
+                </div>
+
+                <div class="param-group">
+                    <label>Learning Rate</label>
+                    <input type="number" id="rnn-learning-rate" class="input" value="0.01" min="0.001" max="1"
+                        step="0.001">
+                </div>
+
+                <div class="param-group">
+                    <label>Step Size</label>
+                    <select id="rnn-step-size" class="select">
+                        <option value="1">1</option>
+                        <option value="5" selected>5</option>
+                        <option value="10">10</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            </aside>
+        </div>
+    </div><!-- end rnn-mode -->
+
+    <!-- LSTM MODE -->
+    <div id="lstm-mode" class="mode-container hidden">
+        <div class="app-container rnn-layout">
+            <aside class="left-panel">
+                <section class="panel network-panel">
+                    <div class="panel-header compact">
+                        <h2>LSTM Cell</h2>
+                        <span id="lstm-weight-count" class="badge">0 weights</span>
+                    </div>
+                    <div class="panel-body">
+                        <canvas id="lstm-network-canvas"></canvas>
+                    </div>
+                </section>
+                <section class="panel gate-panel">
+                    <div class="panel-header compact">
+                        <h2>Gate Activations</h2>
+                    </div>
+                    <div class="panel-body">
+                        <canvas id="lstm-gate-canvas"></canvas>
+                    </div>
+                </section>
+            </aside>
+            <main class="middle-panel">
+                <section class="panel sequence-panel">
+                    <div class="panel-header compact">
+                        <h2>Sequence Prediction</h2>
+                    </div>
+                    <div class="panel-body"><canvas id="lstm-sequence-canvas"></canvas></div>
+                </section>
+                <div class="metrics-row">
+                    <section class="panel metric-panel">
+                        <div class="panel-header compact">
+                            <h2>Loss</h2><span id="lstm-current-loss" class="badge loss-badge">0.0000</span>
+                        </div>
+                        <div class="panel-body"><canvas id="lstm-loss-canvas"></canvas></div>
+                    </section>
+                    <section class="panel metric-panel">
+                        <div class="panel-header compact">
+                            <h2>Accuracy</h2><span id="lstm-current-accuracy" class="badge accuracy-badge">0.00%</span>
+                        </div>
+                        <div class="panel-body"><canvas id="lstm-accuracy-canvas"></canvas></div>
+                    </section>
+                </div>
+                <div class="training-bar">
+                    <div class="epoch-badge">Epoch <span id="lstm-epoch-counter">0</span></div>
+                    <button id="lstm-play-btn" class="btn btn-primary">▶ Play</button>
+                    <button id="lstm-step-btn" class="btn">⏭ Step</button>
+                    <button id="lstm-reset-btn" class="btn btn-danger">↺ Reset</button>
+                </div>
+            </main>
+            <aside class="right-panel">
+                <div class="params-header"><span>Parameters</span></div>
+                <div class="param-group"><label>Dataset</label>
+                    <select id="lstm-dataset" class="select">
+                        <option value="sineWave" selected>Sine Wave</option>
+                        <option value="squareWave">Square Wave</option>
+                        <option value="echo">Echo (delay=3)</option>
+                    </select>
+                </div>
+                <div class="param-group"><label>Hidden Units</label>
+                    <select id="lstm-hidden-size" class="select">
+                        <option value="4">4</option>
+                        <option value="8" selected>8</option>
+                        <option value="16">16</option>
+                    </select>
+                </div>
+                <div class="param-group"><label>Sequence Length</label>
+                    <select id="lstm-seq-length" class="select">
+                        <option value="10">10</option>
+                        <option value="20" selected>20</option>
+                        <option value="30">30</option>
+                    </select>
+                </div>
+                <div class="param-group"><label>Learning Rate</label>
+                    <input type="number" id="lstm-learning-rate" class="input" value="0.01" min="0.001" max="1"
+                        step="0.001">
+                </div>
+                <div class="param-group"><label>Step Size</label>
+                    <select id="lstm-step-size" class="select">
+                        <option value="1">1</option>
+                        <option value="5" selected>5</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+            </aside>
+        </div>
+    </div><!-- end lstm-mode -->
+
+    <!-- TRANSFORMER MODE -->
+    <div id="transformer-mode" class="mode-container hidden">
+        <div class="app-container rnn-layout">
+            <aside class="left-panel">
+                <section class="panel network-panel">
+                    <div class="panel-header compact">
+                        <h2>Architecture</h2><span id="transformer-weight-count" class="badge">0 weights</span>
+                    </div>
+                    <div class="panel-body"><canvas id="transformer-network-canvas"></canvas></div>
+                </section>
+                <section class="panel attention-panel">
+                    <div class="panel-header compact">
+                        <h2>Attention Weights</h2>
+                    </div>
+                    <div class="panel-body"><canvas id="transformer-attention-canvas"></canvas></div>
+                </section>
+            </aside>
+            <main class="middle-panel">
+                <section class="panel sequence-panel">
+                    <div class="panel-header compact">
+                        <h2>Sequence Prediction</h2>
+                    </div>
+                    <div class="panel-body"><canvas id="transformer-sequence-canvas"></canvas></div>
+                </section>
+                <div class="metrics-row">
+                    <section class="panel metric-panel">
+                        <div class="panel-header compact">
+                            <h2>Loss</h2><span id="transformer-current-loss" class="badge loss-badge">0.0000</span>
+                        </div>
+                        <div class="panel-body"><canvas id="transformer-loss-canvas"></canvas></div>
+                    </section>
+                    <section class="panel metric-panel">
+                        <div class="panel-header compact">
+                            <h2>Accuracy</h2><span id="transformer-current-accuracy"
+                                class="badge accuracy-badge">0.00%</span>
+                        </div>
+                        <div class="panel-body"><canvas id="transformer-accuracy-canvas"></canvas></div>
+                    </section>
+                </div>
+                <div class="training-bar">
+                    <div class="epoch-badge">Epoch <span id="transformer-epoch-counter">0</span></div>
+                    <button id="transformer-play-btn" class="btn btn-primary">▶ Play</button>
+                    <button id="transformer-step-btn" class="btn">⏭ Step</button>
+                    <button id="transformer-reset-btn" class="btn btn-danger">↺ Reset</button>
+                </div>
+            </main>
+            <aside class="right-panel">
+                <div class="params-header"><span>Parameters</span></div>
+                <div class="param-group"><label>Dataset</label>
+                    <select id="transformer-dataset" class="select">
+                        <option value="copy" selected>Copy Task</option>
+                        <option value="reverse">Reverse</option>
+                        <option value="pattern">Pattern</option>
+                    </select>
+                </div>
+                <div class="param-group"><label>Embed Dimension</label>
+                    <select id="transformer-embed-dim" class="select">
+                        <option value="4">4</option>
+                        <option value="8" selected>8</option>
+                        <option value="16">16</option>
+                    </select>
+                </div>
+                <div class="param-group"><label>Sequence Length</label>
+                    <select id="transformer-seq-length" class="select">
+                        <option value="8">8</option>
+                        <option value="12" selected>12</option>
+                        <option value="16">16</option>
+                    </select>
+                </div>
+                <div class="param-group"><label>Learning Rate</label>
+                    <input type="number" id="transformer-learning-rate" class="input" value="0.01" min="0.001" max="1"
+                        step="0.001">
+                </div>
+                <div class="param-group"><label>Step Size</label>
+                    <select id="transformer-step-size" class="select">
+                        <option value="1">1</option>
+                        <option value="5" selected>5</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+            </aside>
+        </div>
+    </div><!-- end transformer-mode -->
+
+    <!-- CNN MODE -->
+    <div id="cnn-mode" class="mode-container hidden">
+        <div class="app-container cnn-layout">
+            <aside class="left-panel">
+                <section class="panel input-panel">
+                    <div class="panel-header compact">
+                        <h2>Draw Pattern</h2>
+                        <button id="cnn-clear-btn" class="btn btn-sm">Clear</button>
+                    </div>
+                    <div class="panel-body cnn-input-body"><canvas id="cnn-input-canvas"></canvas></div>
+                </section>
+                <section class="panel prediction-panel">
+                    <div class="panel-header compact">
+                        <h2>Prediction</h2>
+                    </div>
+                    <div class="panel-body" id="cnn-prediction-container"></div>
+                </section>
+            </aside>
+            <main class="middle-panel">
+                <section class="panel network-panel">
+                    <div class="panel-header compact">
+                        <h2>CNN Architecture</h2><span id="cnn-weight-count" class="badge">0 weights</span>
+                    </div>
+                    <div class="panel-body"><canvas id="cnn-network-canvas"></canvas></div>
+                </section>
+                <section class="panel feature-panel">
+                    <div class="panel-header compact">
+                        <h2>Feature Maps</h2>
+                    </div>
+                    <div class="panel-body"><canvas id="cnn-feature-canvas"></canvas></div>
+                </section>
+                <div class="metrics-row">
+                    <section class="panel metric-panel">
+                        <div class="panel-header compact">
+                            <h2>Loss</h2><span id="cnn-current-loss" class="badge loss-badge">0.0000</span>
+                        </div>
+                        <div class="panel-body"><canvas id="cnn-loss-canvas"></canvas></div>
+                    </section>
+                    <section class="panel metric-panel">
+                        <div class="panel-header compact">
+                            <h2>Accuracy</h2><span id="cnn-current-accuracy" class="badge accuracy-badge">0.00%</span>
+                        </div>
+                        <div class="panel-body"><canvas id="cnn-accuracy-canvas"></canvas></div>
+                    </section>
+                </div>
+                <div class="training-bar">
+                    <div class="epoch-badge">Epoch <span id="cnn-epoch-counter">0</span></div>
+                    <button id="cnn-play-btn" class="btn btn-primary">▶ Play</button>
+                    <button id="cnn-step-btn" class="btn">⏭ Step</button>
+                    <button id="cnn-reset-btn" class="btn btn-danger">↺ Reset</button>
+                </div>
+            </main>
+            <aside class="right-panel">
+                <div class="params-header"><span>Parameters</span></div>
+                <div class="param-group"><label>Dataset</label>
+                    <select id="cnn-dataset" class="select">
+                        <option value="patterns" selected>Patterns</option>
+                        <option value="shapes">Shapes</option>
+                    </select>
+                </div>
+                <div class="param-group"><label>Load Pattern</label>
+                    <select id="cnn-pattern-select" class="select">
+                        <option value="">-- Select --</option>
+                        <option value="0">Horizontal</option>
+                        <option value="1">Vertical</option>
+                        <option value="2">Diagonal</option>
+                        <option value="3">Cross</option>
+                    </select>
+                </div>
+                <div class="param-group"><label>Learning Rate</label>
+                    <input type="number" id="cnn-learning-rate" class="input" value="0.01" min="0.001" max="1"
+                        step="0.001">
+                </div>
+                <div class="param-group"><label>Step Size</label>
+                    <select id="cnn-step-size" class="select">
+                        <option value="1">1</option>
+                        <option value="5" selected>5</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+            </aside>
+        </div>
+    </div><!-- end cnn-mode -->
+
+    <!-- Scripts -->
+    <script src="nn-engine.js"></script>
+    <script src="rnn-engine.js"></script>
+    <script src="lstm-engine.js"></script>
+    <script src="transformer-engine.js"></script>
+    <script src="cnn-engine.js"></script>
+    <script src="network-visualizer.js"></script>
+    <script src="curve-visualizer.js"></script>
+    <script src="classification-visualizer.js"></script>
+    <script src="rnn-visualizer.js"></script>
+    <script src="lstm-visualizer.js"></script>
+    <script src="transformer-visualizer.js"></script>
+    <script src="cnn-visualizer.js"></script>
+    <script src="metrics.js"></script>
+    <script src="charts.js"></script>
+    <script src="forward-pass-graph.js"></script>
+    <script src="observations.js"></script>
+    <script src="resizable.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

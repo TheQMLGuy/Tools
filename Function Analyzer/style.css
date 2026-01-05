@@ -1,0 +1,328 @@
+:root {
+    --bg-color: #0d1117;
+    --card-bg: rgba(22, 27, 34, 0.7);
+    --primary: #58a6ff;
+    --secondary: #238636;
+    --accent: #d2a8ff;
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --border: rgba(48, 54, 61, 0.5);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --font-main: 'Outfit', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    background-image:
+        radial-gradient(at 0% 0%, rgba(88, 166, 255, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(210, 168, 255, 0.15) 0px, transparent 50%);
+    color: var(--text);
+    font-family: var(--font-main);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px;
+    gap: 20px;
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+header {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    background: linear-gradient(90deg, #fff, #8b949e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.highlight {
+    color: var(--primary);
+    -webkit-text-fill-color: var(--primary);
+}
+
+.subtitle {
+    font-weight: 300;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 20px;
+    flex: 1;
+    min-height: 0;
+}
+
+.glass-panel {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.controls-panel {
+    gap: 24px;
+}
+
+.viz-panel {
+    padding: 0;
+    /* Plotly handles padding */
+    overflow: hidden;
+    position: relative;
+}
+
+#plot-container {
+    width: 100%;
+    height: 100%;
+}
+
+/* Tabs */
+.mode-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.mode-btn {
+    flex: 1;
+    padding: 10px;
+    background: rgba(48, 54, 61, 0.5);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.mode-btn.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+
+.mode-btn:hover:not(.active) {
+    background: rgba(48, 54, 61, 0.8);
+    color: var(--text);
+}
+
+.mode-controls.hidden {
+    display: none;
+}
+
+.info-text {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    font-style: italic;
+}
+
+/* Inputs */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+input[type="text"],
+input[type="number"] {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+}
+
+.range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.range-inputs input {
+    width: 100%;
+}
+
+/* Toggles */
+.toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.toggle-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 12px;
+}
+
+.toggle-container input {
+    display: none;
+}
+
+.toggle-track {
+    width: 44px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    position: relative;
+    transition: background 0.3s;
+}
+
+.toggle-track::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: #fff;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+input:checked+.toggle-track {
+    background: var(--primary);
+}
+
+input:checked+.toggle-track::after {
+    transform: translateX(20px);
+}
+
+.toggle-label {
+    font-weight: 500;
+}
+
+/* Sub-controls */
+.sub-controls {
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: opacity 0.3s, max-height 0.3s;
+}
+
+.sub-controls.hidden {
+    display: none;
+}
+
+.sub-controls h3 {
+    font-size: 1rem;
+    color: var(--accent);
+}
+
+.result-display {
+    margin-top: 5px;
+    font-family: var(--font-mono);
+    color: var(--secondary);
+    font-weight: bold;
+}
+
+/* Range Slider */
+input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    outline: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+input[type=range]::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    main {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+}
+
+/* Taylor Polynomial Display */
+.taylor-polynomial-display {
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.taylor-polynomial-display label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--accent);
+}
+
+.polynomial-text {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: #fddf68;
+    word-break: break-all;
+    line-height: 1.5;
+    max-height: 100px;
+    overflow-y: auto;
+}

@@ -1,0 +1,1585 @@
+/**
+ * Parallel Axes Visualizer - Main Application
+ * Renders mathematical functions on parallel coordinate axes
+ */
+
+class ParallelAxesVisualizer {
+    constructor() {
+        // Canvas setup - Parallel Axes
+        this.canvas = document.getElementById('parallelCanvas');
+        this.ctx = this.canvas.getContext('2d');
+
+        // Canvas setup - Cartesian
+        this.cartesianCanvas = document.getElementById('cartesianCanvas');
+        this.cartesianCtx = this.cartesianCanvas.getContext('2d');
+
+        // State
+        this.currentFunction = 'linear';
+        this.params = {};
+        this.numPoints = 25;
+        this.xMin = -5;
+        this.xMax = 5;
+        this.isAnimating = false;
+        this.animationProgress = 0;
+        this.animationSpeed = 5;
+        this.animationId = null;
+
+        // Visual options
+        this.lineColorMode = 'gradient';
+        this.showGrid = true;
+        this.showPoints = true;
+        this.continuousMode = false;
+        this.ySquash = 0; // 0 = Y matches X range, 100 = Y auto-fits to function range
+        this.densityVicinity = 0.5; // ± range for density calculation
+
+        // Calculus options
+        this.showDerivative = false;
+        this.showIntegral = false;
+        this.derivativeData = null;  // { latex, evaluate }
+        this.integralData = null;    // { latex, evaluate }
+        this.customExpression = '';  // Current custom expression string
+        this.customExpressionValid = false;
+
+        // Layout
+        this.padding = { top: 60, bottom: 60, left: 80, right: 80 };
+        this.axisGap = 0; // Will be calculated
+
+        // Hover state
+        this.hoveredLine = null;
+        this.tooltip = document.getElementById('tooltip');
+
+        // Data points for current function
+        this.dataPoints = [];
+        this.derivativePoints = [];  // Data points for f'(x)
+        this.integralPoints = [];    // Data points for ∫f(x)dx
+
+        // Initialize
+        this.init();
+    }
+
+    init() {
+        this.setupCanvas();
+        this.bindEvents();
+        this.loadFunctionParams();
+        this.calculateDataPoints();
+        this.render();
+
+        // Initial resize
+        window.addEventListener('resize', () => this.handleResize());
+        this.handleResize();
+    }
+
+    setupCanvas() {
+        // Setup Parallel Canvas
+        const container = this.canvas.parentElement;
+        const dpr = window.devicePixelRatio || 1;
+
+        this.canvas.width = container.clientWidth * dpr;
+        this.canvas.height = container.clientHeight * dpr;
+        this.canvas.style.width = container.clientWidth + 'px';
+        this.canvas.style.height = container.clientHeight + 'px';
+
+        this.ctx.scale(dpr, dpr);
+
+        this.width = container.clientWidth;
+        this.height = container.clientHeight;
+
+        // Setup Cartesian Canvas
+        const cartContainer = this.cartesianCanvas.parentElement;
+        this.cartesianCanvas.width = cartContainer.clientWidth * dpr;
+        this.cartesianCanvas.height = cartContainer.clientHeight * dpr;
+        this.cartesianCanvas.style.width = cartContainer.clientWidth + 'px';
+        this.cartesianCanvas.style.height = cartContainer.clientHeight + 'px';
+
+        this.cartesianCtx.scale(dpr, dpr);
+
+        this.cartWidth = cartContainer.clientWidth;
+        this.cartHeight = cartContainer.clientHeight;
+
+
+        // Calculate axis gap (distance between X and Y axes)
+        this.axisGap = this.width - this.padding.left - this.padding.right;
+    }
+
+    handleResize() {
+        this.setupCanvas();
+        this.render();
+    }
+
+    bindEvents() {
+        // Function selector
+        document.getElementById('functionSelect').addEventListener('change', (e) => {
+            this.currentFunction = e.target.value;
+            this.loadFunctionParams();
+            this.resetAnimation();
+
+            // Show/hide custom expression section
+            const customSection = document.getElementById('customExpressionSection');
+            if (this.currentFunction === 'custom') {
+                customSection.style.display = 'block';
+                // Focus the input
+                setTimeout(() => {
+                    document.getElementById('customExpressionInput').focus();
+                }, 100);
+            } else {
+                customSection.style.display = 'none';
+            }
+
+            this.calculateDataPoints();
+            this.calculateCalculusPoints();
+            this.render();
+            this.updateDescription();
+        });
+
+        // Number of points
+        const numPointsSlider = document.getElementById('numPoints');
+        numPointsSlider.addEventListener('input', (e) => {
+            this.numPoints = parseInt(e.target.value);
+            document.getElementById('numPointsValue').textContent = this.numPoints;
+            this.calculateDataPoints();
+            this.render();
+        });
+
+        // X range inputs
+        document.getElementById('xMin').addEventListener('change', (e) => {
+            this.xMin = parseFloat(e.target.value);
+            this.calculateDataPoints();
+            this.render();
+        });
+
+        document.getElementById('xMax').addEventListener('change', (e) => {
+            this.xMax = parseFloat(e.target.value);
+            this.calculateDataPoints();
+            this.render();
+        });
+
+        // Y Squash toggle button (3 states)
+        // 0: Standard (1:1)
+        // 1: Fit Min/Max (tight fit)
+        // 2: Symmetric Fit (balanced 0)
+        const ySquashBtn = document.getElementById('ySquashBtn');
+        if (ySquashBtn) {
+            ySquashBtn.addEventListener('click', () => {
+                this.ySquash = (this.ySquash + 1) % 3;
+
+                // Update Button State
+                ySquashBtn.classList.remove('btn-secondary', 'active', 'btn-symmetric');
+                ySquashBtn.style.backgroundColor = ''; // Clear inline styles
+                ySquashBtn.style.borderColor = '';
+
+                if (this.ySquash === 0) {
+                    ySquashBtn.classList.add('btn-secondary');
+                    ySquashBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1v14M1 8h14M3 3l10 10M13 3L3 13"/></svg> Standard Scale (1:1)';
+                } else if (this.ySquash === 1) {
+                    ySquashBtn.classList.add('active');
+                    ySquashBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"/></svg> Fit Y to Min/Max';
+                } else {
+                    ySquashBtn.classList.add('active');
+                    ySquashBtn.style.backgroundColor = '#a855f7'; // Purple for symmetric
+                    ySquashBtn.style.borderColor = '#9333ea';
+                    ySquashBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a.75.75 0 01.75.75v14.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zM1 8a.75.75 0 01.75-.75h12.5a.75.75 0 010 1.5H1.75A.75.75 0 011 8z"/></svg> Symmetric Fit';
+                }
+
+                this.calculateDataPoints();
+                this.render();
+            });
+
+            // Initialize button state
+            ySquashBtn.classList.add('btn-secondary');
+            ySquashBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1v14M1 8h14M3 3l10 10M13 3L3 13"/></svg> Standard Scale (1:1)';
+        }
+
+        // Animation controls
+        document.getElementById('playBtn').addEventListener('click', () => this.toggleAnimation());
+        document.getElementById('resetBtn').addEventListener('click', () => this.resetAnimation());
+
+        // Animation speed
+        const speedSlider = document.getElementById('animSpeed');
+        speedSlider.addEventListener('input', (e) => {
+            this.animationSpeed = parseInt(e.target.value);
+            document.getElementById('animSpeedValue').textContent = this.animationSpeed;
+        });
+
+        // Visual options
+        document.getElementById('lineColorMode').addEventListener('change', (e) => {
+            this.lineColorMode = e.target.value;
+            this.render();
+        });
+
+        document.getElementById('showGrid').addEventListener('change', (e) => {
+            this.showGrid = e.target.checked;
+            this.render();
+        });
+
+        document.getElementById('showPoints').addEventListener('change', (e) => {
+            this.showPoints = e.target.checked;
+            this.render();
+        });
+
+        // Continuous mode checkbox
+        const continuousCheckbox = document.getElementById('continuousMode');
+        if (continuousCheckbox) {
+            continuousCheckbox.addEventListener('change', (e) => {
+                this.continuousMode = e.target.checked;
+                this.calculateDataPoints();
+                this.render();
+            });
+        }
+
+        // Density vicinity slider
+        const densitySlider = document.getElementById('densityVicinity');
+        if (densitySlider) {
+            densitySlider.addEventListener('input', (e) => {
+                this.densityVicinity = parseFloat(e.target.value);
+                document.getElementById('densityVicinityValue').textContent = this.densityVicinity.toFixed(1);
+                this.render();
+            });
+        }
+
+        // Mouse events for hover - parallel axes
+        this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+        this.canvas.addEventListener('mouseleave', () => this.handleMouseLeave());
+
+        // Mouse events for hover - Cartesian (bidirectional)
+        this.cartesianCanvas.addEventListener('mousemove', (e) => this.handleCartesianMouseMove(e));
+        this.cartesianCanvas.addEventListener('mouseleave', () => this.handleMouseLeave());
+
+        // Custom expression input
+        const customInput = document.getElementById('customExpressionInput');
+        if (customInput) {
+            // Debounce input to avoid too many updates
+            let debounceTimer;
+            customInput.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    this.handleCustomExpressionInput(e.target.value);
+                }, 150);
+            });
+
+            // Immediate update on enter
+            customInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    clearTimeout(debounceTimer);
+                    this.handleCustomExpressionInput(e.target.value);
+                }
+            });
+        }
+
+        // Expression hint buttons
+        document.querySelectorAll('.hint-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const expr = btn.dataset.expr;
+                const input = document.getElementById('customExpressionInput');
+                if (input) {
+                    input.value = expr;
+                    this.handleCustomExpressionInput(expr);
+                }
+            });
+        });
+
+        // Calculus toggles
+        const derivativeToggle = document.getElementById('showDerivative');
+        if (derivativeToggle) {
+            derivativeToggle.addEventListener('change', (e) => {
+                this.showDerivative = e.target.checked;
+                this.calculateCalculusPoints();
+                this.render();
+                this.updateCalculusFormulas();
+            });
+        }
+
+        const integralToggle = document.getElementById('showIntegral');
+        if (integralToggle) {
+            integralToggle.addEventListener('change', (e) => {
+                this.showIntegral = e.target.checked;
+                this.calculateCalculusPoints();
+                this.render();
+                this.updateCalculusFormulas();
+            });
+        }
+    }
+
+    loadFunctionParams() {
+        const func = MathFunctions[this.currentFunction];
+        const container = document.getElementById('parameterControls');
+        container.innerHTML = '';
+
+        this.params = {};
+
+        if (!func.params || Object.keys(func.params).length === 0) {
+            document.getElementById('parametersSection').style.display = 'none';
+            return;
+        }
+
+        document.getElementById('parametersSection').style.display = 'block';
+
+        for (const [key, config] of Object.entries(func.params)) {
+            this.params[key] = config.default;
+
+            const group = document.createElement('div');
+            group.className = 'control-group';
+
+            group.innerHTML = `
+                <label for="param_${key}">${config.label}</label>
+                <div class="range-wrapper">
+                    <input type="range" id="param_${key}" 
+                           min="${config.min}" max="${config.max}" 
+                           step="${config.step}" value="${config.default}">
+                    <span class="range-value" id="param_${key}_value">${config.default}</span>
+                </div>
+            `;
+
+            container.appendChild(group);
+
+            // Bind event
+            document.getElementById(`param_${key}`).addEventListener('input', (e) => {
+                this.params[key] = parseFloat(e.target.value);
+                document.getElementById(`param_${key}_value`).textContent = this.params[key];
+                this.calculateDataPoints();
+                this.render();
+                this.updateDescription();
+            });
+        }
+    }
+
+    calculateDataPoints() {
+        const func = MathFunctions[this.currentFunction];
+        if (!func) return;
+
+        this.dataPoints = [];
+
+        // For continuous mode: sample at MULTIPLE points per pixel for true solid appearance
+        // This creates truly continuous lines with no gaps
+        let actualNumPoints;
+        if (this.continuousMode) {
+            // Get the height of the drawable area in pixels
+            const axisHeight = this.height - this.padding.top - this.padding.bottom;
+            // Sample 3x points per pixel for guaranteed solid coverage
+            actualNumPoints = Math.max(axisHeight * 3, 1500);
+        } else {
+            actualNumPoints = this.numPoints;
+        }
+
+        const step = (this.xMax - this.xMin) / (actualNumPoints - 1);
+
+        // First pass: calculate all Y values and find actual min/max
+        let actualYMin = Infinity;
+        let actualYMax = -Infinity;
+        const rawPoints = [];
+
+        for (let i = 0; i < actualNumPoints; i++) {
+            // Ensure we hit exactly xMin and xMax at the endpoints
+            const x = (i === 0) ? this.xMin :
+                (i === actualNumPoints - 1) ? this.xMax :
+                    this.xMin + i * step;
+            const y = func.evaluate(x, this.params);
+
+            if (!isNaN(y) && isFinite(y)) {
+                rawPoints.push({ x, y, index: i });
+                actualYMin = Math.min(actualYMin, y);
+                actualYMax = Math.max(actualYMax, y);
+            }
+        }
+
+        // Calculate Y range based on squash setting
+        if (this.ySquash === 1) {
+            // MODE 1: FIT ALL (Min/Max)
+            // Use actual min/max of function values so everything fits
+            this.yMin = actualYMin;
+            this.yMax = actualYMax;
+        } else if (this.ySquash === 2) {
+            // MODE 2: SYMMETRIC FIT
+            // Balanced around 0, good for seeing magnitude relative to 0
+            const maxAbsY = Math.max(Math.abs(actualYMin), Math.abs(actualYMax));
+            if (maxAbsY === 0) {
+                this.yMin = -1;
+                this.yMax = 1;
+            } else {
+                this.yMin = -maxAbsY;
+                this.yMax = maxAbsY;
+            }
+        } else {
+            // MODE 0: STANDARD (1:1 with X)
+            // Matches input X range
+            this.yMin = this.xMin;
+            this.yMax = this.xMax;
+        }
+
+        // Second pass: determine if points are out of range with the new Y limits
+        for (const point of rawPoints) {
+            const outOfRange = point.y < this.yMin || point.y > this.yMax;
+            this.dataPoints.push({ ...point, outOfRange });
+        }
+
+        // Third pass: Calculate mathematical slopes AND detect discontinuities
+        // We calculate |dy/dx| and normalize it
+        let minSlope = Infinity;
+        let maxSlope = 0;
+
+        // Thresholds for discontinuity detection
+        const rangeY = this.yMax - this.yMin;
+
+        for (let i = 0; i < this.dataPoints.length; i++) {
+            let slope = 0;
+            const p = this.dataPoints[i];
+
+            // Check for discontinuity with next point
+            if (i < this.dataPoints.length - 1) {
+                const next = this.dataPoints[i + 1];
+                const deltaY = next.y - p.y;
+                const absDeltaY = Math.abs(deltaY);
+
+                // Heuristic for asymptote:
+                // If points are jumping across the viewport significantly
+                const jumpThreshold = Math.max(rangeY * 1.5, 50);
+
+                if (absDeltaY > jumpThreshold) {
+                    p.isDiscontinuous = true;
+                }
+            }
+
+            // Use central difference where possible
+            if (i > 0 && i < this.dataPoints.length - 1) {
+                const prev = this.dataPoints[i - 1];
+                const next = this.dataPoints[i + 1];
+                slope = Math.abs((next.y - prev.y) / (next.x - prev.x));
+            } else if (i === 0 && this.dataPoints.length > 1) {
+                const next = this.dataPoints[i + 1];
+                slope = Math.abs((next.y - p.y) / (next.x - p.x));
+            } else if (i === this.dataPoints.length - 1 && this.dataPoints.length > 1) {
+                const prev = this.dataPoints[i - 1];
+                slope = Math.abs((p.y - prev.y) / (p.x - prev.x));
+            }
+
+            this.dataPoints[i].slope = slope;
+            minSlope = Math.min(minSlope, slope);
+            maxSlope = Math.max(maxSlope, slope);
+        }
+
+        // Normalize slopes (0 to 1)
+        const slopeRange = maxSlope - minSlope;
+        for (const point of this.dataPoints) {
+            point.normalizedSlope = slopeRange === 0 ? 0 : (point.slope - minSlope) / slopeRange;
+        }
+    }
+
+    // Convert data coordinates to canvas coordinates
+    // HORIZONTAL LAYOUT: X axis at bottom, Y axis at top
+    xToCanvas(x) {
+        // X axis is at bottom - maps x value to horizontal position
+        const t = (x - this.xMin) / (this.xMax - this.xMin);
+        return this.padding.left + t * (this.width - this.padding.left - this.padding.right);
+    }
+
+    yToCanvas(y) {
+        // Y axis is at top - maps y value to horizontal position
+        const t = (y - this.yMin) / (this.yMax - this.yMin);
+        return this.padding.left + t * (this.width - this.padding.left - this.padding.right);
+    }
+
+    // Clamp Y to visible range for drawing
+    yToCanvasClamped(y) {
+        const clampedY = Math.max(this.yMin, Math.min(this.yMax, y));
+        return this.yToCanvas(clampedY);
+    }
+
+    // Get Y position of bottom axis (X-axis)
+    getXAxisY() {
+        return this.height - this.padding.bottom;
+    }
+
+    // Get Y position of top axis (Y-axis)
+    getYAxisY() {
+        return this.padding.top;
+    }
+
+    render() {
+        this.ctx.clearRect(0, 0, this.width, this.height);
+
+        // Draw grid first (behind everything)
+        if (this.showGrid) {
+            this.drawGrid();
+        }
+
+        // Draw axes
+        this.drawAxes();
+
+        // Draw connecting lines for main function
+        this.drawFunctionLines();
+
+        // Draw calculus curves (derivative and integral) on parallel axes
+        this.drawCalculusCurvesParallel();
+
+        // Draw data points on top
+        if (this.showPoints) {
+            this.drawDataPoints();
+        }
+
+        // Render Cartesian view
+        this.renderCartesian();
+    }
+
+    drawGrid() {
+        const ctx = this.ctx;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+        ctx.lineWidth = 1;
+
+        // Vertical grid lines
+        const numVLines = 10;
+        for (let i = 0; i <= numVLines; i++) {
+            const x = this.padding.left + (i / numVLines) * (this.width - this.padding.left - this.padding.right);
+            ctx.beginPath();
+            ctx.moveTo(x, this.padding.top);
+            ctx.lineTo(x, this.height - this.padding.bottom);
+            ctx.stroke();
+        }
+    }
+
+    drawAxes() {
+        const ctx = this.ctx;
+        const xAxisY = this.getXAxisY();
+        const yAxisY = this.getYAxisY();
+        const left = this.padding.left;
+        const right = this.width - this.padding.right;
+
+        // Create gradients for axes (horizontal)
+        const xGrad = ctx.createLinearGradient(left, xAxisY, right, xAxisY);
+        xGrad.addColorStop(0, '#06b6d4');
+        xGrad.addColorStop(1, '#8b5cf6');
+
+        const yGrad = ctx.createLinearGradient(left, yAxisY, right, yAxisY);
+        yGrad.addColorStop(0, '#f472b6');
+        yGrad.addColorStop(1, '#fb923c');
+
+        // Draw X axis (bottom)
+        ctx.strokeStyle = xGrad;
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(left, xAxisY);
+        ctx.lineTo(right, xAxisY);
+        ctx.stroke();
+
+        // Draw Y axis (top)
+        ctx.strokeStyle = yGrad;
+        ctx.beginPath();
+        ctx.moveTo(left, yAxisY);
+        ctx.lineTo(right, yAxisY);
+        ctx.stroke();
+
+        // Draw axis labels
+        ctx.font = '600 14px Inter, sans-serif';
+        ctx.textAlign = 'left';
+
+        ctx.fillStyle = '#06b6d4';
+        ctx.fillText('X axis', left, xAxisY + 25);
+
+        ctx.fillStyle = '#f472b6';
+        ctx.fillText('Y axis', left, yAxisY - 10);
+
+        // Draw tick marks and values
+        this.drawAxisTicks();
+    }
+
+    drawAxisTicks() {
+        const ctx = this.ctx;
+        const xAxisY = this.getXAxisY();
+        const yAxisY = this.getYAxisY();
+        const tickLength = 6;
+
+        ctx.font = '400 10px JetBrains Mono, monospace';
+        ctx.lineWidth = 1;
+
+        // X-axis ticks (bottom axis)
+        const numXTicks = 5;
+        for (let i = 0; i <= numXTicks; i++) {
+            const value = this.xMin + (i / numXTicks) * (this.xMax - this.xMin);
+            const x = this.xToCanvas(value);
+
+            ctx.strokeStyle = 'rgba(6, 182, 212, 0.5)';
+            ctx.beginPath();
+            ctx.moveTo(x, xAxisY);
+            ctx.lineTo(x, xAxisY + tickLength);
+            ctx.stroke();
+
+            ctx.fillStyle = '#a0a0b0';
+            ctx.textAlign = 'center';
+            ctx.fillText(value.toFixed(1), x, xAxisY + tickLength + 12);
+        }
+
+        // Y-axis ticks (top axis)
+        const numYTicks = 5;
+        for (let i = 0; i <= numYTicks; i++) {
+            const value = this.yMin + (i / numYTicks) * (this.yMax - this.yMin);
+            const x = this.yToCanvas(value);
+
+            ctx.strokeStyle = 'rgba(244, 114, 182, 0.5)';
+            ctx.beginPath();
+            ctx.moveTo(x, yAxisY);
+            ctx.lineTo(x, yAxisY - tickLength);
+            ctx.stroke();
+
+            ctx.fillStyle = '#a0a0b0';
+            ctx.textAlign = 'center';
+            ctx.fillText(value.toFixed(1), x, yAxisY - tickLength - 5);
+        }
+    }
+
+    drawFunctionLines() {
+        const ctx = this.ctx;
+        const xAxisY = this.getXAxisY();
+        const yAxisY = this.getYAxisY();
+
+        // Determine how many lines to draw based on animation
+        const linesToDraw = this.isAnimating
+            ? Math.floor(this.animationProgress * this.dataPoints.length)
+            : this.dataPoints.length;
+
+        if (this.continuousMode && linesToDraw > 1) {
+            // TRUE CONTINUOUS MODE: Draw lines at every pixel - so dense they appear solid
+            this.drawContinuousLines(linesToDraw);
+        } else {
+            // DISCRETE MODE: Draw individual lines
+            this.drawDiscreteLines(linesToDraw);
+        }
+    }
+
+    drawContinuousLines(linesToDraw) {
+        const ctx = this.ctx;
+        const xAxisY = this.getXAxisY();
+        const yAxisY = this.getYAxisY();
+
+        // In continuous mode, we draw individual lines at every pixel
+        // This creates a truly continuous appearance
+
+        // Use thin lines with moderate opacity so overlapping creates solid look
+        ctx.lineWidth = 1;
+        ctx.lineCap = 'round';
+        ctx.globalAlpha = 0.5;
+
+        for (let i = 0; i < linesToDraw; i++) {
+            const point = this.dataPoints[i];
+            const xCanvasX = this.xToCanvas(point.x);
+
+            // Skip out-of-range points (draw red marker later)
+            // Also skip if this point is marked as discontinuous (start of a jump)
+            if (point.outOfRange || point.isDiscontinuous) {
+                continue;
+            }
+
+            const yCanvasX = this.yToCanvas(point.y);
+
+            // Color based on position for gradient effect
+            const t = i / (this.dataPoints.length - 1);
+            ctx.strokeStyle = this.interpolateColor('#06b6d4', '#f472b6', t);
+
+            // Draw vertical line from X axis (bottom) to Y axis (top)
+            ctx.beginPath();
+            ctx.moveTo(xCanvasX, xAxisY);
+            ctx.lineTo(yCanvasX, yAxisY);
+            ctx.stroke();
+        }
+
+        ctx.globalAlpha = 1;
+
+        // Draw red markers for out-of-range points on X axis only
+        ctx.fillStyle = '#ef4444';
+        for (let i = 0; i < linesToDraw; i++) {
+            const point = this.dataPoints[i];
+            if (point.outOfRange) {
+                const xCanvasX = this.xToCanvas(point.x);
+                ctx.beginPath();
+                ctx.arc(xCanvasX, xAxisY, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+    }
+
+    drawDiscreteLines(linesToDraw) {
+        const ctx = this.ctx;
+        const xAxisY = this.getXAxisY();
+        const yAxisY = this.getYAxisY();
+
+        for (let i = 0; i < linesToDraw; i++) {
+            const point = this.dataPoints[i];
+            const xCanvasX = this.xToCanvas(point.x);
+
+            // Skip drawing line for out-of-range points (they get red marker in drawDataPoints)
+            // Also skip if discontinuous
+            if (point.outOfRange || point.isDiscontinuous) {
+                continue;
+            }
+
+            const yCanvasX = this.yToCanvas(point.y);
+
+            // Calculate line color based on mode
+            let color;
+            if (this.lineColorMode === 'gradient') {
+                const t = i / (this.dataPoints.length - 1);
+                color = this.interpolateColor('#06b6d4', '#f472b6', t);
+            } else if (this.lineColorMode === 'slope') {
+                const slope = (yCanvasX - xCanvasX) / (yAxisY - xAxisY);
+                const normalizedSlope = (slope + 1) / 2;
+                color = this.interpolateColor('#22c55e', '#ef4444', Math.max(0, Math.min(1, normalizedSlope)));
+            } else {
+                color = '#8b5cf6';
+            }
+
+            const isHovered = this.hoveredLine === i;
+            const alpha = isHovered ? 1 : 0.6;
+            const lineWidth = isHovered ? 2.5 : 1.5;
+
+            ctx.strokeStyle = color;
+            ctx.globalAlpha = alpha;
+            ctx.lineWidth = lineWidth;
+            ctx.lineCap = 'round';
+
+            // Draw vertical line from X axis (bottom) to Y axis (top)
+            ctx.beginPath();
+            ctx.moveTo(xCanvasX, xAxisY);
+            ctx.lineTo(yCanvasX, yAxisY);
+            ctx.stroke();
+        }
+
+        ctx.globalAlpha = 1;
+    }
+
+    drawDataPoints() {
+        const ctx = this.ctx;
+        const xAxisY = this.getXAxisY();
+        const yAxisY = this.getYAxisY();
+        const pointRadius = 4;
+
+        const linesToDraw = this.isAnimating
+            ? Math.floor(this.animationProgress * this.dataPoints.length)
+            : this.dataPoints.length;
+
+        // Skip drawing individual points in continuous mode (too many)
+        if (this.continuousMode) return;
+
+        for (let i = 0; i < linesToDraw; i++) {
+            const point = this.dataPoints[i];
+            const xCanvasX = this.xToCanvas(point.x);
+
+            const isHovered = this.hoveredLine === i;
+            const radius = isHovered ? pointRadius + 2 : pointRadius;
+
+            // Point on X axis (bottom) - RED if out of range
+            ctx.beginPath();
+            ctx.arc(xCanvasX, xAxisY, radius, 0, Math.PI * 2);
+            if (point.outOfRange) {
+                ctx.fillStyle = '#ef4444'; // Red for out of range
+            } else {
+                ctx.fillStyle = isHovered ? '#06b6d4' : 'rgba(6, 182, 212, 0.8)';
+            }
+            ctx.fill();
+
+            // Point on Y axis (top) - ONLY draw if in range
+            if (!point.outOfRange) {
+                const yCanvasX = this.yToCanvas(point.y);
+                ctx.beginPath();
+                ctx.arc(yCanvasX, yAxisY, radius, 0, Math.PI * 2);
+
+                // Color based on slope: Red (low slope) -> Green (high slope)
+                // Use normalized slope calculated in calculateDataPoints
+                let color;
+                if (isHovered) {
+                    color = '#f472b6'; // Keep pink for hover state to match selection
+                } else {
+                    // Interpolate between Red (#ef4444) and Green (#22c55e)
+                    color = this.interpolateColor('#ef4444', '#22c55e', point.normalizedSlope || 0);
+                }
+
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+        }
+    }
+
+    interpolateColor(color1, color2, t) {
+        // Parse hex colors
+        const r1 = parseInt(color1.slice(1, 3), 16);
+        const g1 = parseInt(color1.slice(3, 5), 16);
+        const b1 = parseInt(color1.slice(5, 7), 16);
+
+        const r2 = parseInt(color2.slice(1, 3), 16);
+        const g2 = parseInt(color2.slice(3, 5), 16);
+        const b2 = parseInt(color2.slice(5, 7), 16);
+
+        const r = Math.round(r1 + (r2 - r1) * t);
+        const g = Math.round(g1 + (g2 - g1) * t);
+        const b = Math.round(b1 + (b2 - b1) * t);
+
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    /**
+     * Draw derivative and integral curves on the parallel axes canvas
+     */
+    drawCalculusCurvesParallel() {
+        const ctx = this.ctx;
+        const xAxisY = this.getXAxisY();
+        const yAxisY = this.getYAxisY();
+
+        // Draw derivative lines (green, semi-transparent)
+        if (this.showDerivative && this.derivativePoints.length > 0) {
+            ctx.strokeStyle = '#22c55e';
+            ctx.lineWidth = 1.5;
+            ctx.globalAlpha = 0.6;
+            ctx.setLineDash([4, 3]);
+            ctx.lineCap = 'round';
+
+            for (const point of this.derivativePoints) {
+                const xCanvasX = this.xToCanvas(point.x);
+
+                // Check if y is in visible range
+                if (point.y < this.yMin || point.y > this.yMax) continue;
+
+                const yCanvasX = this.yToCanvas(point.y);
+
+                ctx.beginPath();
+                ctx.moveTo(xCanvasX, xAxisY);
+                ctx.lineTo(yCanvasX, yAxisY);
+                ctx.stroke();
+            }
+
+            ctx.setLineDash([]);
+            ctx.globalAlpha = 1;
+        }
+
+        // Draw integral lines (orange, semi-transparent)
+        if (this.showIntegral && this.integralPoints.length > 0) {
+            ctx.strokeStyle = '#fb923c';
+            ctx.lineWidth = 1.5;
+            ctx.globalAlpha = 0.6;
+            ctx.setLineDash([6, 3]);
+            ctx.lineCap = 'round';
+
+            for (const point of this.integralPoints) {
+                const xCanvasX = this.xToCanvas(point.x);
+
+                // Check if y is in visible range
+                if (point.y < this.yMin || point.y > this.yMax) continue;
+
+                const yCanvasX = this.yToCanvas(point.y);
+
+                ctx.beginPath();
+                ctx.moveTo(xCanvasX, xAxisY);
+                ctx.lineTo(yCanvasX, yAxisY);
+                ctx.stroke();
+            }
+
+            ctx.setLineDash([]);
+            ctx.globalAlpha = 1;
+        }
+    }
+
+    handleMouseMove(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        const xAxisY = this.getXAxisY();
+        const yAxisY = this.getYAxisY();
+
+        // Find closest line
+        let closestIndex = -1;
+        let closestDistance = Infinity;
+
+        for (let i = 0; i < this.dataPoints.length; i++) {
+            const point = this.dataPoints[i];
+            const xCanvasX = this.xToCanvas(point.x);
+            const yCanvasX = this.yToCanvas(point.y);
+
+            // Calculate distance from mouse to line (vertical line from bottom to top)
+            const dist = this.pointToLineDistance(
+                mouseX, mouseY,
+                xCanvasX, xAxisY,
+                yCanvasX, yAxisY
+            );
+
+            if (dist < closestDistance && dist < 15) {
+                closestDistance = dist;
+                closestIndex = i;
+            }
+        }
+
+        if (closestIndex !== this.hoveredLine) {
+            this.hoveredLine = closestIndex;
+            this.render();
+
+            if (closestIndex >= 0) {
+                const point = this.dataPoints[closestIndex];
+                this.showTooltip(e.clientX, e.clientY, point);
+            } else {
+                this.hideTooltip();
+            }
+        } else if (closestIndex >= 0) {
+            // Update tooltip position
+            const point = this.dataPoints[closestIndex];
+            this.showTooltip(e.clientX, e.clientY, point);
+        }
+    }
+
+    pointToLineDistance(px, py, x1, y1, x2, y2) {
+        const A = px - x1;
+        const B = py - y1;
+        const C = x2 - x1;
+        const D = y2 - y1;
+
+        const dot = A * C + B * D;
+        const lenSq = C * C + D * D;
+        let t = lenSq !== 0 ? dot / lenSq : -1;
+
+        t = Math.max(0, Math.min(1, t));
+
+        const xx = x1 + t * C;
+        const yy = y1 + t * D;
+
+        return Math.sqrt((px - xx) ** 2 + (py - yy) ** 2);
+    }
+
+    showTooltip(x, y, point) {
+        this.tooltip.innerHTML = `<strong>x:</strong> ${point.x.toFixed(2)}, <strong>y:</strong> ${point.y.toFixed(2)}`;
+        this.tooltip.style.left = (x + 15) + 'px';
+        this.tooltip.style.top = (y - 10) + 'px';
+        this.tooltip.classList.add('visible');
+    }
+
+    // Handle mouse move on Cartesian canvas - bidirectional hover
+    handleCartesianMouseMove(e) {
+        const rect = this.cartesianCanvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        const padding = { top: 40, bottom: 50, left: 60, right: 30 };
+        const plotWidth = this.cartWidth - padding.left - padding.right;
+        const plotHeight = this.cartHeight - padding.top - padding.bottom;
+
+        // Convert mouse position to data coordinates
+        const dataX = this.xMin + ((mouseX - padding.left) / plotWidth) * (this.xMax - this.xMin);
+        const dataY = this.yMin + ((this.cartHeight - padding.bottom - mouseY) / plotHeight) * (this.yMax - this.yMin);
+
+        // Find closest data point
+        let closestIndex = -1;
+        let closestDistance = Infinity;
+
+        for (let i = 0; i < this.dataPoints.length; i++) {
+            const point = this.dataPoints[i];
+            if (point.outOfRange) continue;
+
+            // Calculate distance in data space
+            const dist = Math.sqrt((point.x - dataX) ** 2 + (point.y - dataY) ** 2);
+
+            if (dist < closestDistance) {
+                closestDistance = dist;
+                closestIndex = i;
+            }
+        }
+
+        // Threshold in data units - about 5% of the range
+        const threshold = Math.max(this.xMax - this.xMin, this.yMax - this.yMin) * 0.1;
+
+        if (closestDistance < threshold && closestIndex !== this.hoveredLine) {
+            this.hoveredLine = closestIndex;
+            this.render();
+        } else if (closestDistance >= threshold && this.hoveredLine !== null) {
+            this.hoveredLine = null;
+            this.render();
+        }
+    }
+
+    hideTooltip() {
+        this.tooltip.classList.remove('visible');
+    }
+
+    handleMouseLeave() {
+        this.hoveredLine = null;
+        this.hideTooltip();
+        this.render();
+    }
+
+    toggleAnimation() {
+        if (this.isAnimating) {
+            this.pauseAnimation();
+        } else {
+            this.playAnimation();
+        }
+    }
+
+    playAnimation() {
+        this.isAnimating = true;
+        this.updatePlayButton();
+
+        if (this.animationProgress >= 1) {
+            this.animationProgress = 0;
+        }
+
+        const animate = () => {
+            if (!this.isAnimating) return;
+
+            this.animationProgress += 0.005 * this.animationSpeed;
+
+            if (this.animationProgress >= 1) {
+                this.animationProgress = 1;
+                this.pauseAnimation();
+            }
+
+            this.render();
+
+            if (this.isAnimating) {
+                this.animationId = requestAnimationFrame(animate);
+            }
+        };
+
+        this.animationId = requestAnimationFrame(animate);
+    }
+
+    pauseAnimation() {
+        this.isAnimating = false;
+        this.updatePlayButton();
+
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+            this.animationId = null;
+        }
+    }
+
+    resetAnimation() {
+        this.pauseAnimation();
+        this.animationProgress = 0;
+        this.render();
+    }
+
+    updatePlayButton() {
+        const btn = document.getElementById('playBtn');
+        const icon = document.getElementById('playIcon');
+        const text = document.getElementById('playText');
+
+        if (this.isAnimating) {
+            icon.setAttribute('d', 'M5 3h3v10H5V3zm5 0h3v10h-3V3z');
+            text.textContent = 'Pause';
+        } else {
+            icon.setAttribute('d', 'M4 2l10 6-10 6V2z');
+            text.textContent = 'Play';
+        }
+    }
+
+    updateDescription() {
+        const func = MathFunctions[this.currentFunction];
+        if (!func) return;
+
+        const formulaEl = document.getElementById('funcFormula');
+        const explanationEl = document.getElementById('funcExplanation');
+
+        // For custom functions, use the custom expression
+        if (this.currentFunction === 'custom' && this.customExpression) {
+            formulaEl.textContent = 'y = ' + this.customExpression;
+            explanationEl.textContent = func.description;
+        } else {
+            formulaEl.textContent = getFormattedFormula(this.currentFunction, this.params);
+            explanationEl.textContent = func.description;
+        }
+    }
+
+    /**
+     * Handle custom expression input
+     * @param {string} exprString - The user's input expression
+     */
+    handleCustomExpressionInput(exprString) {
+        const input = document.getElementById('customExpressionInput');
+        const errorEl = document.getElementById('expressionError');
+        const latexPreview = document.getElementById('latexPreview');
+
+        this.customExpression = exprString;
+
+        if (!exprString || exprString.trim() === '') {
+            // Empty input - reset to default
+            input.classList.remove('error');
+            errorEl.textContent = '';
+            latexPreview.innerHTML = '<span class="latex-content">y = x</span>';
+
+            window.customFunctionEvaluator = (x) => x;
+            this.customExpressionValid = false;
+
+            this.calculateDataPoints();
+            this.calculateCalculusPoints();
+            this.render();
+            this.updateDescription();
+            return;
+        }
+
+        // Normalize and parse the expression
+        const normalized = ExpressionParser.normalize(exprString);
+        const parsed = ExpressionParser.parse(normalized);
+
+        if (parsed.valid) {
+            // Valid expression
+            input.classList.remove('error');
+            errorEl.textContent = '';
+
+            // Render LaTeX preview using KaTeX
+            this.renderLatex(latexPreview, 'y = ' + parsed.latex);
+
+            // Set the global evaluator for the custom function
+            window.customFunctionEvaluator = parsed.evaluate;
+            this.customExpressionValid = true;
+
+            // Recalculate and render
+            this.calculateDataPoints();
+            this.calculateCalculusPoints();
+            this.render();
+            this.updateDescription();
+        } else {
+            // Invalid expression
+            input.classList.add('error');
+            errorEl.textContent = parsed.error;
+            latexPreview.innerHTML = '<span class="latex-content" style="color: #ef4444;">Invalid expression</span>';
+            this.customExpressionValid = false;
+        }
+    }
+
+    /**
+     * Render LaTeX content using KaTeX
+     * @param {HTMLElement} element - Target element
+     * @param {string} latex - LaTeX string to render
+     */
+    renderLatex(element, latex) {
+        if (typeof katex !== 'undefined') {
+            try {
+                katex.render(latex, element, {
+                    throwOnError: false,
+                    displayMode: false
+                });
+            } catch (e) {
+                element.innerHTML = `<span class="latex-content">${latex}</span>`;
+            }
+        } else {
+            // KaTeX not loaded yet, use plain text
+            element.innerHTML = `<span class="latex-content">${latex}</span>`;
+        }
+    }
+
+    /**
+     * Calculate derivative and integral data points
+     */
+    calculateCalculusPoints() {
+        this.derivativePoints = [];
+        this.integralPoints = [];
+        this.derivativeData = null;
+        this.integralData = null;
+
+        // Get the current expression string for calculus
+        let exprString = this.getCurrentExpressionString();
+        if (!exprString) return;
+
+        const numPoints = this.continuousMode ? 500 : this.numPoints;
+        const step = (this.xMax - this.xMin) / (numPoints - 1);
+
+        // Calculate derivative if enabled
+        if (this.showDerivative) {
+            this.derivativeData = ExpressionParser.derivative(exprString);
+
+            if (this.derivativeData.valid) {
+                for (let i = 0; i < numPoints; i++) {
+                    const x = this.xMin + i * step;
+                    const y = this.derivativeData.evaluate(x);
+                    if (!isNaN(y) && isFinite(y)) {
+                        this.derivativePoints.push({ x, y });
+                    }
+                }
+            }
+        }
+
+        // Calculate integral if enabled
+        if (this.showIntegral) {
+            this.integralData = ExpressionParser.integralEvaluator(exprString, this.xMin, this.xMax);
+
+            if (this.integralData.valid) {
+                for (let i = 0; i < numPoints; i++) {
+                    const x = this.xMin + i * step;
+                    const y = this.integralData.evaluate(x);
+                    if (!isNaN(y) && isFinite(y)) {
+                        this.integralPoints.push({ x, y });
+                    }
+                }
+            }
+        }
+
+        this.updateCalculusFormulas();
+    }
+
+    /**
+     * Get the current expression as a string for calculus operations
+     */
+    getCurrentExpressionString() {
+        if (this.currentFunction === 'custom') {
+            return this.customExpressionValid ? ExpressionParser.normalize(this.customExpression) : null;
+        }
+
+        // For built-in functions, return the expression string
+        const expressionMap = {
+            'linear': 'x',
+            'linearCustom': `${this.params.m || 1} * x + ${this.params.b || 0}`,
+            'quadratic': 'x^2',
+            'cubic': 'x^3',
+            'quadraticFull': `${this.params.a || 1} * x^2 + ${this.params.b || 0} * x + ${this.params.c || 0}`,
+            'sin': 'sin(x)',
+            'cos': 'cos(x)',
+            'tan': 'tan(x)',
+            'sqrt': 'sqrt(x)',
+            'abs': 'abs(x)',
+            'reciprocal': '1/x',
+            'exp': 'exp(x)',
+            'log': 'log(x)'
+        };
+
+        return expressionMap[this.currentFunction] || null;
+    }
+
+    /**
+     * Update the calculus formula displays with LaTeX
+     */
+    updateCalculusFormulas() {
+        const derivativeFormulaEl = document.getElementById('derivativeFormula');
+        const integralFormulaEl = document.getElementById('integralFormula');
+        const derivativeLatexEl = document.getElementById('derivativeLatex');
+        const integralLatexEl = document.getElementById('integralLatex');
+
+        // Show/hide derivative formula
+        if (this.showDerivative && this.derivativeData && this.derivativeData.valid) {
+            derivativeFormulaEl.style.display = 'flex';
+            this.renderLatex(derivativeLatexEl, this.derivativeData.latex);
+        } else {
+            derivativeFormulaEl.style.display = 'none';
+        }
+
+        // Show/hide integral formula
+        if (this.showIntegral && this.integralData && this.integralData.valid) {
+            integralFormulaEl.style.display = 'flex';
+            this.renderLatex(integralLatexEl, this.integralData.latex);
+        } else {
+            integralFormulaEl.style.display = 'none';
+        }
+    }
+
+    // Draw density visualization on Y axis
+    // Density = count of points within ±vicinity of each Y position
+    // Color: cyan (low density/high slope) to pink (high density/low slope)
+    drawDensityOnYAxis() {
+        if (this.dataPoints.length < 2) return;
+
+        const ctx = this.ctx;
+        const yAxisY = this.getYAxisY();
+        const left = this.padding.left;
+        const right = this.width - this.padding.right;
+        const vicinity = this.densityVicinity;
+
+        // Get valid Y values
+        const yValues = this.dataPoints
+            .filter(p => !p.outOfRange)
+            .map(p => p.y);
+
+        if (yValues.length === 0) return;
+
+        // Calculate density for each position along the Y axis
+        const numSamples = 100;
+        const densities = [];
+        let maxDensity = 0;
+
+        for (let i = 0; i < numSamples; i++) {
+            const yValue = this.yMin + (i / (numSamples - 1)) * (this.yMax - this.yMin);
+
+            // Count how many Y values are within ±vicinity
+            const count = yValues.filter(y => Math.abs(y - yValue) <= vicinity).length;
+            densities.push({ yValue, count, x: this.yToCanvas(yValue) });
+            maxDensity = Math.max(maxDensity, count);
+        }
+
+        if (maxDensity === 0) return;
+
+        // Draw density bars on Y axis (which is now horizontal at top)
+        const barHeight = 8;
+
+        for (const { x, count } of densities) {
+            const normalizedDensity = count / maxDensity;
+
+            // Color gradient: cyan (low density) -> pink (high density)
+            // This matches the line colors
+            const color = this.interpolateColor('#06b6d4', '#f472b6', normalizedDensity);
+
+            // Variable bar height based on density
+            const height = 3 + normalizedDensity * 12;
+
+            ctx.fillStyle = color;
+            ctx.globalAlpha = 0.8;
+            ctx.fillRect(x - 2, yAxisY - height - 3, 4, height);
+        }
+
+        ctx.globalAlpha = 1;
+
+        // Add insight label
+        ctx.font = '9px Inter, sans-serif';
+        ctx.fillStyle = '#a0a0b0';
+        ctx.textAlign = 'right';
+        ctx.fillText(`Density ±${vicinity.toFixed(1)} | High = flat slope (GD converges here)`, right, yAxisY - 20);
+    }
+
+    // Render Cartesian (orthogonal) coordinate system
+    renderCartesian() {
+        const ctx = this.cartesianCtx;
+        const w = this.cartWidth;
+        const h = this.cartHeight;
+        const padding = { top: 40, bottom: 50, left: 60, right: 30 };
+
+        ctx.clearRect(0, 0, w, h);
+
+        // Draw background
+        ctx.fillStyle = 'rgba(18, 18, 26, 1)';
+        ctx.fillRect(0, 0, w, h);
+
+        const plotWidth = w - padding.left - padding.right;
+        const plotHeight = h - padding.top - padding.bottom;
+
+        // Convert data coords to Cartesian canvas coords
+        const xToCart = (x) => padding.left + ((x - this.xMin) / (this.xMax - this.xMin)) * plotWidth;
+        const yToCart = (y) => h - padding.bottom - ((y - this.yMin) / (this.yMax - this.yMin)) * plotHeight;
+
+        // Draw grid
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.lineWidth = 1;
+
+        // Vertical grid lines
+        const numVLines = 10;
+        for (let i = 0; i <= numVLines; i++) {
+            const x = padding.left + (i / numVLines) * plotWidth;
+            ctx.beginPath();
+            ctx.moveTo(x, padding.top);
+            ctx.lineTo(x, h - padding.bottom);
+            ctx.stroke();
+        }
+
+        // Horizontal grid lines
+        const numHLines = 10;
+        for (let i = 0; i <= numHLines; i++) {
+            const y = padding.top + (i / numHLines) * plotHeight;
+            ctx.beginPath();
+            ctx.moveTo(padding.left, y);
+            ctx.lineTo(w - padding.right, y);
+            ctx.stroke();
+        }
+
+        // Draw axes
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.lineWidth = 2;
+
+        // X axis (at y = 0 if in range)
+        if (this.yMin <= 0 && this.yMax >= 0) {
+            const axisY = yToCart(0);
+            ctx.beginPath();
+            ctx.moveTo(padding.left, axisY);
+            ctx.lineTo(w - padding.right, axisY);
+            ctx.stroke();
+        }
+
+        // Y axis (at x = 0 if in range)
+        if (this.xMin <= 0 && this.xMax >= 0) {
+            const axisX = xToCart(0);
+            ctx.beginPath();
+            ctx.moveTo(axisX, padding.top);
+            ctx.lineTo(axisX, h - padding.bottom);
+            ctx.stroke();
+        }
+
+        // Draw axis labels
+        ctx.fillStyle = '#a0a0b0';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+
+        // X axis labels
+        for (let i = 0; i <= 4; i++) {
+            const val = this.xMin + (i / 4) * (this.xMax - this.xMin);
+            const x = xToCart(val);
+            ctx.fillText(val.toFixed(1), x, h - padding.bottom + 20);
+        }
+
+        // Y axis labels
+        ctx.textAlign = 'right';
+        for (let i = 0; i <= 4; i++) {
+            const val = this.yMin + (i / 4) * (this.yMax - this.yMin);
+            const y = yToCart(val);
+            ctx.fillText(val.toFixed(1), padding.left - 10, y + 4);
+        }
+
+        // Axis titles
+        ctx.fillStyle = '#06b6d4';
+        ctx.font = 'bold 12px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('X', w / 2, h - 10);
+
+        ctx.save();
+        ctx.translate(15, h / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillStyle = '#f472b6';
+        ctx.fillText('Y', 0, 0);
+        ctx.restore();
+
+        // Draw function curve with gradient coloring
+        // Draw function curve with gradient coloring
+        if (this.dataPoints.length > 1) {
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            // Draw all valid segments individually
+            // We use the full dataPoints array to maintain index relationships
+            // But skip outOfRange points for the actual drawing calls unless they connect to in-range points
+
+            for (let i = 0; i < this.dataPoints.length - 1; i++) {
+                const p1 = this.dataPoints[i];
+                const p2 = this.dataPoints[i + 1];
+
+                // CRITICAL: Check for discontinuity
+                if (p1.isDiscontinuous) {
+                    continue; // Do not connect to next point (break the line)
+                }
+
+                // Optimization: Don't draw if both are way out of range on the same side
+                if ((p1.y < this.yMin && p2.y < this.yMin) || (p1.y > this.yMax && p2.y > this.yMax)) {
+                    // continue; // Optional optimization
+                }
+
+                // If both are fully invalid (NaN etc), skip
+                if (isNaN(p1.y) || isNaN(p2.y)) continue;
+
+                // Color interpolation based on position
+                const t = i / (this.dataPoints.length - 1);
+                ctx.strokeStyle = this.interpolateColor('#06b6d4', '#f472b6', t);
+
+                ctx.beginPath();
+                ctx.moveTo(xToCart(p1.x), yToCart(p1.y));
+                ctx.lineTo(xToCart(p2.x), yToCart(p2.y));
+                ctx.stroke();
+            }
+        }
+
+        // Draw derivative curve (green, dashed)
+        if (this.showDerivative && this.derivativePoints.length > 1) {
+            ctx.strokeStyle = '#22c55e';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 4]);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            ctx.beginPath();
+            let started = false;
+            for (let i = 0; i < this.derivativePoints.length; i++) {
+                const p = this.derivativePoints[i];
+                const px = xToCart(p.x);
+                const py = yToCart(p.y);
+
+                // Check if point is in visible range
+                if (py >= padding.top && py <= h - padding.bottom) {
+                    if (!started) {
+                        ctx.moveTo(px, py);
+                        started = true;
+                    } else {
+                        ctx.lineTo(px, py);
+                    }
+                } else {
+                    // Break the line if out of range
+                    if (started) {
+                        ctx.stroke();
+                        ctx.beginPath();
+                        started = false;
+                    }
+                }
+            }
+            if (started) ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Draw integral curve (orange, dashed)
+        if (this.showIntegral && this.integralPoints.length > 1) {
+            ctx.strokeStyle = '#fb923c';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([8, 4]);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            ctx.beginPath();
+            let started = false;
+            for (let i = 0; i < this.integralPoints.length; i++) {
+                const p = this.integralPoints[i];
+                const px = xToCart(p.x);
+                const py = yToCart(p.y);
+
+                // Check if point is in visible range
+                if (py >= padding.top && py <= h - padding.bottom) {
+                    if (!started) {
+                        ctx.moveTo(px, py);
+                        started = true;
+                    } else {
+                        ctx.lineTo(px, py);
+                    }
+                } else {
+                    if (started) {
+                        ctx.stroke();
+                        ctx.beginPath();
+                        started = false;
+                    }
+                }
+            }
+            if (started) ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Highlight hovered point from parallel axes
+        if (this.hoveredLine !== null && this.dataPoints[this.hoveredLine]) {
+            const point = this.dataPoints[this.hoveredLine];
+            const px = xToCart(point.x);
+            const py = yToCart(point.y);
+
+            // Draw crosshairs
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 4]);
+
+            // Vertical line from point to X axis
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(px, h - padding.bottom);
+            ctx.stroke();
+
+            // Horizontal line from point to Y axis
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(padding.left, py);
+            ctx.stroke();
+
+            ctx.setLineDash([]);
+
+            // Draw the point
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(px, py, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#f472b6';
+            ctx.beginPath();
+            ctx.arc(px, py, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Label the point
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 11px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`(${point.x.toFixed(2)}, ${point.y.toFixed(2)})`, px + 10, py - 10);
+        }
+    }
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    window.visualizer = new ParallelAxesVisualizer();
+});

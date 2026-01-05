@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operators As Matrices - Interactive Visualizer</title>
+    <meta name="description"
+        content="Explore how mathematical operators can be represented as matrix operations. Interactive visualization for arithmetic, bitwise, and nonlinear operators.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Landing Page -->
+    <div id="landing" class="landing">
+        <header class="landing-header">
+            <div class="logo">
+                <span class="logo-icon">⊗</span>
+                <span class="logo-text">Operators As Matrices</span>
+            </div>
+        </header>
+
+        <main class="landing-main">
+            <h1 class="landing-title">
+                <span class="gradient-text">Operators As Matrices</span>
+            </h1>
+            <p class="landing-subtitle">
+                Explore how mathematical operators can be represented as matrix operations
+            </p>
+
+            <div class="category-cards">
+                <!-- Arithmetic Operators Card -->
+                <div class="category-card" data-category="arithmetic">
+                    <div class="card-icon">∑</div>
+                    <h2 class="card-title">Arithmetic Operators</h2>
+                    <p class="card-description">
+                        Linear operations like addition and subtraction have direct matrix representations.
+                    </p>
+                    <div class="card-operators">
+                        <span class="operator-tag">+</span>
+                        <span class="operator-tag">−</span>
+                        <span class="operator-tag">×c</span>
+                    </div>
+                    <span class="card-badge badge-success">Direct Matrix</span>
+                </div>
+
+                <!-- Affine Transforms Card -->
+                <div class="category-card" data-category="affine">
+                    <div class="card-icon">⤨</div>
+                    <h2 class="card-title">Affine Transforms</h2>
+                    <p class="card-description">
+                        The homogeneous coordinates trick turns affine operations into pure matrix multiplication.
+                    </p>
+                    <div class="card-operators">
+                        <span class="operator-tag">x+b</span>
+                        <span class="operator-tag">mx+b</span>
+                        <span class="operator-tag">T₂</span>
+                        <span class="operator-tag">R₂</span>
+                    </div>
+                    <span class="card-badge badge-accent">Homogeneous</span>
+                </div>
+
+                <!-- Bitwise Operators Card -->
+                <div class="category-card" data-category="bitwise">
+                    <div class="card-icon">⊕</div>
+                    <h2 class="card-title">Bitwise Operators</h2>
+                    <p class="card-description">
+                        Operations in binary field GF(2) — XOR and shifts are linear over bits.
+                    </p>
+                    <div class="card-operators">
+                        <span class="operator-tag">XOR</span>
+                        <span class="operator-tag">&lt;&lt;</span>
+                        <span class="operator-tag">&gt;&gt;</span>
+                        <span class="operator-tag">NOT</span>
+                    </div>
+                    <span class="card-badge badge-primary">GF(2) Field</span>
+                </div>
+
+                <!-- Nonlinear Operators Card -->
+                <div class="category-card" data-category="nonlinear">
+                    <div class="card-icon">∿</div>
+                    <h2 class="card-title">Nonlinear Workarounds</h2>
+                    <p class="card-description">
+                        Multiplication and AND are nonlinear — see creative mathematical approaches.
+                    </p>
+                    <div class="card-operators">
+                        <span class="operator-tag">×</span>
+                        <span class="operator-tag">÷</span>
+                        <span class="operator-tag">AND</span>
+                        <span class="operator-tag">OR</span>
+                    </div>
+                    <span class="card-badge badge-warning">Workarounds</span>
+                </div>
+            </div>
+
+            <div class="landing-info">
+                <div class="info-box">
+                    <h3>💡 Key Insight</h3>
+                    <p>
+                        <strong>Linear operators</strong> on finite-dimensional vector spaces can always be represented
+                        as matrix multiplication.
+                        But what about <em>nonlinear</em> operations like multiplication? Explore the creative
+                        workarounds!
+                    </p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="landing-footer">
+            <p>Built with ♥ for mathematical education</p>
+        </footer>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="app-container" style="display: none;">
+        <!-- Left Panel: Operator List -->
+        <aside class="left-panel">
+            <div class="panel operator-list-panel">
+                <div class="panel-header compact">
+                    <h2>Operators</h2>
+                    <button class="btn btn-ghost btn-xs" id="backBtn" title="Back to categories">← Back</button>
+                </div>
+                <div class="panel-body">
+                    <div id="operatorList" class="operator-list">
+                        <!-- Operators will be populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel info-panel">
+                <div class="panel-header compact">
+                    <h2>Theory</h2>
+                </div>
+                <div class="panel-body">
+                    <div id="theoryContent" class="theory-content">
+                        <p class="muted">Select an operator to see the mathematical explanation.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Panel: Visualization -->
+        <main class="main-panel">
+            <div class="panel visualization-panel">
+                <div class="panel-header compact">
+                    <h2 id="vizTitle">Matrix Visualization</h2>
+                    <div class="header-right">
+                        <span id="fieldBadge" class="badge" style="display: none;">ℝ</span>
+                        <button class="btn btn-xs btn-fullscreen" id="fullscreenBtn"
+                            title="Toggle fullscreen">⛶</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <canvas id="matrixCanvas"></canvas>
+                </div>
+            </div>
+
+            <!-- Controls Bar -->
+            <div class="controls-bar">
+                <div class="controls-left">
+                    <button class="btn btn-secondary btn-sm" id="resetBtn" title="Reset animation">
+                        <span>⟳</span> Reset
+                    </button>
+                </div>
+                <div class="controls-center">
+                    <button class="btn btn-secondary btn-sm" id="prevStepBtn" title="Previous step">◀</button>
+                    <button class="btn btn-primary" id="playBtn" title="Play/Pause animation">
+                        <span id="playIcon">▶</span> <span id="playText">Animate</span>
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="nextStepBtn" title="Next step">▶</button>
+                </div>
+                <div class="controls-right">
+                    <span class="step-indicator">
+                        Step <span id="currentStep">0</span> / <span id="totalSteps">0</span>
+                    </span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Panel: Parameters -->
+        <aside class="right-panel">
+            <div class="params-header">
+                <span>Parameters</span>
+            </div>
+
+            <div id="inputParams" class="params-section">
+                <!-- Dynamic input parameters -->
+            </div>
+
+            <div class="params-divider"></div>
+
+            <div class="params-section">
+                <div class="param-group">
+                    <label>Animation Speed <span class="param-value" id="speedValue">1.0×</span></label>
+                    <input type="range" class="slider" id="speedSlider" min="0.25" max="3" step="0.25" value="1">
+                </div>
+
+                <div class="param-group">
+                    <label>Bit Width (for bitwise)</label>
+                    <select class="select" id="bitWidthSelect">
+                        <option value="4">4 bits</option>
+                        <option value="8" selected>8 bits</option>
+                        <option value="16">16 bits</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="params-divider"></div>
+
+            <div class="result-section">
+                <div class="result-header">Result</div>
+                <div id="resultDisplay" class="result-display">
+                    <span class="result-placeholder">—</span>
+                </div>
+            </div>
+
+            <div class="params-divider"></div>
+
+            <div class="matrix-equation-section">
+                <div class="equation-header">Matrix Form</div>
+                <div id="equationDisplay" class="equation-display">
+                    <span class="equation-placeholder">Select an operator</span>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Tooltip -->
+    <div id="tooltip" class="tooltip"></div>
+
+    <!-- Scripts -->
+    <script src="operator-engine.js"></script>
+    <script src="matrix-visualizer.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

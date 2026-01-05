@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Circuit Playground</title>
+    <meta name="description"
+        content="Interactive Quantum Circuit Playground - Design, simulate, and analyze quantum circuits">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container three-column">
+        <!-- LEFT: Gate Palette -->
+        <aside class="left-panel">
+            <section class="panel gate-palette-panel">
+                <div class="panel-header compact">
+                    <h2>Gate Palette</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="gate-category">
+                        <h3>Single-Qubit Gates</h3>
+                        <div class="gate-grid">
+                            <div class="gate-item" data-gate="H" title="Hadamard - Creates superposition">
+                                <span class="gate-symbol">H</span>
+                                <span class="gate-name">Hadamard</span>
+                            </div>
+                            <div class="gate-item" data-gate="X" title="Pauli-X (NOT) - Bit flip">
+                                <span class="gate-symbol">X</span>
+                                <span class="gate-name">Pauli-X</span>
+                            </div>
+                            <div class="gate-item" data-gate="Y" title="Pauli-Y - Rotation around Y">
+                                <span class="gate-symbol">Y</span>
+                                <span class="gate-name">Pauli-Y</span>
+                            </div>
+                            <div class="gate-item" data-gate="Z" title="Pauli-Z - Phase flip">
+                                <span class="gate-symbol">Z</span>
+                                <span class="gate-name">Pauli-Z</span>
+                            </div>
+                            <div class="gate-item" data-gate="S" title="S Gate - π/2 phase">
+                                <span class="gate-symbol">S</span>
+                                <span class="gate-name">S Gate</span>
+                            </div>
+                            <div class="gate-item" data-gate="T" title="T Gate - π/4 phase">
+                                <span class="gate-symbol">T</span>
+                                <span class="gate-name">T Gate</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gate-category">
+                        <h3>Multi-Qubit Gates</h3>
+                        <div class="gate-grid">
+                            <div class="gate-item gate-multi" data-gate="CNOT" title="Controlled-NOT">
+                                <span class="gate-symbol">⊕</span>
+                                <span class="gate-name">CNOT</span>
+                            </div>
+                            <div class="gate-item gate-multi" data-gate="SWAP" title="Swap qubits">
+                                <span class="gate-symbol">⨉</span>
+                                <span class="gate-name">SWAP</span>
+                            </div>
+                            <div class="gate-item gate-multi" data-gate="CZ" title="Controlled-Z">
+                                <span class="gate-symbol">CZ</span>
+                                <span class="gate-name">CZ</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gate-category">
+                        <h3>Measurement</h3>
+                        <div class="gate-grid">
+                            <div class="gate-item gate-measure" data-gate="M" title="Measure qubit">
+                                <span class="gate-symbol">📏</span>
+                                <span class="gate-name">Measure</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel info-panel">
+                <div class="panel-header compact">
+                    <h2>Gate Info</h2>
+                </div>
+                <div class="panel-body">
+                    <div id="gate-info" class="gate-info-content">
+                        <p class="muted">Hover over a gate to see details</p>
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <!-- MIDDLE: Circuit & State -->
+        <main class="middle-panel">
+            <section class="panel circuit-panel">
+                <div class="panel-header compact">
+                    <h2>Quantum Circuit</h2>
+                    <div class="header-right">
+                        <button id="add-qubit-btn" class="btn btn-xs btn-secondary">+ Qubit</button>
+                        <button id="remove-qubit-btn" class="btn btn-xs btn-secondary">- Qubit</button>
+                        <button id="clear-circuit-btn" class="btn btn-xs btn-danger">Clear</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="circuit-container" class="circuit-container">
+                        <!-- Circuit will be rendered here -->
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel state-panel">
+                <div class="panel-header compact">
+                    <h2>Quantum State</h2>
+                    <div class="header-right">
+                        <button id="run-circuit-btn" class="btn btn-primary btn-sm">▶ Simulate</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="state-display">
+                        <div class="state-vector" id="state-vector">
+                            <h3>State Vector</h3>
+                            <div id="state-amplitudes" class="amplitudes"></div>
+                        </div>
+                        <div class="probabilities" id="probabilities">
+                            <h3>Measurement Probabilities</h3>
+                            <div id="prob-bars" class="prob-bars"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel bloch-panel">
+                <div class="panel-header compact">
+                    <h2>Bloch Sphere</h2>
+                    <div class="header-right">
+                        <select id="bloch-qubit-select" class="select select-sm">
+                            <option value="0">Qubit 0</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <canvas id="bloch-canvas"></canvas>
+                </div>
+            </section>
+        </main>
+
+        <!-- RIGHT: Controls -->
+        <aside class="right-panel">
+            <div class="params-header">
+                <span>Parameters</span>
+            </div>
+
+            <div class="param-group">
+                <label>Number of Qubits</label>
+                <div class="qubit-counter">
+                    <span id="qubit-count">2</span> qubits
+                </div>
+            </div>
+
+            <div class="param-group">
+                <label>Circuit Depth</label>
+                <div class="depth-counter">
+                    <span id="circuit-depth">0</span> gates
+                </div>
+            </div>
+
+            <div class="params-divider"></div>
+
+            <div class="param-group">
+                <label>Presets</label>
+                <select id="preset-select" class="select">
+                    <option value="">-- Select Preset --</option>
+                    <option value="bell">Bell State</option>
+                    <option value="ghz">GHZ State (3 qubits)</option>
+                    <option value="superposition">Superposition</option>
+                    <option value="teleportation">Quantum Teleportation</option>
+                </select>
+            </div>
+
+            <div class="params-divider"></div>
+
+            <div class="param-group">
+                <label>Display</label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="show-amplitudes" checked>
+                    Show Amplitudes
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="show-phases" checked>
+                    Show Phases
+                </label>
+            </div>
+
+            <div class="params-divider"></div>
+
+            <div class="result-section">
+                <div class="result-header">Simulation Result</div>
+                <div id="measurement-result" class="measurement-result">
+                    <span class="result-placeholder">Click Simulate to run</span>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="quantum-simulator.js"></script>
+    <script src="circuit-renderer.js"></script>
+    <script src="bloch-sphere.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

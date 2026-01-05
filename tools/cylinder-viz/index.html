@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cylindrical Multi-Dimensional Visualizer</title>
+    <meta name="description"
+        content="A 3D visualization tool that maps N input columns to a target column using cylindrical coordinates and correlation-based positioning">
+
+    <!-- Plotly.js for 3D visualization -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../../styles/shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">⬡</div>
+                <h1>CylinderViz</h1>
+            </div>
+            <p class="tagline">Multi-Dimensional Feature Relationship Visualizer</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Left Panel - Controls -->
+            <aside class="control-panel">
+                <section class="panel-section">
+                    <h2>📊 Data Input</h2>
+                    <div class="input-group">
+                        <label for="data-input-method">Input Method</label>
+                        <select id="data-input-method">
+                            <option value="sample">Sample Dataset</option>
+                            <option value="csv">Upload CSV</option>
+                            <option value="paste">Paste Data</option>
+                        </select>
+                    </div>
+
+                    <!-- File Upload -->
+                    <div id="file-upload-section" class="input-group hidden">
+                        <label for="csv-file">Choose CSV File</label>
+                        <input type="file" id="csv-file" accept=".csv" class="file-input">
+                    </div>
+
+                    <!-- Paste Data -->
+                    <div id="paste-section" class="input-group hidden">
+                        <label for="csv-paste">Paste CSV Data</label>
+                        <textarea id="csv-paste"
+                            placeholder="header1,header2,target&#10;1.0,2.0,3.0&#10;..."></textarea>
+                    </div>
+
+                    <!-- Sample Dataset Selector -->
+                    <div id="sample-section" class="input-group">
+                        <label for="sample-select">Sample Dataset</label>
+                        <select id="sample-select">
+                            <option value="correlation-demo">Correlation Demo (4 features)</option>
+                            <option value="multicollinearity">Multicollinearity Example</option>
+                            <option value="mixed">Mixed Relationships</option>
+                        </select>
+                    </div>
+
+                    <button id="load-data-btn" class="btn btn-primary">Load Data</button>
+                </section>
+
+                <section class="panel-section">
+                    <h2>🎯 Column Mapping</h2>
+                    <div class="input-group">
+                        <label for="target-column">Target Column (Center Axis)</label>
+                        <select id="target-column" disabled>
+                            <option value="">-- Load data first --</option>
+                        </select>
+                    </div>
+                    <button id="visualize-btn" class="btn btn-accent" disabled>Generate Visualization</button>
+                </section>
+
+                <section class="panel-section">
+                    <h2>⚙️ Visualization Settings</h2>
+
+                    <div class="input-group">
+                        <label for="angle-mode">Angle Mode</label>
+                        <div class="toggle-group">
+                            <button class="toggle-btn active" data-mode="target">Target-Centric</button>
+                            <button class="toggle-btn" data-mode="cluster">Cluster-Centric</button>
+                        </div>
+                        <p class="hint" id="angle-mode-hint">Angles based on correlation with target</p>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="collision-threshold">
+                            Collision Threshold: <span id="threshold-value">0.05</span>
+                        </label>
+                        <input type="range" id="collision-threshold" min="0.01" max="0.2" step="0.01" value="0.05">
+                        <p class="hint">Lower = stricter grouping, Higher = more collisions</p>
+                    </div>
+
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" id="show-connections" checked>
+                            Show Connection Lines
+                        </label>
+                    </div>
+
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" id="show-grid" checked>
+                            Show Cylinder Grid
+                        </label>
+                    </div>
+
+                    <button id="reset-view-btn" class="btn btn-secondary">Reset Camera View</button>
+                </section>
+            </aside>
+
+            <!-- Center - Visualization -->
+            <div class="visualization-container">
+                <div id="plot-container">
+                    <div class="empty-state">
+                        <div class="empty-icon">🎯</div>
+                        <h3>Load Data to Begin</h3>
+                        <p>Select a dataset and target column to generate the 3D cylindrical visualization</p>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div id="legend" class="legend hidden">
+                    <h4>Legend</h4>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="legend-color"
+                                style="background: linear-gradient(135deg, #00d4aa, #00ff88);"></span>
+                            <span>Unique Predictor</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color"
+                                style="background: linear-gradient(135deg, #ff6b6b, #ee5a24);"></span>
+                            <span>Collided Features (2+)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color"
+                                style="background: linear-gradient(135deg, #4834d4, #686de0);"></span>
+                            <span>Target Variable (Center)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Collision Inspector -->
+            <aside class="inspector-panel">
+                <section class="panel-section">
+                    <h2>🔍 Collision Inspector</h2>
+                    <div id="collision-list" class="collision-list">
+                        <p class="empty-text">No collisions detected yet. Generate a visualization to analyze feature
+                            relationships.</p>
+                    </div>
+                </section>
+
+                <section class="panel-section">
+                    <h2>📈 Correlation Matrix</h2>
+                    <div id="correlation-display" class="correlation-display">
+                        <p class="empty-text">Load data to view correlations</p>
+                    </div>
+                </section>
+
+                <section class="panel-section">
+                    <h2>📋 Data Summary</h2>
+                    <div id="data-summary" class="data-summary">
+                        <p class="empty-text">No data loaded</p>
+                    </div>
+                </section>
+            </aside>
+        </main>
+
+        <!-- Tooltip for hover -->
+        <div id="tooltip" class="tooltip hidden">
+            <div class="tooltip-header"></div>
+            <div class="tooltip-content"></div>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script src="data.js"></script>
+    <script src="correlation.js"></script>
+    <script src="visualization.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
