@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naive Bayes - ML Visualizer</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="left-panel">
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>📊 Naive Bayes</h2>
+                </div>
+                <div class="panel-body">
+                    <p class="description">Probabilistic classification using Bayes' theorem with independence
+                        assumption.</p>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Data</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-group">
+                        <label>Dataset</label>
+                        <select id="dataset-select" class="select">
+                            <option value="gaussian">Gaussian Classes</option>
+                            <option value="overlap">Overlapping</option>
+                            <option value="three-class">Three Classes</option>
+                        </select>
+                    </div>
+                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
+                    <button id="train-btn" class="btn btn-primary btn-block" style="margin-top: 8px;">Train
+                        Model</button>
+                </div>
+            </section>
+
+            <section class="panel stats-panel">
+                <div class="panel-header compact">
+                    <h2>Model</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="stat-row">
+                        <span class="stat-label">Status</span>
+                        <span id="status" class="stat-value">Untrained</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Accuracy</span>
+                        <span id="accuracy" class="stat-value">-</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Class Priors</h2>
+                </div>
+                <div class="panel-body">
+                    <div id="priors-list"></div>
+                </div>
+            </section>
+        </aside>
+
+        <main class="main-panel">
+            <div class="single-viz">
+                <canvas id="bayes-canvas"></canvas>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/naive-bayes.js"></script>
+</body>
+
+</html>

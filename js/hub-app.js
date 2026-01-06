@@ -46,23 +46,132 @@ const CATEGORIES = {
     ml: {
         name: 'Machine Learning',
         icon: '🤖',
-        description: 'Classic ML algorithms with interactive visualizations.',
+        description: 'Classic ML algorithms - supervised, unsupervised, reinforcement, and semi-supervised.',
+        subcategories: true,
         tools: [
+            // Supervised Learning
             {
-                id: 'regression',
-                name: 'Regression',
+                id: 'linear-regression',
+                name: 'Linear Regression',
                 icon: '📈',
-                description: 'Fit curves to continuous functions like sine, cosine, and polynomials.',
-                path: 'tools/neural-network/index.html',
-                hash: 'regression'
+                description: 'Fit a line to data using gradient descent with live loss visualization.',
+                path: 'tools/ml-algorithms/linear-regression.html',
+                category: 'Supervised Learning'
             },
             {
-                id: 'classification',
-                name: 'Classification',
+                id: 'logistic-regression',
+                name: 'Logistic Regression',
                 icon: '🎯',
-                description: 'Classify 2D points and visualize decision boundaries in real-time.',
-                path: 'tools/neural-network/index.html',
-                hash: 'classification'
+                description: 'Binary classification with sigmoid activation and decision boundary.',
+                path: 'tools/ml-algorithms/logistic-regression.html',
+                category: 'Supervised Learning'
+            },
+            {
+                id: 'decision-tree',
+                name: 'Decision Tree',
+                icon: '🌳',
+                description: 'Watch a tree grow node-by-node as it learns to split data.',
+                path: 'tools/ml-algorithms/decision-tree.html',
+                category: 'Supervised Learning'
+            },
+            {
+                id: 'random-forest',
+                name: 'Random Forest',
+                icon: '🌲',
+                description: 'Ensemble of decision trees with bagging visualization.',
+                path: 'tools/ml-algorithms/random-forest.html',
+                category: 'Supervised Learning'
+            },
+            {
+                id: 'knn',
+                name: 'K-Nearest Neighbors',
+                icon: '🎯',
+                description: 'Watch neighbor search and voting in real-time.',
+                path: 'tools/ml-algorithms/knn.html',
+                category: 'Supervised Learning'
+            },
+            {
+                id: 'svm',
+                name: 'Support Vector Machine',
+                icon: '⚔️',
+                description: 'Maximum margin classifier with kernel trick visualization.',
+                path: 'tools/ml-algorithms/svm.html',
+                category: 'Supervised Learning'
+            },
+            {
+                id: 'naive-bayes',
+                name: 'Naive Bayes',
+                icon: '📊',
+                description: 'Probabilistic classification with conditional probability display.',
+                path: 'tools/ml-algorithms/naive-bayes.html',
+                category: 'Supervised Learning'
+            },
+            // Unsupervised Learning
+            {
+                id: 'kmeans',
+                name: 'K-Means Clustering',
+                icon: '🔵',
+                description: 'Animated centroid movement and cluster assignment.',
+                path: 'tools/ml-algorithms/kmeans.html',
+                category: 'Unsupervised Learning'
+            },
+            {
+                id: 'dbscan',
+                name: 'DBSCAN',
+                icon: '🔴',
+                description: 'Density-based clustering with epsilon-neighborhood visualization.',
+                path: 'tools/ml-algorithms/dbscan.html',
+                category: 'Unsupervised Learning'
+            },
+            {
+                id: 'pca',
+                name: 'PCA',
+                icon: '📉',
+                description: 'Principal component analysis with variance explained.',
+                path: 'tools/ml-algorithms/pca.html',
+                category: 'Unsupervised Learning'
+            },
+            {
+                id: 'hierarchical',
+                name: 'Hierarchical Clustering',
+                icon: '🌿',
+                description: 'Dendrogram construction with linkage methods.',
+                path: 'tools/ml-algorithms/hierarchical.html',
+                category: 'Unsupervised Learning'
+            },
+            // Reinforcement Learning
+            {
+                id: 'q-learning',
+                name: 'Q-Learning',
+                icon: '🎮',
+                description: 'Grid world with live Q-table and policy visualization.',
+                path: 'tools/ml-algorithms/q-learning.html',
+                category: 'Reinforcement Learning'
+            },
+            {
+                id: 'multi-armed-bandit',
+                name: 'Multi-Armed Bandit',
+                icon: '🎰',
+                description: 'Explore-exploit tradeoff with UCB and epsilon-greedy.',
+                path: 'tools/ml-algorithms/bandit.html',
+                category: 'Reinforcement Learning'
+            },
+            // Semi-Supervised Learning
+            {
+                id: 'self-training',
+                name: 'Self-Training',
+                icon: '🔄',
+                description: 'Watch pseudo-labels propagate through unlabeled data.',
+                path: 'tools/ml-algorithms/self-training.html',
+                category: 'Semi-Supervised Learning'
+            },
+            {
+                id: 'label-propagation',
+                name: 'Label Propagation',
+                icon: '📡',
+                description: 'Graph-based label spreading visualization.',
+                path: 'tools/ml-algorithms/label-propagation.html',
+                category: 'Semi-Supervised Learning'
             }
         ]
     },
@@ -78,6 +187,14 @@ const CATEGORIES = {
                 description: 'Classic multi-layer perceptron with backpropagation visualization.',
                 path: 'tools/neural-network/index.html',
                 hash: 'regression'
+            },
+            {
+                id: 'classification',
+                name: 'Classification Network',
+                icon: '🎯',
+                description: 'Neural network for 2D point classification with decision boundaries.',
+                path: 'tools/neural-network/index.html',
+                hash: 'classification'
             },
             {
                 id: 'rnn',
@@ -186,8 +303,12 @@ function showCategory(categoryId) {
     categoryIcon.textContent = category.icon;
     categoryName.textContent = category.name;
 
-    // Render tool cards
-    renderToolCards(category.tools);
+    // Render tool cards (grouped if has subcategories)
+    if (category.subcategories) {
+        renderGroupedToolCards(category.tools);
+    } else {
+        renderToolCards(category.tools);
+    }
 
     // Show subcategory page
     landingPage.classList.add('hidden');
@@ -246,6 +367,44 @@ function renderToolCards(tools) {
             <span class="tool-arrow">→</span>
         </div>
     `).join('');
+
+    // Add click handlers
+    toolCardsContainer.querySelectorAll('.tool-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const toolId = card.dataset.toolId;
+            showTool(currentCategory, toolId);
+        });
+    });
+}
+
+function renderGroupedToolCards(tools) {
+    // Group tools by category
+    const groups = {};
+    tools.forEach(tool => {
+        const cat = tool.category || 'Other';
+        if (!groups[cat]) groups[cat] = [];
+        groups[cat].push(tool);
+    });
+
+    // Render grouped
+    let html = '';
+    for (const [groupName, groupTools] of Object.entries(groups)) {
+        html += `<div class="tool-group">
+            <h3 class="tool-group-title">${groupName}</h3>
+            <div class="tool-group-cards">
+                ${groupTools.map(tool => `
+                    <div class="tool-card" data-tool-id="${tool.id}">
+                        <span class="tool-icon">${tool.icon}</span>
+                        <h3>${tool.name}</h3>
+                        <p>${tool.description}</p>
+                        <span class="tool-arrow">→</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>`;
+    }
+
+    toolCardsContainer.innerHTML = html;
 
     // Add click handlers
     toolCardsContainer.querySelectorAll('.tool-card').forEach(card => {

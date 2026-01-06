@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Regression - ML Visualizer</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="left-panel">
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>📈 Linear Regression</h2>
+                </div>
+                <div class="panel-body">
+                    <p class="description">Watch gradient descent fit a line to data points in real-time.</p>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Data</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-group">
+                        <label>Dataset</label>
+                        <select id="dataset-select" class="select">
+                            <option value="linear">Linear + Noise</option>
+                            <option value="quadratic">Quadratic (Poor Fit)</option>
+                            <option value="random">Random Points</option>
+                        </select>
+                    </div>
+                    <div class="param-group">
+                        <label>Number of Points</label>
+                        <input type="range" id="num-points" min="10" max="100" value="30" class="slider">
+                        <span id="num-points-value" class="value-display">30</span>
+                    </div>
+                    <div class="param-group">
+                        <label>Noise Level</label>
+                        <input type="range" id="noise-level" min="0" max="50" value="15" class="slider">
+                        <span id="noise-level-value" class="value-display">15</span>
+                    </div>
+                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Training</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-group">
+                        <label>Learning Rate</label>
+                        <input type="range" id="learning-rate" min="1" max="100" value="10" class="slider">
+                        <span id="learning-rate-value" class="value-display">0.01</span>
+                    </div>
+                    <div class="button-row">
+                        <button id="train-btn" class="btn btn-primary">▶ Train</button>
+                        <button id="step-btn" class="btn btn-secondary">Step</button>
+                        <button id="reset-btn" class="btn btn-ghost">Reset</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel stats-panel">
+                <div class="panel-header compact">
+                    <h2>Model</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="stat-row">
+                        <span class="stat-label">Equation</span>
+                        <span id="equation" class="stat-value equation">y = 0.00x + 0.00</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Epoch</span>
+                        <span id="epoch" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">MSE Loss</span>
+                        <span id="loss" class="stat-value">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">R² Score</span>
+                        <span id="r2" class="stat-value">-</span>
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <main class="main-panel">
+            <div class="visualization-area">
+                <div class="viz-container">
+                    <h3>Data & Regression Line</h3>
+                    <canvas id="scatter-canvas"></canvas>
+                </div>
+                <div class="viz-container">
+                    <h3>Loss Over Time</h3>
+                    <canvas id="loss-canvas"></canvas>
+                </div>
+            </div>
+            <div class="gradient-viz">
+                <h3>Gradient Descent</h3>
+                <div class="weights-display">
+                    <div class="weight-item">
+                        <span class="weight-label">Weight (m)</span>
+                        <div class="weight-bar-container">
+                            <div id="weight-bar" class="weight-bar"></div>
+                        </div>
+                        <span id="weight-value" class="weight-value">0.00</span>
+                    </div>
+                    <div class="weight-item">
+                        <span class="weight-label">Bias (b)</span>
+                        <div class="weight-bar-container">
+                            <div id="bias-bar" class="weight-bar"></div>
+                        </div>
+                        <span id="bias-value" class="weight-value">0.00</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/linear-regression.js"></script>
+</body>
+
+</html>

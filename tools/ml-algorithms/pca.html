@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCA - ML Visualizer</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="left-panel">
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>📉 PCA</h2>
+                </div>
+                <div class="panel-body">
+                    <p class="description">Principal Component Analysis - reduce dimensions while preserving variance.
+                    </p>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Data</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-group">
+                        <label>Dataset</label>
+                        <select id="dataset-select" class="select">
+                            <option value="correlated">Correlated 2D</option>
+                            <option value="blob">Gaussian Blob</option>
+                            <option value="ellipse">Ellipse</option>
+                        </select>
+                    </div>
+                    <div class="param-group">
+                        <label>Number of Points</label>
+                        <input type="range" id="num-points" min="50" max="200" value="100" class="slider">
+                        <span id="num-points-value" class="value-display">100</span>
+                    </div>
+                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>PCA</h2>
+                </div>
+                <div class="panel-body">
+                    <button id="compute-btn" class="btn btn-primary btn-block">Compute PCA</button>
+                    <label class="checkbox-label" style="margin-top: 12px;">
+                        <input type="checkbox" id="show-projection" checked>
+                        Show projections
+                    </label>
+                </div>
+            </section>
+
+            <section class="panel stats-panel">
+                <div class="panel-header compact">
+                    <h2>Components</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="stat-row">
+                        <span class="stat-label">PC1 Variance</span>
+                        <span id="var1" class="stat-value">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">PC2 Variance</span>
+                        <span id="var2" class="stat-value">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Total Explained</span>
+                        <span id="total-var" class="stat-value">-</span>
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <main class="main-panel">
+            <div class="single-viz">
+                <canvas id="pca-canvas"></canvas>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/pca.js"></script>
+</body>
+
+</html>

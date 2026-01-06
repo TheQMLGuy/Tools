@@ -102,8 +102,15 @@ body {
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 .landing-title {
@@ -413,6 +420,59 @@ body {
 }
 
 /* ============================================
+   Tool Groups (for ML categories)
+   ============================================ */
+
+.tool-group {
+    margin-bottom: 32px;
+}
+
+.tool-group-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-primary);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tool-group-title::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: var(--accent-gradient);
+    border-radius: 2px;
+}
+
+.tool-group-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.tool-group-cards .tool-card {
+    padding: 20px;
+}
+
+.tool-group-cards .tool-card .tool-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.tool-group-cards .tool-card h3 {
+    font-size: 1rem;
+}
+
+.tool-group-cards .tool-card p {
+    font-size: 0.8rem;
+}
+
+/* ============================================
    Tool Viewer (iframe)
    ============================================ */
 
@@ -489,7 +549,9 @@ body {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* ============================================
@@ -512,6 +574,7 @@ body {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);

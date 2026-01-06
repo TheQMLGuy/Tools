@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Nearest Neighbors - ML Visualizer</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="left-panel">
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>🎯 K-Nearest Neighbors</h2>
+                </div>
+                <div class="panel-body">
+                    <p class="description">Click anywhere to classify a point by majority vote of its K nearest
+                        neighbors.</p>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Parameters</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-group">
+                        <label>K (Neighbors)</label>
+                        <input type="range" id="k-value" min="1" max="15" value="5" class="slider">
+                        <span id="k-value-display" class="value-display">5</span>
+                    </div>
+                    <div class="param-group">
+                        <label>Distance Metric</label>
+                        <select id="distance-metric" class="select">
+                            <option value="euclidean">Euclidean</option>
+                            <option value="manhattan">Manhattan</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Training Data</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-group">
+                        <label>Dataset</label>
+                        <select id="dataset-select" class="select">
+                            <option value="two-clusters">Two Clusters</option>
+                            <option value="three-clusters">Three Classes</option>
+                            <option value="spiral">Spiral</option>
+                        </select>
+                    </div>
+                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
+                    <button id="show-boundary-btn" class="btn btn-primary btn-block" style="margin-top: 8px;">Show
+                        Decision Boundary</button>
+                </div>
+            </section>
+
+            <section class="panel stats-panel">
+                <div class="panel-header compact">
+                    <h2>Classification</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="stat-row">
+                        <span class="stat-label">Query Point</span>
+                        <span id="query-point" class="stat-value">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Predicted Class</span>
+                        <span id="predicted-class" class="stat-value">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Confidence</span>
+                        <span id="confidence" class="stat-value">-</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Nearest Neighbors</h2>
+                </div>
+                <div class="panel-body">
+                    <div id="neighbor-list" class="neighbor-list"></div>
+                </div>
+            </section>
+        </aside>
+
+        <main class="main-panel">
+            <div class="single-viz">
+                <canvas id="knn-canvas"></canvas>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/knn.js"></script>
+</body>
+
+</html>

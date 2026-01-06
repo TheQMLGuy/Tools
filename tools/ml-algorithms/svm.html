@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVM - ML Visualizer</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="left-panel">
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>⚔️ Support Vector Machine</h2>
+                </div>
+                <div class="panel-body">
+                    <p class="description">Maximum margin classifier with support vectors and decision boundary.</p>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Data</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-group">
+                        <label>Dataset</label>
+                        <select id="dataset-select" class="select">
+                            <option value="linear">Linearly Separable</option>
+                            <option value="overlap">Overlapping Classes</option>
+                            <option value="xor">XOR (Non-linear)</option>
+                        </select>
+                    </div>
+                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Parameters</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-group">
+                        <label>Kernel</label>
+                        <select id="kernel-select" class="select">
+                            <option value="linear">Linear</option>
+                            <option value="rbf">RBF (Gaussian)</option>
+                            <option value="poly">Polynomial</option>
+                        </select>
+                    </div>
+                    <div class="param-group">
+                        <label>C (Regularization)</label>
+                        <input type="range" id="c-param" min="1" max="100" value="50" class="slider">
+                        <span id="c-param-value" class="value-display">1.0</span>
+                    </div>
+                    <button id="train-btn" class="btn btn-primary btn-block">Train SVM</button>
+                </div>
+            </section>
+
+            <section class="panel stats-panel">
+                <div class="panel-header compact">
+                    <h2>Model Info</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="stat-row">
+                        <span class="stat-label">Support Vectors</span>
+                        <span id="num-sv" class="stat-value">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Accuracy</span>
+                        <span id="accuracy" class="stat-value">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Margin</span>
+                        <span id="margin" class="stat-value">-</span>
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <main class="main-panel">
+            <div class="single-viz">
+                <canvas id="svm-canvas"></canvas>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/svm.js"></script>
+</body>
+
+</html>

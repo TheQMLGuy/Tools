@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q-Learning Grid World - ML Visualizer</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="left-panel">
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>🎮 Q-Learning Grid World</h2>
+                </div>
+                <div class="panel-body">
+                    <p class="description">Watch an agent learn to navigate a grid world using Q-learning.</p>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Parameters</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-group">
+                        <label>Learning Rate (α)</label>
+                        <input type="range" id="learning-rate" min="1" max="100" value="10" class="slider">
+                        <span id="learning-rate-value" class="value-display">0.10</span>
+                    </div>
+                    <div class="param-group">
+                        <label>Discount Factor (γ)</label>
+                        <input type="range" id="discount" min="1" max="100" value="90" class="slider">
+                        <span id="discount-value" class="value-display">0.90</span>
+                    </div>
+                    <div class="param-group">
+                        <label>Exploration (ε)</label>
+                        <input type="range" id="epsilon" min="1" max="100" value="20" class="slider">
+                        <span id="epsilon-value" class="value-display">0.20</span>
+                    </div>
+                    <div class="param-group">
+                        <label>Speed</label>
+                        <input type="range" id="speed" min="1" max="10" value="5" class="slider">
+                        <span id="speed-value" class="value-display">5</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Controls</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="button-row">
+                        <button id="train-btn" class="btn btn-primary">▶ Train</button>
+                        <button id="step-btn" class="btn btn-secondary">Step</button>
+                    </div>
+                    <button id="reset-btn" class="btn btn-ghost btn-block" style="margin-top: 8px;">Reset</button>
+                </div>
+            </section>
+
+            <section class="panel stats-panel">
+                <div class="panel-header compact">
+                    <h2>Statistics</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="stat-row">
+                        <span class="stat-label">Episode</span>
+                        <span id="episode" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Steps This Episode</span>
+                        <span id="steps" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Total Reward</span>
+                        <span id="reward" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Success Rate</span>
+                        <span id="success-rate" class="stat-value">-</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Legend</h2>
+                </div>
+                <div class="panel-body legend">
+                    <div class="legend-item"><span class="legend-color" style="background: #10b981;"></span> Goal (+100)
+                    </div>
+                    <div class="legend-item"><span class="legend-color" style="background: #ef4444;"></span> Trap (-100)
+                    </div>
+                    <div class="legend-item"><span class="legend-color" style="background: #6366f1;"></span> Agent</div>
+                    <div class="legend-item"><span class="legend-color" style="background: #1e1e2e;"></span> Wall</div>
+                </div>
+            </section>
+        </aside>
+
+        <main class="main-panel">
+            <div class="single-viz">
+                <canvas id="grid-canvas"></canvas>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/q-learning.js"></script>
+</body>
+
+</html>
