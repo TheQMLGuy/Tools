@@ -4,120 +4,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coming Soon - ML Visualizer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Self-Training - ML Visualizer</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="../../styles/shared.css">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #0a0a0f;
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0;
-        }
-
-        .coming-soon {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.1);
-                opacity: 0.8;
-            }
-        }
-
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 12px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        p {
-            color: #a0a0b0;
-            font-size: 1rem;
-            max-width: 400px;
-            line-height: 1.6;
-        }
-
-        .available {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .available h3 {
-            font-size: 0.8rem;
-            color: #606070;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 16px;
-        }
-
-        .available-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .available-links a {
-            padding: 8px 16px;
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 6px;
-            color: #8b5cf6;
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-
-        .available-links a:hover {
-            background: rgba(99, 102, 241, 0.2);
-            border-color: #8b5cf6;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div class="coming-soon">
-        <div class="icon">🚧</div>
-        <h1>Coming Soon</h1>
-        <p>This ML algorithm visualizer is under development. Check back soon for an interactive learning experience!
-        </p>
+    <div class="app-container">
+        <aside class="left-panel">
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>🔄 Self-Training</h2>
+                </div>
+                <div class="panel-body">
+                    <p class="description">Semi-supervised learning: train on labeled data, then iteratively add
+                        confident predictions.</p>
+                </div>
+            </section>
 
-        <div class="available">
-            <h3>Available Now</h3>
-            <div class="available-links">
-                <a href="linear-regression.html">Linear Regression</a>
-                <a href="knn.html">KNN</a>
-                <a href="decision-tree.html">Decision Tree</a>
-                <a href="svm.html">SVM</a>
-                <a href="kmeans.html">K-Means</a>
-                <a href="pca.html">PCA</a>
-                <a href="q-learning.html">Q-Learning</a>
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Data</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-group">
+                        <label>Labeled Points</label>
+                        <input type="range" id="num-labeled" min="2" max="20" value="6" class="slider">
+                        <span id="num-labeled-value" class="value-display">6</span>
+                    </div>
+                    <div class="param-group">
+                        <label>Unlabeled Points</label>
+                        <input type="range" id="num-unlabeled" min="20" max="100" value="50" class="slider">
+                        <span id="num-unlabeled-value" class="value-display">50</span>
+                    </div>
+                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Training</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-group">
+                        <label>Confidence Threshold</label>
+                        <input type="range" id="threshold" min="50" max="99" value="80" class="slider">
+                        <span id="threshold-value" class="value-display">0.80</span>
+                    </div>
+                    <div class="button-row">
+                        <button id="train-btn" class="btn btn-primary">▶ Train</button>
+                        <button id="step-btn" class="btn btn-secondary">Step</button>
+                    </div>
+                    <button id="reset-btn" class="btn btn-ghost btn-block" style="margin-top: 8px;">Reset</button>
+                </div>
+            </section>
+
+            <section class="panel stats-panel">
+                <div class="panel-header compact">
+                    <h2>Progress</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="stat-row">
+                        <span class="stat-label">Iteration</span>
+                        <span id="iteration" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Labeled</span>
+                        <span id="labeled-count" class="stat-value">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Unlabeled</span>
+                        <span id="unlabeled-count" class="stat-value">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Accuracy</span>
+                        <span id="accuracy" class="stat-value">-</span>
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <main class="main-panel">
+            <div class="single-viz">
+                <canvas id="self-training-canvas"></canvas>
             </div>
-        </div>
+        </main>
     </div>
+
+    <script src="js/self-training.js"></script>
 </body>
 
 </html>

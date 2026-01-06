@@ -40,6 +40,13 @@ const CATEGORIES = {
                 icon: '⬡',
                 description: 'Multi-dimensional feature relationship visualizer using cylindrical coordinates.',
                 path: 'tools/cylinder-viz/index.html'
+            },
+            {
+                id: 'matrix-graph',
+                name: 'Matrix to Graph',
+                icon: '🕸️',
+                description: 'Visualize square matrices as directed graphs.',
+                path: 'tools/matrix-graph/index.html'
             }
         ]
     },

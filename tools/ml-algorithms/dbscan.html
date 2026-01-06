@@ -4,120 +4,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coming Soon - ML Visualizer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>DBSCAN - ML Visualizer</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="../../styles/shared.css">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #0a0a0f;
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0;
-        }
-
-        .coming-soon {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.1);
-                opacity: 0.8;
-            }
-        }
-
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 12px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        p {
-            color: #a0a0b0;
-            font-size: 1rem;
-            max-width: 400px;
-            line-height: 1.6;
-        }
-
-        .available {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .available h3 {
-            font-size: 0.8rem;
-            color: #606070;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 16px;
-        }
-
-        .available-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .available-links a {
-            padding: 8px 16px;
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 6px;
-            color: #8b5cf6;
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-
-        .available-links a:hover {
-            background: rgba(99, 102, 241, 0.2);
-            border-color: #8b5cf6;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div class="coming-soon">
-        <div class="icon">🚧</div>
-        <h1>Coming Soon</h1>
-        <p>This ML algorithm visualizer is under development. Check back soon for an interactive learning experience!
-        </p>
+    <div class="app-container">
+        <aside class="left-panel">
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>🔴 DBSCAN</h2>
+                </div>
+                <div class="panel-body">
+                    <p class="description">Density-based clustering that finds arbitrarily shaped clusters.</p>
+                </div>
+            </section>
 
-        <div class="available">
-            <h3>Available Now</h3>
-            <div class="available-links">
-                <a href="linear-regression.html">Linear Regression</a>
-                <a href="knn.html">KNN</a>
-                <a href="decision-tree.html">Decision Tree</a>
-                <a href="svm.html">SVM</a>
-                <a href="kmeans.html">K-Means</a>
-                <a href="pca.html">PCA</a>
-                <a href="q-learning.html">Q-Learning</a>
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Data</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-group">
+                        <label>Dataset</label>
+                        <select id="dataset-select" class="select">
+                            <option value="blobs">Dense Blobs</option>
+                            <option value="moons">Two Moons</option>
+                            <option value="circles">Concentric Circles</option>
+                            <option value="noise">With Noise</option>
+                        </select>
+                    </div>
+                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Parameters</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-group">
+                        <label>Epsilon (ε)</label>
+                        <input type="range" id="epsilon" min="5" max="50" value="15" class="slider">
+                        <span id="epsilon-value" class="value-display">0.15</span>
+                    </div>
+                    <div class="param-group">
+                        <label>Min Points</label>
+                        <input type="range" id="min-pts" min="2" max="10" value="4" class="slider">
+                        <span id="min-pts-value" class="value-display">4</span>
+                    </div>
+                    <button id="run-btn" class="btn btn-primary btn-block">Run DBSCAN</button>
+                </div>
+            </section>
+
+            <section class="panel stats-panel">
+                <div class="panel-header compact">
+                    <h2>Results</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="stat-row">
+                        <span class="stat-label">Clusters Found</span>
+                        <span id="num-clusters" class="stat-value">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Noise Points</span>
+                        <span id="noise-points" class="stat-value">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Core Points</span>
+                        <span id="core-points" class="stat-value">-</span>
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <main class="main-panel">
+            <div class="single-viz">
+                <canvas id="dbscan-canvas"></canvas>
             </div>
-        </div>
+        </main>
     </div>
+
+    <script src="js/dbscan.js"></script>
 </body>
 
 </html>
