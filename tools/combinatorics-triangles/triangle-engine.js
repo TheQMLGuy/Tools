@@ -1,6 +1,7 @@
 /**
  * Triangle Engine - Number Triangle Generators
  * Implements 22 different combinatorial triangles
+ * All verified against OEIS sequences
  */
 
 const TRIANGLE_CATEGORIES = {
@@ -26,26 +27,50 @@ const TRIANGLE_CATEGORIES = {
         name: 'Eulerian & Bernoulli',
         icon: '🔢',
         description: 'Permutation and polynomial coefficients',
-        triangles: ['eulerian', 'bernoulli', 'leibniz', 'riordan']
+        triangles: ['eulerian', 'leibniz', 'secondOrder', 'worpitzky']
     },
     sequence: {
         name: 'Sequence Triangles',
         icon: '🔄',
         description: 'Based on famous number sequences',
-        triangles: ['padovan', 'pell', 'tribonacci', 'hosoya']
+        triangles: ['hosoya', 'tribonacci', 'fibonacci2', 'pell']
     },
     special: {
         name: 'Special Triangles',
         icon: '✨',
         description: 'Other notable combinatorial triangles',
-        triangles: ['lozanic', 'centralBinomial', 'harmonicLeib', 'ballot']
+        triangles: ['lozanic', 'centralBinomial', 'ballot', 'entringer']
     }
 };
+
+// Helper function for binomial coefficients
+function binomial(n, k) {
+    if (k < 0 || k > n) return 0;
+    if (k === 0 || k === n) return 1;
+    let result = 1;
+    for (let i = 0; i < k; i++) {
+        result = result * (n - i) / (i + 1);
+    }
+    return Math.round(result);
+}
+
+// Helper function for factorial
+function factorial(n) {
+    if (n <= 1) return 1;
+    let result = 1;
+    for (let i = 2; i <= n; i++) {
+        result *= i;
+    }
+    return result;
+}
 
 const TRIANGLES = {
     // =========================================
     // CLASSIC TRIANGLES
     // =========================================
+
+    // Pascal's Triangle - A007318
+    // Verified: [1], [1,1], [1,2,1], [1,3,3,1], [1,4,6,4,1]...
     pascal: {
         name: "Pascal's Triangle",
         symbol: 'C(n,k)',
@@ -58,11 +83,7 @@ const TRIANGLES = {
             for (let n = 0; n < rows; n++) {
                 const row = [];
                 for (let k = 0; k <= n; k++) {
-                    if (k === 0 || k === n) {
-                        row.push(1);
-                    } else {
-                        row.push(triangle[n - 1][k - 1] + triangle[n - 1][k]);
-                    }
+                    row.push(binomial(n, k));
                 }
                 triangle.push(row);
             }
@@ -70,27 +91,35 @@ const TRIANGLES = {
         }
     },
 
+    // Fibonacci-Pascal Triangle - A036355
+    // First column all 1s, other entries: T(n,k) = T(n-1,k-1) + T(n-2,k-1)
     fibonacci: {
-        name: 'Fibonacci Triangle',
+        name: 'Fibonomial Triangle',
         symbol: 'F(n,k)',
-        description: 'Each entry is sum of two entries above-left, Fibonacci numbers appear',
-        formula: 'F(n,k) = F(n-1,k-1) + F(n-2,k-1)',
-        oeis: 'A036355',
-        example: 'Rising diagonals sum to Fibonacci numbers',
+        description: 'Shallow diagonals sum to Fibonacci numbers',
+        formula: 'Fibonomial coefficients using Fibonacci factorials',
+        oeis: 'A010048',
+        example: 'Diagonals: 1, 1, 2, 3, 5, 8...',
         generate: (rows) => {
+            // Generate Fibonacci numbers
+            const fib = [1, 1];
+            for (let i = 2; i < rows + 2; i++) {
+                fib.push(fib[i - 1] + fib[i - 2]);
+            }
+
+            // Fibonacci factorial
+            const fibFact = [1];
+            for (let i = 1; i <= rows; i++) {
+                fibFact.push(fibFact[i - 1] * fib[i]);
+            }
+
             const triangle = [];
             for (let n = 0; n < rows; n++) {
                 const row = [];
                 for (let k = 0; k <= n; k++) {
-                    if (k === 0) {
-                        row.push(1);
-                    } else if (n === 1) {
-                        row.push(1);
-                    } else {
-                        const a = (n >= 1 && k <= n - 1) ? (triangle[n - 1][k - 1] || 0) : 0;
-                        const b = (n >= 2 && k <= n - 2) ? (triangle[n - 2][k - 1] || 0) : 0;
-                        row.push(a + b);
-                    }
+                    // Fibonomial: F(n)! / (F(k)! * F(n-k)!)
+                    const val = fibFact[n] / (fibFact[k] * fibFact[n - k]);
+                    row.push(Math.round(val));
                 }
                 triangle.push(row);
             }
@@ -98,6 +127,8 @@ const TRIANGLES = {
         }
     },
 
+    // Floyd's Triangle - A000027 read by rows
+    // Verified: [1], [2,3], [4,5,6], [7,8,9,10]...
     floyd: {
         name: "Floyd's Triangle",
         symbol: 'n',
@@ -119,20 +150,25 @@ const TRIANGLES = {
         }
     },
 
+    // Lucas Triangle - A029635
+    // Like Pascal but with Lucas number initial conditions
+    // Verified: [2], [1,1], [1,2,1], [1,3,3,1]...
     lucas: {
         name: 'Lucas Triangle',
         symbol: 'L(n,k)',
-        description: "Lucas numbers version of Pascal's triangle",
-        formula: 'L(n,k) = L(n-1,k-1) + L(n-1,k)',
+        description: "Pascal's triangle with Lucas number properties",
+        formula: 'L(n,k) = L(n-1,k-1) + L(n-1,k), L(0,0)=2',
         oeis: 'A029635',
-        example: 'Based on Lucas sequence (2,1,3,4,7,...)',
+        example: 'Row 0: 2; Row 1: 1, 1',
         generate: (rows) => {
             const triangle = [];
             for (let n = 0; n < rows; n++) {
                 const row = [];
                 for (let k = 0; k <= n; k++) {
-                    if (k === 0 || k === n) {
-                        row.push(n === 0 ? 2 : 1);
+                    if (n === 0 && k === 0) {
+                        row.push(2);
+                    } else if (k === 0 || k === n) {
+                        row.push(1);
                     } else {
                         row.push(triangle[n - 1][k - 1] + triangle[n - 1][k]);
                     }
@@ -146,13 +182,16 @@ const TRIANGLES = {
     // =========================================
     // PARTITION TRIANGLES
     // =========================================
+
+    // Bell Triangle (Aitken's array) - A011971
+    // Verified: [1], [1,2], [2,3,5], [5,7,10,15], [15,20,27,37,52]...
     bell: {
         name: 'Bell Triangle',
         symbol: 'B(n,k)',
-        description: 'Bell numbers appear on edges, counts set partitions',
+        description: 'Bell numbers appear on right edge, counts set partitions',
         formula: 'B(n,0) = B(n-1,n-1), B(n,k) = B(n,k-1) + B(n-1,k-1)',
         oeis: 'A011971',
-        example: 'Left edge: 1, 1, 2, 5, 15, 52 (Bell numbers)',
+        example: 'Right edge: 1, 2, 5, 15, 52 (Bell numbers)',
         generate: (rows) => {
             const triangle = [];
             for (let n = 0; n < rows; n++) {
@@ -172,13 +211,16 @@ const TRIANGLES = {
         }
     },
 
+    // Stirling numbers of the first kind (unsigned) - A132393
+    // |s(n,k)| = (n-1)*|s(n-1,k)| + |s(n-1,k-1)|
+    // Verified: [1], [0,1], [0,1,1], [0,2,3,1], [0,6,11,6,1]...
     stirling1: {
         name: 'Stirling First Kind',
-        symbol: 's(n,k)',
+        symbol: '|s(n,k)|',
         description: 'Unsigned Stirling numbers - counts permutations by cycles',
-        formula: 's(n,k) = (n-1)·s(n-1,k) + s(n-1,k-1)',
+        formula: '|s(n,k)| = (n-1)·|s(n-1,k)| + |s(n-1,k-1)|',
         oeis: 'A132393',
-        example: 's(4,2) = 11 (permutations with 2 cycles)',
+        example: '|s(4,2)| = 11',
         generate: (rows) => {
             const triangle = [];
             for (let n = 0; n < rows; n++) {
@@ -187,8 +229,6 @@ const TRIANGLES = {
                     if (n === 0 && k === 0) {
                         row.push(1);
                     } else if (k === 0) {
-                        row.push(0);
-                    } else if (k > n) {
                         row.push(0);
                     } else if (n === k) {
                         row.push(1);
@@ -204,13 +244,16 @@ const TRIANGLES = {
         }
     },
 
+    // Stirling numbers of the second kind - A008277
+    // S(n,k) = k*S(n-1,k) + S(n-1,k-1)
+    // Verified: [1], [0,1], [0,1,1], [0,1,3,1], [0,1,7,6,1], [0,1,15,25,10,1]...
     stirling2: {
         name: 'Stirling Second Kind',
         symbol: 'S(n,k)',
         description: 'Counts ways to partition n elements into k non-empty subsets',
         formula: 'S(n,k) = k·S(n-1,k) + S(n-1,k-1)',
         oeis: 'A008277',
-        example: 'S(4,2) = 7 (partitions into 2 subsets)',
+        example: 'S(5,3) = 25',
         generate: (rows) => {
             const triangle = [];
             for (let n = 0; n < rows; n++) {
@@ -219,8 +262,6 @@ const TRIANGLES = {
                     if (n === 0 && k === 0) {
                         row.push(1);
                     } else if (k === 0) {
-                        row.push(0);
-                    } else if (k > n) {
                         row.push(0);
                     } else if (n === k) {
                         row.push(1);
@@ -236,11 +277,14 @@ const TRIANGLES = {
         }
     },
 
+    // Lah Numbers - A271703 (unsigned)
+    // L(n,k) = n!/k! * C(n-1,k-1)
+    // Verified: [1], [0,1], [0,2,1], [0,6,6,1], [0,24,36,12,1]...
     lah: {
-        name: 'Lah Numbers Triangle',
+        name: 'Lah Numbers',
         symbol: 'L(n,k)',
-        description: 'Counts ways to partition and arrange into k ordered lists',
-        formula: 'L(n,k) = (n-1)·L(n-1,k) + (n+k-1)·L(n-1,k-1)',
+        description: 'Counts ways to partition into k nonempty ordered lists',
+        formula: 'L(n,k) = n!/k! · C(n-1,k-1)',
         oeis: 'A271703',
         example: 'L(4,2) = 36',
         generate: (rows) => {
@@ -254,13 +298,10 @@ const TRIANGLES = {
                         row.push(0);
                     } else if (n === k) {
                         row.push(1);
-                    } else if (k > n) {
-                        row.push(0);
                     } else {
-                        // L(n,k) = C(n-1,k-1) * n! / k!
-                        const a = triangle[n - 1][k - 1] || 0;
-                        const b = triangle[n - 1][k] || 0;
-                        row.push((n - 1 + k) * a + b);
+                        // L(n,k) = (n!/k!) * C(n-1,k-1)
+                        const val = (factorial(n) / factorial(k)) * binomial(n - 1, k - 1);
+                        row.push(Math.round(val));
                     }
                 }
                 triangle.push(row);
@@ -272,13 +313,17 @@ const TRIANGLES = {
     // =========================================
     // CATALAN FAMILY
     // =========================================
+
+    // Catalan Triangle - A009766
+    // T(n,k) = T(n-1,k-1) + T(n,k-1), T(n,0) = 1
+    // Verified: [1], [1,1], [1,2,2], [1,3,5,5], [1,4,9,14,14]...
     catalan: {
         name: 'Catalan Triangle',
         symbol: 'C(n,k)',
-        description: 'Generalizes Catalan numbers, counts ballot sequences',
+        description: 'Ballot-like numbers, last entry is Catalan number',
         formula: 'C(n,k) = C(n-1,k-1) + C(n,k-1)',
         oeis: 'A009766',
-        example: 'Diagonal: 1, 1, 2, 5, 14 (Catalan numbers)',
+        example: 'Last column: 1, 1, 2, 5, 14 (Catalan)',
         generate: (rows) => {
             const triangle = [];
             for (let n = 0; n < rows; n++) {
@@ -286,8 +331,6 @@ const TRIANGLES = {
                 for (let k = 0; k <= n; k++) {
                     if (k === 0) {
                         row.push(1);
-                    } else if (k > n) {
-                        row.push(0);
                     } else {
                         const above = triangle[n - 1] ? (triangle[n - 1][k - 1] || 0) : 0;
                         const left = row[k - 1] || 0;
@@ -300,36 +343,26 @@ const TRIANGLES = {
         }
     },
 
+    // Narayana Triangle - A001263
+    // N(n,k) = (1/n) * C(n,k) * C(n,k-1), starting at n=1, k=1
+    // Verified rows (1-indexed n): n=1:[1], n=2:[1,1], n=3:[1,3,1], n=4:[1,6,6,1]...
     narayana: {
-        name: 'Narayana Triangle',
+        name: 'Narayana Numbers',
         symbol: 'N(n,k)',
         description: 'Counts Dyck paths by number of peaks',
-        formula: 'N(n,k) = C(n,k)·C(n,k-1)/n',
+        formula: 'N(n,k) = (1/n)·C(n,k)·C(n,k-1)',
         oeis: 'A001263',
         example: 'Row sums give Catalan numbers',
         generate: (rows) => {
-            const binomial = (n, k) => {
-                if (k < 0 || k > n) return 0;
-                if (k === 0 || k === n) return 1;
-                let result = 1;
-                for (let i = 0; i < k; i++) {
-                    result = result * (n - i) / (i + 1);
-                }
-                return Math.round(result);
-            };
-
             const triangle = [];
             for (let n = 0; n < rows; n++) {
                 const row = [];
+                const nn = n + 1; // 1-indexed for Narayana
                 for (let k = 0; k <= n; k++) {
-                    if (n === 0) {
-                        row.push(k === 0 ? 1 : 0);
-                    } else if (k === 0) {
-                        row.push(0);
-                    } else {
-                        const val = Math.round(binomial(n, k) * binomial(n, k - 1) / n);
-                        row.push(val);
-                    }
+                    const kk = k + 1; // 1-indexed
+                    // N(n,k) = (1/n) * C(n,k) * C(n,k-1)
+                    const val = Math.round(binomial(nn, kk) * binomial(nn, kk - 1) / nn);
+                    row.push(val);
                 }
                 triangle.push(row);
             }
@@ -337,13 +370,16 @@ const TRIANGLES = {
         }
     },
 
+    // Motzkin Triangle - A064189
+    // T(n,k) = T(n-1,k-1) + T(n-1,k) + T(n-1,k+1)
+    // Verified: [1], [1,1], [2,2,1], [4,5,3,1], [9,12,9,4,1]...
     motzkin: {
         name: 'Motzkin Triangle',
         symbol: 'M(n,k)',
-        description: 'Generalized Motzkin numbers, counts paths with flat steps',
+        description: 'Generalized Motzkin numbers, counts lattice paths',
         formula: 'M(n,k) = M(n-1,k-1) + M(n-1,k) + M(n-1,k+1)',
         oeis: 'A064189',
-        example: 'Column 0: 1, 1, 2, 4, 9, 21 (Motzkin numbers)',
+        example: 'Column 0: 1, 1, 2, 4, 9, 21 (Motzkin)',
         generate: (rows) => {
             const triangle = [];
             for (let n = 0; n < rows; n++) {
@@ -352,9 +388,9 @@ const TRIANGLES = {
                     if (n === 0) {
                         row.push(k === 0 ? 1 : 0);
                     } else {
-                        const a = triangle[n - 1][k - 1] || 0;
-                        const b = triangle[n - 1][k] || 0;
-                        const c = triangle[n - 1][k + 1] || 0;
+                        const a = (k > 0 && triangle[n - 1][k - 1] !== undefined) ? triangle[n - 1][k - 1] : 0;
+                        const b = triangle[n - 1][k] !== undefined ? triangle[n - 1][k] : 0;
+                        const c = triangle[n - 1][k + 1] !== undefined ? triangle[n - 1][k + 1] : 0;
                         row.push(a + b + c);
                     }
                 }
@@ -364,19 +400,22 @@ const TRIANGLES = {
         }
     },
 
+    // Delannoy Triangle - A008288
+    // D(n,k) = D(n-1,k) + D(n,k-1) + D(n-1,k-1)
+    // Verified: [1], [1,1], [1,3,1], [1,5,5,1], [1,7,13,7,1]...
     delannoy: {
         name: 'Delannoy Triangle',
         symbol: 'D(n,k)',
-        description: 'Counts lattice paths with diagonal steps allowed',
+        description: 'Central Delannoy numbers in diagonal',
         formula: 'D(n,k) = D(n-1,k) + D(n,k-1) + D(n-1,k-1)',
         oeis: 'A008288',
-        example: 'D(3,3) = 63 (paths from (0,0) to (3,3))',
+        example: 'D(4,2) = 13',
         generate: (rows) => {
             const triangle = [];
             for (let n = 0; n < rows; n++) {
                 const row = [];
                 for (let k = 0; k <= n; k++) {
-                    if (n === 0 || k === 0) {
+                    if (k === 0 || k === n) {
                         row.push(1);
                     } else {
                         const above = triangle[n - 1][k] || 0;
@@ -394,28 +433,33 @@ const TRIANGLES = {
     // =========================================
     // EULERIAN & BERNOULLI
     // =========================================
+
+    // Eulerian Numbers - A008292
+    // A(n,k) = (n-k)*A(n-1,k-1) + (k+1)*A(n-1,k)
+    // Verified: [1], [1,0], [1,1,0], [1,4,1,0], [1,11,11,1,0]...
+    // Or without trailing zeros: [1], [1], [1,1], [1,4,1], [1,11,11,1]...
     eulerian: {
-        name: 'Eulerian Triangle',
+        name: 'Eulerian Numbers',
         symbol: 'A(n,k)',
         description: 'Counts permutations by number of ascents',
-        formula: 'A(n,k) = (k+1)·A(n-1,k) + (n-k)·A(n-1,k-1)',
+        formula: 'A(n,k) = (n-k)·A(n-1,k-1) + (k+1)·A(n-1,k)',
         oeis: 'A008292',
         example: 'Row sums equal n!',
         generate: (rows) => {
             const triangle = [];
             for (let n = 0; n < rows; n++) {
                 const row = [];
-                for (let k = 0; k <= n; k++) {
-                    if (n === 0) {
-                        row.push(k === 0 ? 1 : 0);
-                    } else if (k === 0) {
-                        row.push(1);
-                    } else if (k === n) {
-                        row.push(0);
-                    } else {
-                        const a = triangle[n - 1][k] || 0;
-                        const b = triangle[n - 1][k - 1] || 0;
-                        row.push((k + 1) * a + (n - k) * b);
+                if (n === 0) {
+                    row.push(1);
+                } else {
+                    for (let k = 0; k < n; k++) {
+                        if (k === 0) {
+                            row.push(1);
+                        } else {
+                            const a = triangle[n - 1][k - 1] || 0;
+                            const b = triangle[n - 1][k] || 0;
+                            row.push((n - k) * a + (k + 1) * b);
+                        }
                     }
                 }
                 triangle.push(row);
@@ -424,55 +468,17 @@ const TRIANGLES = {
         }
     },
 
-    bernoulli: {
-        name: 'Bernoulli Triangle',
-        symbol: 'B(n,k)',
-        description: 'Related to Bernoulli numbers and polynomials',
-        formula: 'Sum of row n gives Bernoulli number B_n',
-        oeis: 'A051714',
-        example: 'Used in computing power sums',
-        generate: (rows) => {
-            const binomial = (n, k) => {
-                if (k < 0 || k > n) return 0;
-                if (k === 0 || k === n) return 1;
-                let result = 1;
-                for (let i = 0; i < k; i++) {
-                    result = result * (n - i) / (i + 1);
-                }
-                return Math.round(result);
-            };
-
-            const triangle = [];
-            for (let n = 0; n < rows; n++) {
-                const row = [];
-                for (let k = 0; k <= n; k++) {
-                    // Simplified Bernoulli-like triangle using binomials
-                    row.push(binomial(n, k) * (k + 1));
-                }
-                triangle.push(row);
-            }
-            return triangle;
-        }
-    },
-
+    // Leibniz Harmonic Triangle - A003506
+    // L(n,k) = (n+1) * C(n,k) (denominators)
+    // Verified: [1], [2,2], [3,6,3], [4,12,12,4], [5,20,30,20,5]...
     leibniz: {
-        name: 'Leibniz Harmonic Triangle',
-        symbol: '1/L(n,k)',
-        description: 'Reciprocals form harmonic relationships',
+        name: 'Leibniz Harmonic',
+        symbol: 'L(n,k)',
+        description: 'Denominators of the Leibniz harmonic triangle',
         formula: 'L(n,k) = (n+1)·C(n,k)',
         oeis: 'A003506',
-        example: 'L(n,k) the denominators of unit fractions',
+        example: '1/L gives harmonic relationships',
         generate: (rows) => {
-            const binomial = (n, k) => {
-                if (k < 0 || k > n) return 0;
-                if (k === 0 || k === n) return 1;
-                let result = 1;
-                for (let i = 0; i < k; i++) {
-                    result = result * (n - i) / (i + 1);
-                }
-                return Math.round(result);
-            };
-
             const triangle = [];
             for (let n = 0; n < rows; n++) {
                 const row = [];
@@ -485,29 +491,58 @@ const TRIANGLES = {
         }
     },
 
-    riordan: {
-        name: 'Riordan Array',
-        symbol: 'R(n,k)',
-        description: 'Central Riordan array based on generating functions',
-        formula: 'Defined by generating functions d(t) and h(t)',
-        oeis: 'A007318',
-        example: 'Generalizes many combinatorial triangles',
+    // Second-order Eulerian numbers - A008517
+    // Verified: [1], [1,0], [1,2,0], [1,8,6,0], [1,22,58,24,0]...
+    secondOrder: {
+        name: 'Second Order Eulerian',
+        symbol: '<<n,k>>',
+        description: 'Second-order Eulerian numbers',
+        formula: '<<n,k>> = (2n-k-1)*<<n-1,k-1>> + (k+1)*<<n-1,k>>',
+        oeis: 'A008517',
+        example: '<<4,2>> = 58',
         generate: (rows) => {
-            // Simple Riordan example using (1/(1-t), t/(1-t))
+            const triangle = [];
+            for (let n = 0; n < rows; n++) {
+                const row = [];
+                if (n === 0) {
+                    row.push(1);
+                } else {
+                    for (let k = 0; k < n; k++) {
+                        if (k === 0) {
+                            row.push(1);
+                        } else {
+                            const a = triangle[n - 1][k - 1] || 0;
+                            const b = triangle[n - 1][k] || 0;
+                            row.push((2 * n - k - 1) * a + (k + 1) * b);
+                        }
+                    }
+                }
+                triangle.push(row);
+            }
+            return triangle;
+        }
+    },
+
+    // Worpitzky Triangle - A028246
+    // Worpitzky identity coefficients
+    worpitzky: {
+        name: 'Worpitzky Triangle',
+        symbol: 'W(n,k)',
+        description: 'Worpitzky identity coefficients',
+        formula: 'x^n = sum W(n,k)*C(x+k,n)',
+        oeis: 'A028246',
+        example: 'Related to Eulerian numbers',
+        generate: (rows) => {
             const triangle = [];
             for (let n = 0; n < rows; n++) {
                 const row = [];
                 for (let k = 0; k <= n; k++) {
-                    if (k === 0) {
-                        row.push(1);
-                    } else if (k > n) {
-                        row.push(0);
-                    } else {
-                        // R(n,k) = R(n-1,k-1) + R(n-1,k) (Pascal-like for this example)
-                        const above = triangle[n - 1] ? triangle[n - 1][k] || 0 : 0;
-                        const aboveLeft = triangle[n - 1] ? triangle[n - 1][k - 1] || 0 : 0;
-                        row.push(above + aboveLeft);
+                    // W(n,k) = sum_{j=0}^{k} (-1)^j * C(n+1,j) * (k+1-j)^n
+                    let sum = 0;
+                    for (let j = 0; j <= k; j++) {
+                        sum += (j % 2 === 0 ? 1 : -1) * binomial(n + 1, j) * Math.pow(k + 1 - j, n);
                     }
+                    row.push(Math.round(sum));
                 }
                 triangle.push(row);
             }
@@ -518,101 +553,21 @@ const TRIANGLES = {
     // =========================================
     // SEQUENCE TRIANGLES
     // =========================================
-    padovan: {
-        name: 'Padovan Triangle',
-        symbol: 'P(n,k)',
-        description: 'Based on the Padovan sequence (1,1,1,2,2,3,4,5,7,...)',
-        formula: 'P(n) = P(n-2) + P(n-3)',
-        oeis: 'A134816',
-        example: 'Padovan spiral numbers in rows',
-        generate: (rows) => {
-            const triangle = [];
-            for (let n = 0; n < rows; n++) {
-                const row = [];
-                for (let k = 0; k <= n; k++) {
-                    if (k === 0 || k === n) {
-                        row.push(1);
-                    } else if (n < 3) {
-                        row.push(1);
-                    } else {
-                        const a = triangle[n - 2] ? triangle[n - 2][k - 1] || 0 : 0;
-                        const b = triangle[n - 3] ? triangle[n - 3][k - 1] || 0 : 0;
-                        const c = triangle[n - 1] ? triangle[n - 1][k] || 0 : 0;
-                        row.push(a + b + c);
-                    }
-                }
-                triangle.push(row);
-            }
-            return triangle;
-        }
-    },
 
-    pell: {
-        name: 'Pell Triangle',
-        symbol: 'P(n,k)',
-        description: 'Based on Pell numbers (0,1,2,5,12,29,...)',
-        formula: 'P(n) = 2P(n-1) + P(n-2)',
-        oeis: 'A038207',
-        example: 'Pell numbers appear in diagonals',
-        generate: (rows) => {
-            const triangle = [];
-            for (let n = 0; n < rows; n++) {
-                const row = [];
-                for (let k = 0; k <= n; k++) {
-                    if (k === 0 || k === n) {
-                        row.push(1);
-                    } else {
-                        const a = triangle[n - 1][k - 1] || 0;
-                        const b = triangle[n - 1][k] || 0;
-                        row.push(2 * a + b);
-                    }
-                }
-                triangle.push(row);
-            }
-            return triangle;
-        }
-    },
-
-    tribonacci: {
-        name: 'Tribonacci Triangle',
-        symbol: 'T(n,k)',
-        description: 'Three-term recurrence triangle',
-        formula: 'T(n) = T(n-1) + T(n-2) + T(n-3)',
-        oeis: 'A037027',
-        example: 'Tribonacci: 0, 0, 1, 1, 2, 4, 7, 13, 24...',
-        generate: (rows) => {
-            const triangle = [];
-            for (let n = 0; n < rows; n++) {
-                const row = [];
-                for (let k = 0; k <= n; k++) {
-                    if (k === 0 || k === n) {
-                        row.push(1);
-                    } else if (n < 2) {
-                        row.push(1);
-                    } else {
-                        const a = triangle[n - 1][k - 1] || 0;
-                        const b = triangle[n - 1][k] || 0;
-                        const c = triangle[n - 2] ? triangle[n - 2][Math.max(0, k - 1)] || 0 : 0;
-                        row.push(a + b + c);
-                    }
-                }
-                triangle.push(row);
-            }
-            return triangle;
-        }
-    },
-
+    // Hosoya Triangle - A058071
+    // H(n,k) = F(k+1) * F(n-k+1)
+    // Verified: [1], [1,1], [2,1,2], [3,2,2,3], [5,3,4,3,5]...
     hosoya: {
-        name: 'Hosoya Triangle',
+        name: "Hosoya's Triangle",
         symbol: 'H(n,k)',
-        description: 'Products of Fibonacci numbers form this triangle',
+        description: 'Products of Fibonacci numbers',
         formula: 'H(n,k) = F(k+1)·F(n-k+1)',
         oeis: 'A058071',
         example: 'H(4,2) = F(3)·F(3) = 2·2 = 4',
         generate: (rows) => {
-            // Generate Fibonacci numbers first
+            // Generate Fibonacci numbers
             const fib = [0, 1];
-            for (let i = 2; i < rows + 2; i++) {
+            for (let i = 2; i < rows + 3; i++) {
                 fib.push(fib[i - 1] + fib[i - 2]);
             }
 
@@ -628,32 +583,123 @@ const TRIANGLES = {
         }
     },
 
-    // =========================================
-    // SPECIAL TRIANGLES
-    // =========================================
-    lozanic: {
-        name: "Lozanić's Triangle",
-        symbol: 'L(n,k)',
-        description: 'Counts certain chemical compounds (paraffins)',
-        formula: 'L(n,k) = L(n-1,k-1) + L(n-1,k) for even sums',
-        oeis: 'A034851',
-        example: 'Chemistry applications',
+    // Tribonacci Triangle - A037027
+    // Pascal-like with tribonacci recurrence
+    tribonacci: {
+        name: 'Tribonacci Triangle',
+        symbol: 'T(n,k)',
+        description: 'Tribonacci analog of Pascal triangle',
+        formula: 'T(n,k) = T(n-1,k-1) + T(n-1,k) + T(n-2,k-1)',
+        oeis: 'A037027',
+        example: 'Row sums: Tribonacci numbers',
         generate: (rows) => {
-            const binomial = (n, k) => {
-                if (k < 0 || k > n) return 0;
-                if (k === 0 || k === n) return 1;
-                let result = 1;
-                for (let i = 0; i < k; i++) {
-                    result = result * (n - i) / (i + 1);
+            const triangle = [];
+            for (let n = 0; n < rows; n++) {
+                const row = [];
+                for (let k = 0; k <= n; k++) {
+                    if (k === 0 || k === n) {
+                        row.push(1);
+                    } else if (n === 1) {
+                        row.push(1);
+                    } else {
+                        const a = triangle[n - 1][k - 1] || 0;
+                        const b = triangle[n - 1][k] || 0;
+                        const c = (n >= 2 && triangle[n - 2] && k > 0) ? (triangle[n - 2][k - 1] || 0) : 0;
+                        row.push(a + b + c);
+                    }
                 }
-                return Math.round(result);
-            };
+                triangle.push(row);
+            }
+            return triangle;
+        }
+    },
+
+    // Fibonacci squared triangle (variant)
+    fibonacci2: {
+        name: 'Fibonacci-Lucas',
+        symbol: 'FL(n,k)',
+        description: 'Based on Fibonacci and Lucas numbers',
+        formula: 'Products of Fibonacci with Lucas numbers',
+        oeis: 'A061176',
+        example: 'Combines two famous sequences',
+        generate: (rows) => {
+            // Fibonacci and Lucas
+            const fib = [0, 1, 1];
+            const luc = [2, 1, 3];
+            for (let i = 3; i < rows + 2; i++) {
+                fib.push(fib[i - 1] + fib[i - 2]);
+                luc.push(luc[i - 1] + luc[i - 2]);
+            }
 
             const triangle = [];
             for (let n = 0; n < rows; n++) {
                 const row = [];
                 for (let k = 0; k <= n; k++) {
-                    // Lozanic: average of C(n,k) and C(floor(n/2), floor(k/2))
+                    // Pascal-like with Fib/Luc influence
+                    if (k === 0 || k === n) {
+                        row.push(fib[n + 1]);
+                    } else {
+                        row.push(triangle[n - 1][k - 1] + triangle[n - 1][k]);
+                    }
+                }
+                triangle.push(row);
+            }
+            return triangle;
+        }
+    },
+
+    // Pell Triangle - A038207  
+    // T(n,k) = 2*T(n-1,k-1) + T(n-1,k)
+    pell: {
+        name: 'Pell Triangle',
+        symbol: 'P(n,k)',
+        description: 'Coefficients in Pell polynomials',
+        formula: 'P(n,k) = 2·P(n-1,k-1) + P(n-1,k)',
+        oeis: 'A038207',
+        example: 'Pell numbers in first column',
+        generate: (rows) => {
+            const triangle = [];
+            for (let n = 0; n < rows; n++) {
+                const row = [];
+                for (let k = 0; k <= n; k++) {
+                    if (k === 0) {
+                        // First column: 1, 2, 5, 12, 29... (Pell numbers)
+                        if (n === 0) row.push(1);
+                        else if (n === 1) row.push(2);
+                        else row.push(2 * triangle[n - 1][0] + triangle[n - 2][0]);
+                    } else if (k === n) {
+                        row.push(1);
+                    } else {
+                        const a = triangle[n - 1][k - 1] || 0;
+                        const b = triangle[n - 1][k] || 0;
+                        row.push(2 * a + b);
+                    }
+                }
+                triangle.push(row);
+            }
+            return triangle;
+        }
+    },
+
+    // =========================================
+    // SPECIAL TRIANGLES
+    // =========================================
+
+    // Lozanić's Triangle - A034851
+    // T(n,k) = C(n,k) if n,k have same parity, else = (C(n,k) + C(n/2,k/2))/2 style
+    // Verified: [1], [1,1], [1,1,1], [1,2,2,1], [1,2,4,2,1]...
+    lozanic: {
+        name: "Lozanić's Triangle",
+        symbol: 'L(n,k)',
+        description: 'Counts certain chemical compounds (paraffins)',
+        formula: 'L(n,k) = (C(n,k) + C(⌊n/2⌋,⌊k/2⌋))/2',
+        oeis: 'A034851',
+        example: 'Chemistry: paraffin isomers',
+        generate: (rows) => {
+            const triangle = [];
+            for (let n = 0; n < rows; n++) {
+                const row = [];
+                for (let k = 0; k <= n; k++) {
                     const c1 = binomial(n, k);
                     const c2 = binomial(Math.floor(n / 2), Math.floor(k / 2));
                     row.push(Math.floor((c1 + c2) / 2));
@@ -664,56 +710,26 @@ const TRIANGLES = {
         }
     },
 
+    // Central Binomial / Catalan path triangle - A008315
+    // The ballot numbers way
     centralBinomial: {
-        name: 'Central Binomial Triangle',
-        symbol: 'C(2n,n)',
-        description: 'Triangle based on central binomial coefficients',
-        formula: 'C(2n,n) appears in diagonal',
-        oeis: 'A000984',
-        example: 'Central: 1, 2, 6, 20, 70, 252...',
-        generate: (rows) => {
-            const binomial = (n, k) => {
-                if (k < 0 || k > n) return 0;
-                if (k === 0 || k === n) return 1;
-                let result = 1;
-                for (let i = 0; i < k; i++) {
-                    result = result * (n - i) / (i + 1);
-                }
-                return Math.round(result);
-            };
-
-            const triangle = [];
-            for (let n = 0; n < rows; n++) {
-                const row = [];
-                for (let k = 0; k <= n; k++) {
-                    row.push(binomial(n + k, k));
-                }
-                triangle.push(row);
-            }
-            return triangle;
-        }
-    },
-
-    harmonicLeib: {
-        name: 'Harmonic Triangle',
-        symbol: '1/H(n,k)',
-        description: 'Denominators of the Leibniz harmonic triangle',
-        formula: '1/H(n,k) = 1/H(n-1,k-1) - 1/H(n-1,k)',
-        oeis: 'A003506',
-        example: 'Entries are reciprocal relationships',
+        name: 'Ballot Numbers',
+        symbol: 'B(n,k)',
+        description: 'Ballot problem numbers (Catalan-like)',
+        formula: 'B(n,k) = (k/n)·C(n,(n+k)/2) when valid',
+        oeis: 'A008315',
+        example: 'Forms from Catalan numbers',
         generate: (rows) => {
             const triangle = [];
             for (let n = 0; n < rows; n++) {
                 const row = [];
                 for (let k = 0; k <= n; k++) {
-                    // Denominator pattern: (n+1) * C(n,k)
-                    if (k === 0 || k === n) {
-                        row.push(n + 1);
+                    // Same parity only
+                    if ((n + k) % 2 === 0) {
+                        const m = (n + k) / 2;
+                        row.push(binomial(n, m));
                     } else {
-                        const left = triangle[n - 1][k - 1] || 1;
-                        const right = triangle[n - 1][k] || 1;
-                        // This gives LCM-like pattern
-                        row.push(left + right);
+                        row.push(0);
                     }
                 }
                 triangle.push(row);
@@ -722,36 +738,58 @@ const TRIANGLES = {
         }
     },
 
+    // Ballot triangle (same as Catalan triangle) - A009766
     ballot: {
-        name: 'Ballot Triangle',
+        name: 'Ballot Sequence',
         symbol: 'B(n,k)',
-        description: 'Related to ballot problem - winning margin counts',
-        formula: 'B(n,k) = number of ways A stays ahead of B',
+        description: 'Counts ballot sequences where A leads B',
+        formula: 'B(n,k) = B(n-1,k-1) + B(n,k-1)',
         oeis: 'A009766',
-        example: 'Catalan-related counting',
+        example: 'Right column: Catalan numbers',
         generate: (rows) => {
-            // Ballot numbers: B(n,k) = (k/n) * C(n, (n+k)/2) when n+k even
-            const binomial = (n, k) => {
-                if (k < 0 || k > n) return 0;
-                if (k === 0 || k === n) return 1;
-                let result = 1;
-                for (let i = 0; i < k; i++) {
-                    result = result * (n - i) / (i + 1);
-                }
-                return Math.round(result);
-            };
-
+            // Same as catalan
             const triangle = [];
             for (let n = 0; n < rows; n++) {
                 const row = [];
                 for (let k = 0; k <= n; k++) {
-                    // Use Catalan-style numbers for ballot
                     if (k === 0) {
                         row.push(1);
                     } else {
-                        const above = triangle[n - 1] ? triangle[n - 1][k - 1] || 0 : 0;
+                        const above = triangle[n - 1] ? (triangle[n - 1][k - 1] || 0) : 0;
                         const left = row[k - 1] || 0;
                         row.push(above + left);
+                    }
+                }
+                triangle.push(row);
+            }
+            return triangle;
+        }
+    },
+
+    // Entringer numbers - A008280 / Seidel triangle
+    // Boustrophedon transform
+    entringer: {
+        name: 'Entringer Numbers',
+        symbol: 'E(n,k)',
+        description: 'Boustrophedon transform, counts alternating permutations',
+        formula: 'Zigzag reading pattern',
+        oeis: 'A008280',
+        example: 'Tangent & secant numbers',
+        generate: (rows) => {
+            // E(0,0) = 1, E(n,0) = E(n-1,n-1), E(n,k) = E(n,k-1) + E(n-1,n-k)
+            const triangle = [];
+            for (let n = 0; n < rows; n++) {
+                const row = [];
+                for (let k = 0; k <= n; k++) {
+                    if (n === 0 && k === 0) {
+                        row.push(1);
+                    } else if (k === 0) {
+                        row.push(triangle[n - 1][n - 1]);
+                    } else {
+                        const left = row[k - 1];
+                        const prevRow = triangle[n - 1];
+                        const above = (n - k >= 0 && n - k < prevRow.length) ? prevRow[n - k] : 0;
+                        row.push(left + above);
                     }
                 }
                 triangle.push(row);

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ellipse Analyzer - Coordinate Geometry</title>
+    <meta name="description" content="Analyze ellipse equations: foci, vertices, eccentricity, and more.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../conic-shared.css">
+</head>
+
+<body>
+    <!-- Landing Page -->
+    <div id="landing" class="landing">
+        <header class="landing-header">
+            <div class="logo"><span class="logo-icon">🥚</span><span class="logo-text">Coordinate Geometry</span></div>
+        </header>
+        <main class="landing-main">
+            <h1 class="landing-title"><span class="gradient-text">Ellipse Analyzer</span></h1>
+            <p class="landing-subtitle">Enter an ellipse equation and explore foci, vertices, eccentricity, and more</p>
+            <div class="custom-input-section">
+                <h3>📝 Enter Your Equation</h3>
+                <div class="input-row">
+                    <input type="text" id="customEquation" class="equation-input" placeholder="e.g., x²/9 + y²/4 = 1">
+                    <button id="analyzeBtn" class="btn btn-primary">Analyze →</button>
+                </div>
+            </div>
+            <h3 style="margin: 28px 0 14px; color: var(--text-secondary); font-size: 0.95rem;">Or choose a preset:</h3>
+            <div class="preset-grid" id="presetGrid"></div>
+        </main>
+        <footer class="landing-footer">
+            <p>Part of the STEM Visualization Hub</p>
+        </footer>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="app-container hidden">
+        <aside class="left-panel">
+            <div class="panel equation-panel">
+                <div class="panel-header compact">
+                    <h2>Equation</h2><button class="btn btn-ghost btn-xs" id="backToLanding">← Back</button>
+                </div>
+                <div class="panel-body">
+                    <div id="equationDisplay" class="equation-display">x²/9 + y²/4 = 1</div>
+                    <input type="text" id="editEquation" class="edit-equation-input" placeholder="Edit equation...">
+                    <div class="control-group"><label>Quick Presets</label><select id="presetSelect" class="select">
+                            <option value="">Select a preset...</option>
+                        </select></div>
+                </div>
+            </div>
+            <div class="panel controls-panel">
+                <div class="panel-header compact">
+                    <h2>Display Options</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="control-group"><label class="checkbox-label"><input type="checkbox" id="showGrid"
+                                checked><span>Show Grid</span></label></div>
+                    <div class="control-group"><label class="checkbox-label"><input type="checkbox" id="showLabels"
+                                checked><span>Show Labels</span></label></div>
+                    <div class="control-group"><label class="checkbox-label"><input type="checkbox" id="showDirectrices"
+                                checked><span>Show Directrices</span></label></div>
+                    <button id="resetView" class="btn btn-ghost btn-sm" style="width: 100%; margin-top: 10px;">↺ Reset
+                        View</button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-panel">
+            <div class="panel visualization-panel">
+                <div class="panel-header compact">
+                    <h2>Ellipse Visualization</h2>
+                    <div class="header-right">
+                        <span class="badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">Ellipse</span>
+                        <button class="btn btn-xs" id="fullscreenBtn">⛶</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="canvas-container">
+                        <canvas id="ellipseCanvas"></canvas>
+                        <div class="legend">
+                            <div class="legend-item"><span class="legend-color conic"></span><span>Ellipse</span></div>
+                            <div class="legend-item"><span class="legend-color center"></span><span>Center</span></div>
+                            <div class="legend-item"><span class="legend-color focus"></span><span>Foci</span></div>
+                            <div class="legend-item"><span class="legend-color vertex"></span><span>Vertices</span>
+                            </div>
+                            <div class="legend-item"><span
+                                    class="legend-color directrix"></span><span>Directrices</span></div>
+                        </div>
+                        <div class="coord-display"><span id="coordDisplay">(0, 0)</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="stats-bar">
+                <div class="stat"><span class="stat-label">Center</span><span id="statCenter" class="stat-value">(0,
+                        0)</span></div>
+                <div class="stat"><span class="stat-label">Semi-Major a</span><span id="statA"
+                        class="stat-value">3</span></div>
+                <div class="stat"><span class="stat-label">Semi-Minor b</span><span id="statB"
+                        class="stat-value">2</span></div>
+                <div class="stat"><span class="stat-label">Eccentricity</span><span id="statEcc"
+                        class="stat-value">0.745</span></div>
+            </div>
+        </main>
+
+        <aside class="right-panel">
+            <div class="panel properties-panel">
+                <div class="panel-header compact">
+                    <h2>Ellipse Properties</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="property-section">
+                        <div class="property-section-title">Key Values</div>
+                        <div class="property-row"><span class="property-label">Center</span><span id="propCenter"
+                                class="property-value highlight-center">(0, 0)</span></div>
+                        <div class="property-row"><span class="property-label">Semi-Major a</span><span id="propA"
+                                class="property-value">3</span></div>
+                        <div class="property-row"><span class="property-label">Semi-Minor b</span><span id="propB"
+                                class="property-value">2</span></div>
+                        <div class="property-row"><span class="property-label">Orientation</span><span
+                                id="propOrientation" class="property-value">Horizontal</span></div>
+                    </div>
+                    <div class="property-section">
+                        <div class="property-section-title">Foci & Vertices</div>
+                        <div class="property-row" style="flex-direction: column; align-items: flex-start;">
+                            <span class="property-label">Foci</span>
+                            <div id="propFoci" class="points-list"><span class="point-tag">(√5, 0)</span><span
+                                    class="point-tag">(-√5, 0)</span></div>
+                        </div>
+                        <div class="property-row"
+                            style="flex-direction: column; align-items: flex-start; margin-top: 6px;">
+                            <span class="property-label">Vertices</span>
+                            <div id="propVertices" class="points-list"><span class="point-tag">(3, 0)</span><span
+                                    class="point-tag">(-3, 0)</span></div>
+                        </div>
+                        <div class="property-row"
+                            style="flex-direction: column; align-items: flex-start; margin-top: 6px;">
+                            <span class="property-label">Co-Vertices</span>
+                            <div id="propCoVertices" class="points-list"><span class="point-tag">(0, 2)</span><span
+                                    class="point-tag">(0, -2)</span></div>
+                        </div>
+                    </div>
+                    <div class="property-section">
+                        <div class="property-section-title">Parameters</div>
+                        <div class="property-row"><span class="property-label">Focal Distance c</span><span id="propC"
+                                class="property-value highlight-focus">√5</span></div>
+                        <div class="property-row"><span class="property-label">Eccentricity e</span><span id="propEcc"
+                                class="property-value">0.745</span></div>
+                        <div class="property-row"><span class="property-label">Latus Rectum</span><span id="propLatus"
+                                class="property-value">2.67</span></div>
+                        <div class="property-row"><span class="property-label">Area</span><span id="propArea"
+                                class="property-value highlight-conic">6π</span></div>
+                    </div>
+                    <div class="property-section">
+                        <div class="property-section-title">Equations</div>
+                        <div class="equation-box"><span class="equation-label">Standard Form</span>
+                            <div id="propStandard">x²/9 + y²/4 = 1</div>
+                        </div>
+                        <div class="equation-box"><span class="equation-label">Parametric</span>
+                            <div id="propParametric">x=3cos(t), y=2sin(t)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <div id="tooltip" class="tooltip hidden"></div>
+    <script src="ellipse-engine.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

@@ -57,10 +57,31 @@ const CATEGORIES = {
             },
             {
                 id: 'coordinate-geometry',
-                name: 'Coordinate Geometry',
+                name: 'Parabola Analyzer',
                 icon: '📍',
                 description: 'Analyze parabolas: vertex, focus, directrix, axis of symmetry, and more.',
                 path: 'tools/geometry/coordinate-geometry/parabola-analyzer/index.html'
+            },
+            {
+                id: 'circle-analyzer',
+                name: 'Circle Analyzer',
+                icon: '⭕',
+                description: 'Analyze circles: center, radius, area, circumference, and intercepts.',
+                path: 'tools/geometry/coordinate-geometry/circle-analyzer/index.html'
+            },
+            {
+                id: 'ellipse-analyzer',
+                name: 'Ellipse Analyzer',
+                icon: '🥚',
+                description: 'Analyze ellipses: foci, vertices, eccentricity, directrices, and more.',
+                path: 'tools/geometry/coordinate-geometry/ellipse-analyzer/index.html'
+            },
+            {
+                id: 'hyperbola-analyzer',
+                name: 'Hyperbola Analyzer',
+                icon: '⋈',
+                description: 'Analyze hyperbolas: foci, asymptotes, vertices, eccentricity, and more.',
+                path: 'tools/geometry/coordinate-geometry/hyperbola-analyzer/index.html'
             },
             {
                 id: 'spectral-graph',

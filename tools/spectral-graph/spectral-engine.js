@@ -78,50 +78,116 @@ class SpectralEngine {
         };
     }
 
-    jacobiEigenvalue(matrix, maxIter = 100, tol = 1e-10) {
+    /**
+     * Jacobi eigenvalue algorithm for symmetric matrices
+     * Improved version with better numerical stability
+     */
+    jacobiEigenvalue(matrix, maxIter = 200, tol = 1e-12) {
         const n = matrix.length;
-        let A = matrix.map(row => [...row]);
-        let V = Array(n).fill(0).map((_, i) => Array(n).fill(0).map((_, j) => i === j ? 1 : 0));
 
-        for (let iter = 0; iter < maxIter; iter++) {
-            let maxVal = 0, p = 0, q = 1;
-            for (let i = 0; i < n; i++) {
-                for (let j = i + 1; j < n; j++) {
-                    if (Math.abs(A[i][j]) > maxVal) { maxVal = Math.abs(A[i][j]); p = i; q = j; }
-                }
-            }
-            if (maxVal < tol) break;
-
-            const diff = A[q][q] - A[p][p];
-            let t = Math.abs(diff) < tol ? (A[p][q] > 0 ? 1 : -1) :
-                1 / (Math.abs(diff / (2 * A[p][q])) + Math.sqrt((diff / (2 * A[p][q])) ** 2 + 1));
-            if (diff < 0 && Math.abs(diff) >= tol) t = -t;
-
-            const c = 1 / Math.sqrt(t * t + 1), s = t * c;
-            const newA = A.map(row => [...row]);
-
-            for (let i = 0; i < n; i++) {
-                if (i !== p && i !== q) {
-                    newA[i][p] = newA[p][i] = c * A[i][p] - s * A[i][q];
-                    newA[i][q] = newA[q][i] = s * A[i][p] + c * A[i][q];
-                }
-            }
-            newA[p][p] = c * c * A[p][p] - 2 * s * c * A[p][q] + s * s * A[q][q];
-            newA[q][q] = s * s * A[p][p] + 2 * s * c * A[p][q] + c * c * A[q][q];
-            newA[p][q] = newA[q][p] = 0;
-            A = newA;
-
-            for (let i = 0; i < n; i++) {
-                const vip = V[i][p], viq = V[i][q];
-                V[i][p] = c * vip - s * viq;
-                V[i][q] = s * vip + c * viq;
+        // Make a fresh copy
+        let A = [];
+        for (let i = 0; i < n; i++) {
+            A[i] = [];
+            for (let j = 0; j < n; j++) {
+                A[i][j] = matrix[i][j];
             }
         }
 
-        return {
-            eigenvalues: A.map((row, i) => row[i]),
-            eigenvectors: Array(n).fill(0).map((_, i) => Array(n).fill(0).map((_, j) => V[j][i]))
-        };
+        // Initialize eigenvector matrix as identity
+        let V = [];
+        for (let i = 0; i < n; i++) {
+            V[i] = [];
+            for (let j = 0; j < n; j++) {
+                V[i][j] = (i === j) ? 1 : 0;
+            }
+        }
+
+        for (let iter = 0; iter < maxIter; iter++) {
+            // Find largest off-diagonal element
+            let maxVal = 0;
+            let p = 0, q = 1;
+
+            for (let i = 0; i < n; i++) {
+                for (let j = i + 1; j < n; j++) {
+                    if (Math.abs(A[i][j]) > maxVal) {
+                        maxVal = Math.abs(A[i][j]);
+                        p = i;
+                        q = j;
+                    }
+                }
+            }
+
+            // Check convergence
+            if (maxVal < tol) break;
+
+            // Compute rotation angle
+            const App = A[p][p];
+            const Aqq = A[q][q];
+            const Apq = A[p][q];
+
+            let theta;
+            if (Math.abs(Aqq - App) < tol) {
+                theta = Math.PI / 4;
+                if (Apq < 0) theta = -theta;
+            } else {
+                theta = 0.5 * Math.atan2(2 * Apq, Aqq - App);
+            }
+
+            const c = Math.cos(theta);
+            const s = Math.sin(theta);
+
+            // Apply Givens rotation to A: A' = G^T * A * G
+            // Store old values
+            const oldApp = App;
+            const oldAqq = Aqq;
+            const oldApq = Apq;
+
+            // Update diagonal elements
+            A[p][p] = c * c * oldApp - 2 * s * c * oldApq + s * s * oldAqq;
+            A[q][q] = s * s * oldApp + 2 * s * c * oldApq + c * c * oldAqq;
+            A[p][q] = 0;
+            A[q][p] = 0;
+
+            // Update off-diagonal elements
+            for (let i = 0; i < n; i++) {
+                if (i !== p && i !== q) {
+                    const oldAip = A[i][p];
+                    const oldAiq = A[i][q];
+                    A[i][p] = c * oldAip - s * oldAiq;
+                    A[p][i] = A[i][p];
+                    A[i][q] = s * oldAip + c * oldAiq;
+                    A[q][i] = A[i][q];
+                }
+            }
+
+            // Update eigenvector matrix V' = V * G
+            for (let i = 0; i < n; i++) {
+                const oldVip = V[i][p];
+                const oldViq = V[i][q];
+                V[i][p] = c * oldVip - s * oldViq;
+                V[i][q] = s * oldVip + c * oldViq;
+            }
+        }
+
+        // Extract eigenvalues from diagonal, round near-zero values
+        const eigenvalues = [];
+        for (let i = 0; i < n; i++) {
+            let val = A[i][i];
+            if (Math.abs(val) < 1e-10) val = 0;
+            eigenvalues.push(val);
+        }
+
+        // Get eigenvectors as rows (each column of V is an eigenvector)
+        const eigenvectors = [];
+        for (let i = 0; i < n; i++) {
+            eigenvectors[i] = [];
+            for (let j = 0; j < n; j++) {
+                eigenvectors[i][j] = V[j][i];
+            }
+        }
+
+        return { eigenvalues, eigenvectors };
     }
 
     getFiedlerVector() {

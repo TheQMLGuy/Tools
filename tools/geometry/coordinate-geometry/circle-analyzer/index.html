@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle Analyzer - Coordinate Geometry</title>
+    <meta name="description" content="Analyze circle equations: center, radius, area, circumference, and more.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../conic-shared.css">
+</head>
+
+<body>
+    <!-- Landing Page -->
+    <div id="landing" class="landing">
+        <header class="landing-header">
+            <div class="logo">
+                <span class="logo-icon">⭕</span>
+                <span class="logo-text">Coordinate Geometry</span>
+            </div>
+        </header>
+        <main class="landing-main">
+            <h1 class="landing-title"><span class="gradient-text">Circle Analyzer</span></h1>
+            <p class="landing-subtitle">Enter a circle equation and explore center, radius, area, and more</p>
+            <div class="custom-input-section">
+                <h3>📝 Enter Your Equation</h3>
+                <div class="input-row">
+                    <input type="text" id="customEquation" class="equation-input"
+                        placeholder="e.g., x² + y² = 4 or (x-2)² + (y-3)² = 9">
+                    <button id="analyzeBtn" class="btn btn-primary">Analyze →</button>
+                </div>
+            </div>
+            <h3 style="margin: 28px 0 14px; color: var(--text-secondary); font-size: 0.95rem;">Or choose a preset:</h3>
+            <div class="preset-grid" id="presetGrid"></div>
+        </main>
+        <footer class="landing-footer">
+            <p>Part of the STEM Visualization Hub</p>
+        </footer>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="app-container hidden">
+        <aside class="left-panel">
+            <div class="panel equation-panel">
+                <div class="panel-header compact">
+                    <h2>Equation</h2>
+                    <button class="btn btn-ghost btn-xs" id="backToLanding">← Back</button>
+                </div>
+                <div class="panel-body">
+                    <div id="equationDisplay" class="equation-display">x² + y² = 1</div>
+                    <input type="text" id="editEquation" class="edit-equation-input" placeholder="Edit equation...">
+                    <div class="control-group">
+                        <label>Quick Presets</label>
+                        <select id="presetSelect" class="select">
+                            <option value="">Select a preset...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="panel controls-panel">
+                <div class="panel-header compact">
+                    <h2>Display Options</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="control-group"><label class="checkbox-label"><input type="checkbox" id="showGrid"
+                                checked><span>Show Grid</span></label></div>
+                    <div class="control-group"><label class="checkbox-label"><input type="checkbox" id="showLabels"
+                                checked><span>Show Labels</span></label></div>
+                    <div class="control-group"><label class="checkbox-label"><input type="checkbox" id="showCardinal"
+                                checked><span>Show Cardinal Points</span></label></div>
+                    <button id="resetView" class="btn btn-ghost btn-sm" style="width: 100%; margin-top: 10px;">↺ Reset
+                        View</button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-panel">
+            <div class="panel visualization-panel">
+                <div class="panel-header compact">
+                    <h2>Circle Visualization</h2>
+                    <div class="header-right">
+                        <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">Circle</span>
+                        <button class="btn btn-xs" id="fullscreenBtn">⛶</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="canvas-container">
+                        <canvas id="circleCanvas"></canvas>
+                        <div class="legend">
+                            <div class="legend-item"><span class="legend-color conic"></span><span>Circle</span></div>
+                            <div class="legend-item"><span class="legend-color center"></span><span>Center</span></div>
+                        </div>
+                        <div class="coord-display"><span id="coordDisplay">(0, 0)</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="stats-bar">
+                <div class="stat"><span class="stat-label">Center</span><span id="statCenter" class="stat-value">(0,
+                        0)</span></div>
+                <div class="stat"><span class="stat-label">Radius</span><span id="statRadius"
+                        class="stat-value">1</span></div>
+                <div class="stat"><span class="stat-label">Area</span><span id="statArea" class="stat-value">π</span>
+                </div>
+                <div class="stat"><span class="stat-label">Circumference</span><span id="statCircum"
+                        class="stat-value">2π</span></div>
+            </div>
+        </main>
+
+        <aside class="right-panel">
+            <div class="panel properties-panel">
+                <div class="panel-header compact">
+                    <h2>Circle Properties</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="property-section">
+                        <div class="property-section-title">Key Values</div>
+                        <div class="property-row"><span class="property-label">Center</span><span id="propCenter"
+                                class="property-value highlight-center">(0, 0)</span></div>
+                        <div class="property-row"><span class="property-label">Radius</span><span id="propRadius"
+                                class="property-value">1</span></div>
+                        <div class="property-row"><span class="property-label">Diameter</span><span id="propDiameter"
+                                class="property-value">2</span></div>
+                    </div>
+                    <div class="property-section">
+                        <div class="property-section-title">Measurements</div>
+                        <div class="property-row"><span class="property-label">Area</span><span id="propArea"
+                                class="property-value highlight-conic">π ≈ 3.14</span></div>
+                        <div class="property-row"><span class="property-label">Circumference</span><span id="propCircum"
+                                class="property-value">2π ≈ 6.28</span></div>
+                        <div class="property-row"><span class="property-label">Eccentricity</span><span id="propEcc"
+                                class="property-value">0</span></div>
+                    </div>
+                    <div class="property-section">
+                        <div class="property-section-title">Intercepts</div>
+                        <div class="property-row" style="flex-direction: column; align-items: flex-start;">
+                            <span class="property-label">X-Intercepts</span>
+                            <div id="propXIntercepts" class="points-list"><span class="point-tag">(1, 0)</span><span
+                                    class="point-tag">(-1, 0)</span></div>
+                        </div>
+                        <div class="property-row"
+                            style="flex-direction: column; align-items: flex-start; margin-top: 6px;">
+                            <span class="property-label">Y-Intercepts</span>
+                            <div id="propYIntercepts" class="points-list"><span class="point-tag">(0, 1)</span><span
+                                    class="point-tag">(0, -1)</span></div>
+                        </div>
+                    </div>
+                    <div class="property-section">
+                        <div class="property-section-title">Equation Forms</div>
+                        <div class="equation-box"><span class="equation-label">Standard Form</span>
+                            <div id="propStandard">(x)² + (y)² = 1</div>
+                        </div>
+                        <div class="equation-box"><span class="equation-label">General Form</span>
+                            <div id="propGeneral">x² + y² - 1 = 0</div>
+                        </div>
+                        <div class="equation-box"><span class="equation-label">Parametric</span>
+                            <div id="propParametric">x = cos(t), y = sin(t)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <div id="tooltip" class="tooltip hidden"></div>
+    <script src="circle-engine.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
