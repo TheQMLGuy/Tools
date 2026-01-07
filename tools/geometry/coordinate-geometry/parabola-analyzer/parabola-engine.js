@@ -1,468 +1,838 @@
 /**
- * Parabola Engine - Coordinate Geometry Calculations
- * Computes all properties of a parabola from quadratic equations
+ * Advanced Parabola Engine - Comprehensive Coordinate Geometry
+ * 
+ * Features:
+ * - Multiple forms: y² = 4ax, x² = 4ay, (y-k)² = 4a(x-h), (x-h)² = 4a(y-k)
+ * - Parametric representation: (at², 2at)
+ * - Bidirectional input: define by equation, focus, directrix, vertex, or latus rectum
+ * - Line tools: tangent, normal, chord with multiple input methods
+ * - Advanced constructions: director circle, chord of contact, focal chord, diameter
  */
 
-class ParabolaEngine {
+class AdvancedParabolaEngine {
     constructor() {
         this.reset();
     }
 
     reset() {
-        // Standard form: y = ax² + bx + c (vertical) or x = ay² + by + c (horizontal)
-        this.a = 1;
-        this.b = 0;
-        this.c = 0;
-        this.orientation = 'vertical'; // 'vertical' or 'horizontal'
+        // Canonical parameters (all parabolas reduce to this)
+        this.a = 1;          // Parameter 'a' in y² = 4ax
+        this.h = 0;          // Vertex x
+        this.k = 0;          // Vertex y
+        this.orientation = 'right'; // 'right', 'left', 'up', 'down'
+
+        // Derived properties
         this.properties = null;
+
+        // Active lines (tangent, normal, chord)
+        this.lines = [];
+
+        // Parametric point
+        this.currentT = 1;
     }
 
+    // =====================================================
+    // BIDIRECTIONAL SETTERS - Any can define the parabola
+    // =====================================================
+
     /**
-     * Parse equation string into coefficients
-     * Supports: y = ax² + bx + c, y = ax^2 + bx + c, x = ay² + by + c
+     * Set from equation string
+     * Supports: y² = 4ax, x² = 4ay, y = ax² + bx + c, x = ay² + by + c
      */
-    parseEquation(equation) {
-        // Clean the equation
+    setFromEquation(equation) {
         let eq = equation.replace(/\s+/g, '').toLowerCase();
+        eq = eq.replace(/²/g, '^2');
 
-        // Determine orientation
-        if (eq.startsWith('x=')) {
-            this.orientation = 'horizontal';
-            eq = eq.substring(2);
-            return this._parseQuadraticExpression(eq, 'y');
-        } else if (eq.startsWith('y=')) {
-            this.orientation = 'vertical';
-            eq = eq.substring(2);
-            return this._parseQuadraticExpression(eq, 'x');
-        } else {
-            // Assume vertical: y = ...
-            this.orientation = 'vertical';
-            return this._parseQuadraticExpression(eq, 'x');
-        }
-    }
-
-    _parseQuadraticExpression(expr, variable) {
-        // Handle patterns: ax², ax^2, x², x^2, etc.
-        let a = 0, b = 0, c = 0;
-
-        // Normalize power notation: x² -> x^2, y² -> y^2
-        expr = expr.replace(/²/g, '^2');
-
-        // Match coefficient for squared term: ax^2
-        const sqPattern = new RegExp(`([+-]?[\\d.]*(?:\\/[\\d.]+)?)?${variable}\\^2`, 'g');
-        const sqMatch = expr.match(sqPattern);
-        if (sqMatch) {
-            for (const match of sqMatch) {
-                const coef = match.replace(new RegExp(`${variable}\\^2`, 'g'), '');
-                a += this._parseCoefficient(coef);
-            }
+        // Pattern: y^2 = 4ax or y² = 4ax (right-opening)
+        let match = eq.match(/y\^2=(\d*\.?\d*)x/);
+        if (match) {
+            const coef = parseFloat(match[1]) || 4;
+            this.a = coef / 4;
+            this.h = 0;
+            this.k = 0;
+            this.orientation = 'right';
+            return this.calculate();
         }
 
-        // Match coefficient for linear term: bx (not followed by ^2)
-        // First remove squared terms to avoid confusion
-        let linearExpr = expr.replace(sqPattern, '');
-        const linPattern = new RegExp(`([+-]?[\\d.]*(?:\\/[\\d.]+)?)?${variable}(?![\\^])`, 'g');
-        const linMatch = linearExpr.match(linPattern);
-        if (linMatch) {
-            for (const match of linMatch) {
-                const coef = match.replace(new RegExp(variable, 'g'), '');
-                b += this._parseCoefficient(coef);
-            }
+        // Pattern: y^2 = -4ax (left-opening)
+        match = eq.match(/y\^2=-(\d*\.?\d*)x/);
+        if (match) {
+            const coef = parseFloat(match[1]) || 4;
+            this.a = coef / 4;
+            this.h = 0;
+            this.k = 0;
+            this.orientation = 'left';
+            return this.calculate();
         }
 
-        // Match constant term
-        // Remove variable terms and parse remaining numbers
-        let constExpr = linearExpr.replace(linPattern, '');
-        const constMatch = constExpr.match(/[+-]?[\d.]+(?:\/[\d.]+)?/g);
-        if (constMatch) {
-            for (const match of constMatch) {
-                c += this._parseCoefficient(match);
-            }
+        // Pattern: x^2 = 4ay (up-opening)
+        match = eq.match(/x\^2=(\d*\.?\d*)y/);
+        if (match) {
+            const coef = parseFloat(match[1]) || 4;
+            this.a = coef / 4;
+            this.h = 0;
+            this.k = 0;
+            this.orientation = 'up';
+            return this.calculate();
         }
 
-        this.a = a !== 0 ? a : 1; // Default to 1 if no squared term coefficient
-        this.b = b;
-        this.c = c;
-
-        return { a: this.a, b: this.b, c: this.c };
-    }
-
-    _parseCoefficient(str) {
-        if (!str || str === '' || str === '+') return 1;
-        if (str === '-') return -1;
-
-        // Handle fractions
-        if (str.includes('/')) {
-            const [num, den] = str.split('/');
-            return parseFloat(num) / parseFloat(den);
+        // Pattern: x^2 = -4ay (down-opening)
+        match = eq.match(/x\^2=-(\d*\.?\d*)y/);
+        if (match) {
+            const coef = parseFloat(match[1]) || 4;
+            this.a = coef / 4;
+            this.h = 0;
+            this.k = 0;
+            this.orientation = 'down';
+            return this.calculate();
         }
 
-        return parseFloat(str);
-    }
+        // Pattern: y = ax^2 + bx + c (vertical, convert to standard form)
+        match = eq.match(/y=([+-]?\d*\.?\d*)x\^2([+-]\d*\.?\d*)?x?([+-]\d*\.?\d*)?/);
+        if (match) {
+            const A = parseFloat(match[1]) || 1;
+            const B = parseFloat(match[2]) || 0;
+            const C = parseFloat(match[3]) || 0;
 
-    /**
-     * Set coefficients directly
-     */
-    setCoefficients(a, b, c, orientation = 'vertical') {
-        this.a = a;
-        this.b = b;
-        this.c = c;
-        this.orientation = orientation;
+            // Convert to vertex form: y = A(x - h)² + k
+            this.h = -B / (2 * A);
+            this.k = C - (B * B) / (4 * A);
+            this.a = 1 / (4 * Math.abs(A));
+            this.orientation = A > 0 ? 'up' : 'down';
+            return this.calculate();
+        }
+
+        // Pattern: (y-k)^2 = 4a(x-h) - shifted horizontal
+        match = eq.match(/\(y([+-][\d.]+)?\)\^2=(\d*\.?\d*)\(x([+-][\d.]+)?\)/);
+        if (match) {
+            this.k = match[1] ? -parseFloat(match[1]) : 0;
+            const coef = parseFloat(match[2]) || 4;
+            this.a = coef / 4;
+            this.h = match[3] ? -parseFloat(match[3]) : 0;
+            this.orientation = 'right';
+            return this.calculate();
+        }
+
+        return { error: 'Could not parse equation' };
     }
 
     /**
-     * Calculate all parabola properties
+     * Set from focus coordinates
      */
-    calculate() {
-        const { a, b, c, orientation } = this;
+    setFromFocus(fx, fy, vertexX = null, vertexY = null) {
+        if (vertexX !== null && vertexY !== null) {
+            this.h = vertexX;
+            this.k = vertexY;
 
-        if (a === 0) {
-            return { error: 'Not a parabola (a = 0)' };
-        }
+            // Determine orientation and 'a' from focus-vertex distance
+            const dx = fx - vertexX;
+            const dy = fy - vertexY;
 
-        // Vertex: (h, k) where h = -b/(2a), k = c - b²/(4a)
-        const h = -b / (2 * a);
-        const k = c - (b * b) / (4 * a);
-
-        // Parameter p (distance from vertex to focus)
-        // For y = ax², we have (x-h)² = (1/a)(y-k), so 4p = 1/a, p = 1/(4a)
-        const p = 1 / (4 * a);
-
-        // Direction
-        let direction;
-        if (orientation === 'vertical') {
-            direction = a > 0 ? 'up' : 'down';
-        } else {
-            direction = a > 0 ? 'right' : 'left';
-        }
-
-        // Focus
-        let focus;
-        if (orientation === 'vertical') {
-            focus = { x: h, y: k + p };
-        } else {
-            focus = { x: h + p, y: k };
-        }
-
-        // Directrix
-        let directrix;
-        if (orientation === 'vertical') {
-            directrix = { type: 'horizontal', value: k - p, equation: `y = ${this._formatNumber(k - p)}` };
-        } else {
-            directrix = { type: 'vertical', value: h - p, equation: `x = ${this._formatNumber(h - p)}` };
-        }
-
-        // Axis of symmetry
-        let axisOfSymmetry;
-        if (orientation === 'vertical') {
-            axisOfSymmetry = { type: 'vertical', value: h, equation: `x = ${this._formatNumber(h)}` };
-        } else {
-            axisOfSymmetry = { type: 'horizontal', value: k, equation: `y = ${this._formatNumber(k)}` };
-        }
-
-        // Latus rectum length = |4p| = |1/a|
-        const latusRectumLength = Math.abs(4 * p);
-
-        // Latus rectum endpoints
-        let latusRectumEndpoints;
-        if (orientation === 'vertical') {
-            latusRectumEndpoints = [
-                { x: focus.x - latusRectumLength / 2, y: focus.y },
-                { x: focus.x + latusRectumLength / 2, y: focus.y }
-            ];
-        } else {
-            latusRectumEndpoints = [
-                { x: focus.x, y: focus.y - latusRectumLength / 2 },
-                { x: focus.x, y: focus.y + latusRectumLength / 2 }
-            ];
-        }
-
-        // X-intercepts (for vertical parabola)
-        let xIntercepts = [];
-        if (orientation === 'vertical') {
-            const discriminant = b * b - 4 * a * c;
-            if (discriminant > 0) {
-                xIntercepts = [
-                    { x: (-b + Math.sqrt(discriminant)) / (2 * a), y: 0 },
-                    { x: (-b - Math.sqrt(discriminant)) / (2 * a), y: 0 }
-                ];
-            } else if (discriminant === 0) {
-                xIntercepts = [{ x: -b / (2 * a), y: 0 }];
-            }
-        } else {
-            // For horizontal parabola, x-intercept at y=0
-            xIntercepts = [{ x: c, y: 0 }];
-        }
-
-        // Y-intercept
-        let yIntercept;
-        if (orientation === 'vertical') {
-            yIntercept = { x: 0, y: c };
-        } else {
-            // For horizontal parabola: x = ay² + by + c at x=0
-            const discriminant = b * b - 4 * a * (-c);
-            if (discriminant >= 0) {
-                const y1 = (-b + Math.sqrt(discriminant)) / (2 * a);
-                const y2 = (-b - Math.sqrt(discriminant)) / (2 * a);
-                yIntercept = discriminant === 0 ? [{ x: 0, y: y1 }] : [{ x: 0, y: y1 }, { x: 0, y: y2 }];
+            if (Math.abs(dx) > Math.abs(dy)) {
+                // Horizontal parabola
+                this.a = Math.abs(dx);
+                this.orientation = dx > 0 ? 'right' : 'left';
             } else {
-                yIntercept = [];
+                // Vertical parabola
+                this.a = Math.abs(dy);
+                this.orientation = dy > 0 ? 'up' : 'down';
+            }
+        } else {
+            // Assume vertex at origin
+            this.h = 0;
+            this.k = 0;
+
+            if (Math.abs(fx) > Math.abs(fy)) {
+                this.a = Math.abs(fx);
+                this.orientation = fx > 0 ? 'right' : 'left';
+            } else {
+                this.a = Math.abs(fy);
+                this.orientation = fy > 0 ? 'up' : 'down';
             }
         }
 
-        // Standard form equations
-        let vertexForm, standardForm;
-        if (orientation === 'vertical') {
-            vertexForm = `y = ${this._formatCoef(a)}(x ${this._formatOffset(-h)})² ${this._formatOffset(k)}`;
-            standardForm = `(x ${this._formatOffset(-h)})² = ${this._formatNumber(4 * p)}(y ${this._formatOffset(-k)})`;
-        } else {
-            vertexForm = `x = ${this._formatCoef(a)}(y ${this._formatOffset(-k)})² ${this._formatOffset(h)}`;
-            standardForm = `(y ${this._formatOffset(-k)})² = ${this._formatNumber(4 * p)}(x ${this._formatOffset(-h)})`;
+        return this.calculate();
+    }
+
+    /**
+     * Set from directrix
+     * @param {string} directrixEq - Equation like "x = -2" or "y = 3"
+     * @param {number} vertexX - Optional vertex x
+     * @param {number} vertexY - Optional vertex y
+     */
+    setFromDirectrix(directrixEq, vertexX = null, vertexY = null) {
+        const eq = directrixEq.replace(/\s+/g, '').toLowerCase();
+
+        // Parse directrix: x = value or y = value
+        let match = eq.match(/x=([+-]?\d*\.?\d+)/);
+        if (match) {
+            const dx = parseFloat(match[1]);
+            if (vertexX !== null) {
+                this.a = Math.abs(vertexX - dx);
+                this.h = vertexX;
+                this.k = vertexY || 0;
+                this.orientation = vertexX > dx ? 'right' : 'left';
+            } else {
+                this.a = Math.abs(dx);
+                this.h = 0;
+                this.k = 0;
+                this.orientation = dx < 0 ? 'right' : 'left';
+            }
+            return this.calculate();
         }
+
+        match = eq.match(/y=([+-]?\d*\.?\d+)/);
+        if (match) {
+            const dy = parseFloat(match[1]);
+            if (vertexY !== null) {
+                this.a = Math.abs(vertexY - dy);
+                this.h = vertexX || 0;
+                this.k = vertexY;
+                this.orientation = vertexY > dy ? 'up' : 'down';
+            } else {
+                this.a = Math.abs(dy);
+                this.h = 0;
+                this.k = 0;
+                this.orientation = dy < 0 ? 'up' : 'down';
+            }
+            return this.calculate();
+        }
+
+        return { error: 'Invalid directrix format' };
+    }
+
+    /**
+     * Set from latus rectum length
+     */
+    setFromLatusRectum(length, orientation = 'right', h = 0, k = 0) {
+        this.a = length / 4;
+        this.orientation = orientation;
+        this.h = h;
+        this.k = k;
+        return this.calculate();
+    }
+
+    /**
+     * Set from parameter 'a' directly
+     */
+    setFromParameter(a, orientation = 'right', h = 0, k = 0) {
+        this.a = Math.abs(a);
+        this.orientation = orientation;
+        this.h = h;
+        this.k = k;
+        return this.calculate();
+    }
+
+    /**
+     * Set vertex position (preserves 'a' and orientation)
+     */
+    setVertex(h, k) {
+        this.h = h;
+        this.k = k;
+        return this.calculate();
+    }
+
+    // =====================================================
+    // CALCULATE ALL PROPERTIES
+    // =====================================================
+
+    calculate() {
+        const { a, h, k, orientation } = this;
+
+        if (a <= 0) {
+            return { error: 'Parameter a must be positive' };
+        }
+
+        // Vertex
+        const vertex = { x: h, y: k };
+
+        // Focus and directrix based on orientation
+        let focus, directrix, axisOfSymmetry;
+
+        switch (orientation) {
+            case 'right':
+                focus = { x: h + a, y: k };
+                directrix = { type: 'vertical', value: h - a, equation: `x = ${this._fmt(h - a)}` };
+                axisOfSymmetry = { type: 'horizontal', value: k, equation: `y = ${this._fmt(k)}` };
+                break;
+            case 'left':
+                focus = { x: h - a, y: k };
+                directrix = { type: 'vertical', value: h + a, equation: `x = ${this._fmt(h + a)}` };
+                axisOfSymmetry = { type: 'horizontal', value: k, equation: `y = ${this._fmt(k)}` };
+                break;
+            case 'up':
+                focus = { x: h, y: k + a };
+                directrix = { type: 'horizontal', value: k - a, equation: `y = ${this._fmt(k - a)}` };
+                axisOfSymmetry = { type: 'vertical', value: h, equation: `x = ${this._fmt(h)}` };
+                break;
+            case 'down':
+                focus = { x: h, y: k - a };
+                directrix = { type: 'horizontal', value: k + a, equation: `y = ${this._fmt(k + a)}` };
+                axisOfSymmetry = { type: 'vertical', value: h, equation: `x = ${this._fmt(h)}` };
+                break;
+        }
+
+        // Latus rectum
+        const latusRectumLength = 4 * a;
+        const latusRectumEndpoints = this._getLatusRectumEndpoints(focus, orientation, a);
 
         // Eccentricity (always 1 for parabola)
         const eccentricity = 1;
 
-        this.properties = {
-            // Input coefficients
-            a, b, c,
-            orientation,
+        // Equation forms
+        const equations = this._getEquationForms();
 
-            // Core properties
-            vertex: { x: h, y: k },
+        // Intercepts
+        const xIntercepts = this._getXIntercepts();
+        const yIntercepts = this._getYIntercepts();
+
+        this.properties = {
+            parameter: a,
+            vertex,
             focus,
             directrix,
             axisOfSymmetry,
-            parameter: p,
-            direction,
-
-            // Latus rectum
             latusRectumLength,
             latusRectumEndpoints,
-
-            // Intercepts
-            xIntercepts,
-            yIntercept,
-
-            // Equations
-            generalForm: this._formatGeneralForm(),
-            vertexForm,
-            standardForm,
-
-            // Other
             eccentricity,
-            concavity: a > 0 ? 'concave up' : 'concave down'
+            orientation,
+            equations,
+            xIntercepts,
+            yIntercepts
         };
 
         return this.properties;
     }
 
-    _formatNumber(num) {
-        if (Number.isInteger(num)) return num.toString();
-        // Check for nice fractions
-        const fracs = [[1, 2], [1, 3], [2, 3], [1, 4], [3, 4], [1, 5], [2, 5], [3, 5], [4, 5], [1, 6], [5, 6], [1, 8], [3, 8], [5, 8], [7, 8]];
-        for (const [n, d] of fracs) {
-            if (Math.abs(num - n / d) < 0.0001) return `${n}/${d}`;
-            if (Math.abs(num + n / d) < 0.0001) return `-${n}/${d}`;
+    _getLatusRectumEndpoints(focus, orientation, a) {
+        if (orientation === 'right' || orientation === 'left') {
+            return [
+                { x: focus.x, y: focus.y + 2 * a },
+                { x: focus.x, y: focus.y - 2 * a }
+            ];
+        } else {
+            return [
+                { x: focus.x + 2 * a, y: focus.y },
+                { x: focus.x - 2 * a, y: focus.y }
+            ];
         }
-        return num.toFixed(4).replace(/\.?0+$/, '');
     }
 
-    _formatCoef(num) {
-        if (num === 1) return '';
-        if (num === -1) return '-';
-        return this._formatNumber(num);
-    }
+    _getEquationForms() {
+        const { a, h, k, orientation } = this;
+        const fourA = this._fmt(4 * a);
 
-    _formatOffset(num) {
-        if (num === 0) return '';
-        if (num > 0) return `+ ${this._formatNumber(num)}`;
-        return `- ${this._formatNumber(Math.abs(num))}`;
-    }
+        let standard, parametric, general;
 
-    _formatGeneralForm() {
-        const { a, b, c, orientation } = this;
-        const variable = orientation === 'vertical' ? 'x' : 'y';
-        const output = orientation === 'vertical' ? 'y' : 'x';
-
-        let terms = [];
-        if (a !== 0) {
-            if (a === 1) terms.push(`${variable}²`);
-            else if (a === -1) terms.push(`-${variable}²`);
-            else terms.push(`${this._formatNumber(a)}${variable}²`);
+        switch (orientation) {
+            case 'right':
+                if (h === 0 && k === 0) {
+                    standard = `y² = ${fourA}x`;
+                } else {
+                    standard = `(y ${this._fmtOff(-k)})² = ${fourA}(x ${this._fmtOff(-h)})`;
+                }
+                parametric = `x = ${this._fmt(a)}t², y = ${this._fmt(2 * a)}t`;
+                break;
+            case 'left':
+                if (h === 0 && k === 0) {
+                    standard = `y² = -${fourA}x`;
+                } else {
+                    standard = `(y ${this._fmtOff(-k)})² = -${fourA}(x ${this._fmtOff(-h)})`;
+                }
+                parametric = `x = -${this._fmt(a)}t², y = ${this._fmt(2 * a)}t`;
+                break;
+            case 'up':
+                if (h === 0 && k === 0) {
+                    standard = `x² = ${fourA}y`;
+                } else {
+                    standard = `(x ${this._fmtOff(-h)})² = ${fourA}(y ${this._fmtOff(-k)})`;
+                }
+                parametric = `x = ${this._fmt(2 * a)}t, y = ${this._fmt(a)}t²`;
+                break;
+            case 'down':
+                if (h === 0 && k === 0) {
+                    standard = `x² = -${fourA}y`;
+                } else {
+                    standard = `(x ${this._fmtOff(-h)})² = -${fourA}(y ${this._fmtOff(-k)})`;
+                }
+                parametric = `x = ${this._fmt(2 * a)}t, y = -${this._fmt(a)}t²`;
+                break;
         }
-        if (b !== 0) {
-            if (terms.length === 0) {
-                if (b === 1) terms.push(variable);
-                else if (b === -1) terms.push(`-${variable}`);
-                else terms.push(`${this._formatNumber(b)}${variable}`);
+
+        return { standard, parametric };
+    }
+
+    _getXIntercepts() {
+        const { a, h, k, orientation } = this;
+        const intercepts = [];
+
+        if (orientation === 'up' || orientation === 'down') {
+            // x² = ±4a(y - k), set y = 0
+            const val = (orientation === 'up') ? -k : k;
+            if (val * 4 * a >= 0) {
+                const xOff = Math.sqrt(Math.abs(4 * a * val));
+                intercepts.push({ x: h + xOff, y: 0 });
+                if (xOff > 0.0001) intercepts.push({ x: h - xOff, y: 0 });
+            }
+        } else {
+            // (y - k)² = ±4a(x - h), set y = 0
+            const yOff = -k;
+            const xVal = (yOff * yOff) / (4 * a);
+            if (orientation === 'right') {
+                intercepts.push({ x: h + xVal, y: 0 });
             } else {
-                if (b === 1) terms.push(`+ ${variable}`);
-                else if (b === -1) terms.push(`- ${variable}`);
-                else if (b > 0) terms.push(`+ ${this._formatNumber(b)}${variable}`);
-                else terms.push(`- ${this._formatNumber(Math.abs(b))}${variable}`);
+                intercepts.push({ x: h - xVal, y: 0 });
             }
         }
-        if (c !== 0) {
-            if (terms.length === 0) terms.push(this._formatNumber(c));
-            else if (c > 0) terms.push(`+ ${this._formatNumber(c)}`);
-            else terms.push(`- ${this._formatNumber(Math.abs(c))}`);
+
+        return intercepts;
+    }
+
+    _getYIntercepts() {
+        const { a, h, k, orientation } = this;
+        const intercepts = [];
+
+        if (orientation === 'right' || orientation === 'left') {
+            // (y - k)² = ±4a(x - h), set x = 0
+            const xVal = -h;
+            const ySquared = 4 * a * (orientation === 'right' ? xVal : -xVal);
+            if (ySquared >= 0) {
+                const yOff = Math.sqrt(ySquared);
+                intercepts.push({ x: 0, y: k + yOff });
+                if (yOff > 0.0001) intercepts.push({ x: 0, y: k - yOff });
+            }
+        } else {
+            // (x - h)² = ±4a(y - k), set x = 0
+            const xOff = -h;
+            const yVal = (xOff * xOff) / (4 * a);
+            if (orientation === 'up') {
+                intercepts.push({ x: 0, y: k + yVal });
+            } else {
+                intercepts.push({ x: 0, y: k - yVal });
+            }
         }
 
-        return `${output} = ${terms.join(' ') || '0'}`;
+        return intercepts;
+    }
+
+    // =====================================================
+    // PARAMETRIC REPRESENTATION
+    // =====================================================
+
+    /**
+     * Get point on parabola at parameter t
+     * For y² = 4ax: point is (at², 2at)
+     */
+    getParametricPoint(t) {
+        const { a, h, k, orientation } = this;
+
+        switch (orientation) {
+            case 'right':
+                return { x: h + a * t * t, y: k + 2 * a * t, t };
+            case 'left':
+                return { x: h - a * t * t, y: k + 2 * a * t, t };
+            case 'up':
+                return { x: h + 2 * a * t, y: k + a * t * t, t };
+            case 'down':
+                return { x: h + 2 * a * t, y: k - a * t * t, t };
+        }
     }
 
     /**
-     * Compute y value for given x (vertical parabola)
-     * or x value for given y (horizontal parabola)
+     * Get parameter t from a point (inverse of getParametricPoint)
      */
-    evaluate(input) {
-        const { a, b, c } = this;
-        return a * input * input + b * input + c;
+    getParameterFromPoint(x, y) {
+        const { a, h, k, orientation } = this;
+
+        switch (orientation) {
+            case 'right':
+            case 'left':
+                return (y - k) / (2 * a);
+            case 'up':
+            case 'down':
+                return (x - h) / (2 * a);
+        }
     }
 
     /**
-     * Generate points for plotting the parabola
+     * Find the closest parameter t for a given point
      */
-    generatePlotPoints(minInput = -10, maxInput = 10, steps = 200) {
+    getClosestParameter(px, py) {
+        const { a, h, k, orientation } = this;
+
+        // For horizontal parabola y² = 4ax
+        if (orientation === 'right' || orientation === 'left') {
+            // t = y / (2a), but we need to verify x matches
+            const t = (py - k) / (2 * a);
+            return t;
+        } else {
+            // For vertical parabola x² = 4ay
+            const t = (px - h) / (2 * a);
+            return t;
+        }
+    }
+
+    // =====================================================
+    // LINE TOOLS: TANGENT, NORMAL, CHORD
+    // =====================================================
+
+    /**
+     * Get tangent line at parameter t
+     * For y² = 4ax at (at², 2at): tangent is ty = x + at²
+     */
+    getTangentAt(t) {
+        const { a, h, k, orientation } = this;
+        const point = this.getParametricPoint(t);
+
+        let slope, equation, yIntercept;
+
+        switch (orientation) {
+            case 'right':
+                // ty = x + at² → y = (1/t)x + at
+                if (Math.abs(t) < 0.0001) {
+                    // Vertical tangent at vertex
+                    return {
+                        type: 'tangent',
+                        point,
+                        slope: Infinity,
+                        equation: `x = ${this._fmt(h)}`,
+                        isVertical: true
+                    };
+                }
+                slope = 1 / t;
+                yIntercept = k + a * t;
+                equation = `y = ${this._fmt(slope)}x + ${this._fmt(yIntercept)}`;
+                break;
+            case 'left':
+                if (Math.abs(t) < 0.0001) {
+                    return { type: 'tangent', point, slope: Infinity, equation: `x = ${this._fmt(h)}`, isVertical: true };
+                }
+                slope = -1 / t;
+                yIntercept = k + a * t;
+                equation = `y = ${this._fmt(slope)}x + ${this._fmt(yIntercept)}`;
+                break;
+            case 'up':
+                if (Math.abs(t) < 0.0001) {
+                    return { type: 'tangent', point, slope: 0, equation: `y = ${this._fmt(k)}`, isHorizontal: true };
+                }
+                slope = t;
+                yIntercept = k - a * t * t + slope * h;
+                equation = `y = ${this._fmt(slope)}(x - ${this._fmt(h)}) + ${this._fmt(k)}`;
+                break;
+            case 'down':
+                if (Math.abs(t) < 0.0001) {
+                    return { type: 'tangent', point, slope: 0, equation: `y = ${this._fmt(k)}`, isHorizontal: true };
+                }
+                slope = -t;
+                yIntercept = k + a * t * t + slope * h;
+                equation = `y = ${this._fmt(slope)}(x - ${this._fmt(h)}) + ${this._fmt(k)}`;
+                break;
+        }
+
+        return {
+            type: 'tangent',
+            point,
+            t,
+            slope,
+            equation,
+            // Line data for rendering
+            getY: (x) => slope * (x - h) + point.y - slope * (point.x - h)
+        };
+    }
+
+    /**
+     * Get tangent line by slope
+     * For y² = 4ax with slope m: y = mx + a/m
+     */
+    getTangentBySlope(m) {
+        const { a, h, k, orientation } = this;
+
+        if (Math.abs(m) < 0.0001) {
+            return { error: 'Slope cannot be zero for this orientation' };
+        }
+
+        let equation, yIntercept, point;
+
+        switch (orientation) {
+            case 'right':
+                yIntercept = k + a / m;
+                equation = `y = ${this._fmt(m)}x + ${this._fmt(yIntercept)}`;
+                // Point of tangency: (a/m², 2a/m)
+                point = { x: h + a / (m * m), y: k + 2 * a / m };
+                break;
+            case 'left':
+                yIntercept = k - a / m;
+                equation = `y = ${this._fmt(m)}x + ${this._fmt(yIntercept)}`;
+                point = { x: h - a / (m * m), y: k + 2 * a / m };
+                break;
+            case 'up':
+                yIntercept = k - a * m * m;
+                equation = `y = ${this._fmt(m)}x + ${this._fmt(yIntercept - m * h)}`;
+                point = { x: h + 2 * a * m, y: k + a * m * m };
+                break;
+            case 'down':
+                yIntercept = k + a * m * m;
+                equation = `y = ${this._fmt(m)}x + ${this._fmt(yIntercept - m * h)}`;
+                point = { x: h + 2 * a * m, y: k - a * m * m };
+                break;
+        }
+
+        return {
+            type: 'tangent',
+            point,
+            slope: m,
+            equation,
+            getY: (x) => m * x + yIntercept - m * h
+        };
+    }
+
+    /**
+     * Get normal line at parameter t
+     * Normal is perpendicular to tangent
+     */
+    getNormalAt(t) {
+        const { a, h, k, orientation } = this;
+        const point = this.getParametricPoint(t);
+        const tangent = this.getTangentAt(t);
+
+        if (tangent.isVertical) {
+            // Normal is horizontal
+            return {
+                type: 'normal',
+                point,
+                t,
+                slope: 0,
+                equation: `y = ${this._fmt(point.y)}`,
+                isHorizontal: true
+            };
+        }
+
+        if (tangent.isHorizontal) {
+            return {
+                type: 'normal',
+                point,
+                t,
+                slope: Infinity,
+                equation: `x = ${this._fmt(point.x)}`,
+                isVertical: true
+            };
+        }
+
+        const normalSlope = -1 / tangent.slope;
+        const equation = `y = ${this._fmt(normalSlope)}(x - ${this._fmt(point.x)}) + ${this._fmt(point.y)}`;
+
+        return {
+            type: 'normal',
+            point,
+            t,
+            slope: normalSlope,
+            equation,
+            getY: (x) => normalSlope * (x - point.x) + point.y
+        };
+    }
+
+    /**
+     * Get chord between two parametric points t1 and t2
+     */
+    getChord(t1, t2) {
+        const p1 = this.getParametricPoint(t1);
+        const p2 = this.getParametricPoint(t2);
+
+        if (Math.abs(p2.x - p1.x) < 0.0001) {
+            // Vertical chord
+            return {
+                type: 'chord',
+                points: [p1, p2],
+                t: [t1, t2],
+                slope: Infinity,
+                equation: `x = ${this._fmt(p1.x)}`,
+                isVertical: true,
+                isFocalChord: this._isFocalChord(t1, t2)
+            };
+        }
+
+        const slope = (p2.y - p1.y) / (p2.x - p1.x);
+        const equation = `y = ${this._fmt(slope)}(x - ${this._fmt(p1.x)}) + ${this._fmt(p1.y)}`;
+
+        return {
+            type: 'chord',
+            points: [p1, p2],
+            t: [t1, t2],
+            slope,
+            equation,
+            isFocalChord: this._isFocalChord(t1, t2),
+            getY: (x) => slope * (x - p1.x) + p1.y
+        };
+    }
+
+    /**
+     * Check if chord is a focal chord (passes through focus)
+     * For y² = 4ax, focal chord has t1 * t2 = -1
+     */
+    _isFocalChord(t1, t2) {
+        return Math.abs(t1 * t2 + 1) < 0.01;
+    }
+
+    /**
+     * Get focal chord at parameter t (the other end is at -1/t)
+     */
+    getFocalChord(t) {
+        if (Math.abs(t) < 0.0001) {
+            return { error: 't cannot be zero for focal chord' };
+        }
+        return this.getChord(t, -1 / t);
+    }
+
+    // =====================================================
+    // ADVANCED CONSTRUCTIONS
+    // =====================================================
+
+    /**
+     * Get chord of contact from external point (x1, y1)
+     * For y² = 4ax: yy₁ = 2a(x + x₁)
+     */
+    getChordOfContact(x1, y1) {
+        const { a, h, k, orientation } = this;
+
+        // Adjust for translation
+        const px = x1 - h;
+        const py = y1 - k;
+
+        let equation;
+
+        switch (orientation) {
+            case 'right':
+            case 'left':
+                // yy₁ = 2a(x + x₁) shifted
+                equation = `${this._fmt(py)}y = ${this._fmt(2 * a)}(x + ${this._fmt(px)})`;
+                break;
+            case 'up':
+            case 'down':
+                equation = `${this._fmt(px)}x = ${this._fmt(2 * a)}(y + ${this._fmt(py)})`;
+                break;
+        }
+
+        return {
+            type: 'chord_of_contact',
+            externalPoint: { x: x1, y: y1 },
+            equation
+        };
+    }
+
+    /**
+     * Get diameter of parabola for chords with slope m
+     * For y² = 4ax: diameter is y = 2a/m
+     */
+    getDiameter(m) {
+        const { a, k, orientation } = this;
+
+        if (Math.abs(m) < 0.0001) {
+            return { error: 'Slope cannot be zero' };
+        }
+
+        let equation, value;
+
+        switch (orientation) {
+            case 'right':
+            case 'left':
+                value = k + 2 * a / m;
+                equation = `y = ${this._fmt(value)}`;
+                return { type: 'diameter', slope: m, equation, value, isHorizontal: true };
+            case 'up':
+            case 'down':
+                value = this.h + 2 * a / m;
+                equation = `x = ${this._fmt(value)}`;
+                return { type: 'diameter', slope: m, equation, value, isVertical: true };
+        }
+    }
+
+    /**
+     * Get director circle
+     * For parabola y² = 4ax: the directrix is x = -a (not a circle)
+     * But the locus of intersection of perpendicular tangents is the directrix
+     */
+    getDirectorCircle() {
+        // For a parabola, perpendicular tangents meet on the directrix
+        return {
+            type: 'director_locus',
+            description: 'For a parabola, perpendicular tangents meet on the directrix',
+            locus: this.properties?.directrix
+        };
+    }
+
+    /**
+     * Get normal chord - chord joining feet of two normals
+     */
+    getNormalChord(t) {
+        // For normal at t, it meets parabola again at t' where t' = -t - 2/t
+        if (Math.abs(t) < 0.0001) {
+            return { error: 't cannot be zero' };
+        }
+        const t2 = -t - 2 / t;
+        return this.getChord(t, t2);
+    }
+
+    // =====================================================
+    // PLOTTING
+    // =====================================================
+
+    generatePlotPoints(tMin = -5, tMax = 5, steps = 200) {
         const points = [];
-        const step = (maxInput - minInput) / steps;
+        const dt = (tMax - tMin) / steps;
 
         for (let i = 0; i <= steps; i++) {
-            const input = minInput + i * step;
-            const output = this.evaluate(input);
-
-            if (this.orientation === 'vertical') {
-                points.push({ x: input, y: output });
-            } else {
-                points.push({ x: output, y: input });
-            }
+            const t = tMin + i * dt;
+            points.push(this.getParametricPoint(t));
         }
 
         return points;
     }
 
-    /**
-     * Get the optimal view bounds for visualization
-     */
     getViewBounds(padding = 2) {
-        if (!this.properties) this.calculate();
-        const props = this.properties;
+        const { a, h, k, orientation } = this;
+        const extent = Math.max(4 * a, 3) + padding;
 
-        // Collect key points
-        const points = [
-            props.vertex,
-            props.focus,
-            ...props.latusRectumEndpoints,
-            ...props.xIntercepts
-        ];
-
-        if (Array.isArray(props.yIntercept)) {
-            points.push(...props.yIntercept);
-        } else if (props.yIntercept) {
-            points.push(props.yIntercept);
+        switch (orientation) {
+            case 'right':
+                return { minX: h - padding, maxX: h + extent, minY: k - extent / 2, maxY: k + extent / 2 };
+            case 'left':
+                return { minX: h - extent, maxX: h + padding, minY: k - extent / 2, maxY: k + extent / 2 };
+            case 'up':
+                return { minX: h - extent / 2, maxX: h + extent / 2, minY: k - padding, maxY: k + extent };
+            case 'down':
+                return { minX: h - extent / 2, maxX: h + extent / 2, minY: k - extent, maxY: k + padding };
         }
+    }
 
-        // Find bounds
-        let minX = Infinity, maxX = -Infinity;
-        let minY = Infinity, maxY = -Infinity;
+    // =====================================================
+    // FORMATTING HELPERS
+    // =====================================================
 
-        for (const p of points) {
-            if (p && isFinite(p.x) && isFinite(p.y)) {
-                minX = Math.min(minX, p.x);
-                maxX = Math.max(maxX, p.x);
-                minY = Math.min(minY, p.y);
-                maxY = Math.max(maxY, p.y);
-            }
-        }
+    _fmt(n) {
+        if (Number.isInteger(n)) return n.toString();
+        if (Math.abs(n) < 0.0001) return '0';
+        return n.toFixed(4).replace(/\.?0+$/, '');
+    }
 
-        // Ensure reasonable bounds
-        minX = Math.max(minX - padding, -20);
-        maxX = Math.min(maxX + padding, 20);
-        minY = Math.max(minY - padding, -20);
-        maxY = Math.min(maxY + padding, 20);
-
-        // Ensure minimum size
-        if (maxX - minX < 4) {
-            const mid = (maxX + minX) / 2;
-            minX = mid - 2;
-            maxX = mid + 2;
-        }
-        if (maxY - minY < 4) {
-            const mid = (maxY + minY) / 2;
-            minY = mid - 2;
-            maxY = mid + 2;
-        }
-
-        return { minX, maxX, minY, maxY };
+    _fmtOff(n) {
+        if (Math.abs(n) < 0.0001) return '';
+        if (n > 0) return `+ ${this._fmt(n)}`;
+        return `- ${this._fmt(Math.abs(n))}`;
     }
 }
 
-// Preset parabola examples
+// Preset examples
 const PARABOLA_PRESETS = [
-    {
-        id: 'basic-up',
-        name: 'Basic (y = x²)',
-        equation: 'y = x²',
-        description: 'Simplest parabola opening upward'
-    },
-    {
-        id: 'basic-down',
-        name: 'Opening Down (y = -x²)',
-        equation: 'y = -x²',
-        description: 'Parabola opening downward'
-    },
-    {
-        id: 'narrow',
-        name: 'Narrow (y = 2x²)',
-        equation: 'y = 2x²',
-        description: 'Narrower parabola with a = 2'
-    },
-    {
-        id: 'wide',
-        name: 'Wide (y = 0.5x²)',
-        equation: 'y = 0.5x²',
-        description: 'Wider parabola with a = 0.5'
-    },
-    {
-        id: 'shifted-vertex',
-        name: 'Shifted Vertex',
-        equation: 'y = x² - 4x + 3',
-        description: 'Vertex at (2, -1)'
-    },
-    {
-        id: 'two-roots',
-        name: 'Two X-Intercepts',
-        equation: 'y = x² - 5x + 6',
-        description: 'Crosses x-axis at x = 2 and x = 3'
-    },
-    {
-        id: 'single-root',
-        name: 'Single X-Intercept',
-        equation: 'y = x² - 4x + 4',
-        description: 'Touches x-axis at x = 2'
-    },
-    {
-        id: 'no-roots',
-        name: 'No Real Roots',
-        equation: 'y = x² + 1',
-        description: 'Never crosses x-axis'
-    },
-    {
-        id: 'horizontal',
-        name: 'Horizontal (x = y²)',
-        equation: 'x = y²',
-        description: 'Opens to the right'
-    },
-    {
-        id: 'horizontal-left',
-        name: 'Horizontal Left (x = -y²)',
-        equation: 'x = -y²',
-        description: 'Opens to the left'
-    }
+    { id: 'standard', name: 'Standard (y² = 4x)', equation: 'y² = 4x', description: 'a = 1, opens right' },
+    { id: 'wide', name: 'Wide (y² = 8x)', equation: 'y² = 8x', description: 'a = 2, opens right' },
+    { id: 'narrow', name: 'Narrow (y² = 2x)', equation: 'y² = 2x', description: 'a = 0.5, opens right' },
+    { id: 'left', name: 'Left Opening', equation: 'y² = -4x', description: 'Opens left' },
+    { id: 'up', name: 'Up Opening', equation: 'x² = 4y', description: 'Opens up' },
+    { id: 'down', name: 'Down Opening', equation: 'x² = -4y', description: 'Opens down' },
+    { id: 'vertex', name: 'Vertex Form', equation: 'y = x² - 4x + 3', description: 'Vertex at (2, -1)' },
+    { id: 'shifted', name: 'Shifted', equation: '(y - 2)² = 8(x - 1)', description: 'Vertex at (1, 2)' }
 ];
 
-// Export for module use
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { ParabolaEngine, PARABOLA_PRESETS };
+    module.exports = { AdvancedParabolaEngine, PARABOLA_PRESETS };
 }

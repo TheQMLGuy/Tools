@@ -315,13 +315,13 @@ const TRIANGLES = {
     // =========================================
 
     // Catalan Triangle - A009766
-    // T(n,k) = T(n-1,k-1) + T(n,k-1), T(n,0) = 1
+    // T(n,k) = T(n,k-1) + T(n-1,k), T(n,0) = 1
     // Verified: [1], [1,1], [1,2,2], [1,3,5,5], [1,4,9,14,14]...
     catalan: {
         name: 'Catalan Triangle',
         symbol: 'C(n,k)',
         description: 'Ballot-like numbers, last entry is Catalan number',
-        formula: 'C(n,k) = C(n-1,k-1) + C(n,k-1)',
+        formula: 'C(n,k) = C(n,k-1) + C(n-1,k)',
         oeis: 'A009766',
         example: 'Last column: 1, 1, 2, 5, 14 (Catalan)',
         generate: (rows) => {
@@ -332,7 +332,8 @@ const TRIANGLES = {
                     if (k === 0) {
                         row.push(1);
                     } else {
-                        const above = triangle[n - 1] ? (triangle[n - 1][k - 1] || 0) : 0;
+                        // T(n,k) = T(n,k-1) + T(n-1,k)
+                        const above = triangle[n - 1] ? (triangle[n - 1][k] || 0) : 0;
                         const left = row[k - 1] || 0;
                         row.push(above + left);
                     }
@@ -743,7 +744,7 @@ const TRIANGLES = {
         name: 'Ballot Sequence',
         symbol: 'B(n,k)',
         description: 'Counts ballot sequences where A leads B',
-        formula: 'B(n,k) = B(n-1,k-1) + B(n,k-1)',
+        formula: 'B(n,k) = B(n,k-1) + B(n-1,k)',
         oeis: 'A009766',
         example: 'Right column: Catalan numbers',
         generate: (rows) => {
@@ -755,7 +756,8 @@ const TRIANGLES = {
                     if (k === 0) {
                         row.push(1);
                     } else {
-                        const above = triangle[n - 1] ? (triangle[n - 1][k - 1] || 0) : 0;
+                        // T(n,k) = T(n,k-1) + T(n-1,k)
+                        const above = triangle[n - 1] ? (triangle[n - 1][k] || 0) : 0;
                         const left = row[k - 1] || 0;
                         row.push(above + left);
                     }
