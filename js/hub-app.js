@@ -61,6 +61,13 @@ const CATEGORIES = {
                 icon: '📍',
                 description: 'Analyze parabolas: vertex, focus, directrix, axis of symmetry, and more.',
                 path: 'tools/geometry/coordinate-geometry/parabola-analyzer/index.html'
+            },
+            {
+                id: 'spectral-graph',
+                name: 'Spectral Graph Theory',
+                icon: '🌊',
+                description: 'Explore eigenvalues, Laplacian matrices, Fiedler vectors, and graph connectivity.',
+                path: 'tools/spectral-graph/index.html'
             }
         ]
     },
