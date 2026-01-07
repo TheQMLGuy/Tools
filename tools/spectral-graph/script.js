@@ -55,10 +55,6 @@ function setupEventListeners() {
         applyPreset('path');
         updateAll();
     });
-    document.getElementById('resetBtn').addEventListener('click', () => {
-        applyPreset('cycle');
-        updateAll();
-    });
 
     // Laplacian type
     document.querySelectorAll('input[name="laplacianType"]').forEach(radio => {
@@ -238,7 +234,7 @@ function updateEigenvalueList() {
         item.addEventListener('click', () => {
             selectedEigenvalueIndex = parseInt(item.dataset.index);
             updateEigenvalueList();
-            if (currentTab === 'fiedler') updateVisualization();
+            if (currentTab === 'eigenvector') updateVisualization();
         });
     });
 }
@@ -268,7 +264,7 @@ function updateSpectralAnalysis() {
 function showTab(tab) {
     document.getElementById('spectrumContainer').classList.toggle('hidden', tab !== 'spectrum');
     document.getElementById('laplacianContainer').classList.toggle('hidden', tab !== 'laplacian');
-    document.getElementById('fiedlerContainer').classList.toggle('hidden', tab !== 'fiedler');
+    document.getElementById('fiedlerContainer').classList.toggle('hidden', tab !== 'eigenvector');
     mainCanvas.style.display = tab === 'graph' ? 'block' : 'none';
 
     updateVisualization();
@@ -282,7 +278,7 @@ function updateVisualization() {
         case 'graph': drawGraph(); break;
         case 'spectrum': drawSpectrum(); break;
         case 'laplacian': drawLaplacian(); break;
-        case 'fiedler': drawFiedler(); break;
+        case 'eigenvector': drawFiedler(); break;
     }
 }
 

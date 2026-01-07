@@ -4,39 +4,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Circle Analyzer - Coordinate Geometry</title>
-    <meta name="description" content="Analyze circle equations: center, radius, area, circumference, and more.">
+    <title>Circle Analyzer - Advanced Coordinate Geometry</title>
+    <meta name="description"
+        content="Comprehensive circle analysis: parametric form, tangent, chord, power of a point.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../conic-shared.css">
+    <style>
+        .parametric-display {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-align: center;
+            padding: 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        .point-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            padding: 8px;
+            background: rgba(34, 211, 238, 0.1);
+            border-radius: 4px;
+            border: 1px solid rgba(34, 211, 238, 0.3);
+        }
+
+        .line-mode-selector {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .line-mode {
+            flex: 1;
+            padding: 6px 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .line-mode:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .line-mode.active {
+            border-color: #06b6d4;
+            color: #06b6d4;
+        }
+
+        .line-input-method {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .line-input-method label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .active-lines {
+            margin-top: 10px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .line-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            margin-bottom: 4px;
+            font-size: 0.75rem;
+        }
+
+        .line-item .line-type {
+            font-weight: 500;
+            text-transform: uppercase;
+            color: #06b6d4;
+        }
+
+        .line-item .line-eq {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .line-item .remove-line {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 2px 6px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 2px;
+            bottom: 2px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input:checked+.toggle-slider {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .toggle-switch input:checked+.toggle-slider:before {
+            transform: translateX(16px);
+            background: white;
+        }
+
+        .click-hint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(6, 182, 212, 0.2);
+            border: 1px solid var(--accent-primary);
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            font-size: 0.85rem;
+            color: var(--accent-primary);
+            pointer-events: none;
+        }
+    </style>
 </head>
 
 <body>
     <!-- Landing Page -->
     <div id="landing" class="landing">
         <header class="landing-header">
-            <div class="logo">
-                <span class="logo-icon">⭕</span>
-                <span class="logo-text">Coordinate Geometry</span>
-            </div>
+            <div class="logo"><span class="logo-icon">⭕</span><span class="logo-text">Coordinate Geometry</span></div>
         </header>
         <main class="landing-main">
             <h1 class="landing-title"><span class="gradient-text">Circle Analyzer</span></h1>
-            <p class="landing-subtitle">Enter a circle equation and explore center, radius, area, and more</p>
+            <p class="landing-subtitle">Interactive circle exploration with parametric points, tangents, and chords</p>
+
             <div class="custom-input-section">
                 <h3>📝 Enter Your Equation</h3>
                 <div class="input-row">
                     <input type="text" id="customEquation" class="equation-input"
-                        placeholder="e.g., x² + y² = 4 or (x-2)² + (y-3)² = 9">
+                        placeholder="x² + y² = 4, (x-2)² + (y-3)² = 9">
                     <button id="analyzeBtn" class="btn btn-primary">Analyze →</button>
                 </div>
             </div>
+
             <h3 style="margin: 28px 0 14px; color: var(--text-secondary); font-size: 0.95rem;">Or choose a preset:</h3>
             <div class="preset-grid" id="presetGrid"></div>
         </main>
-        <footer class="landing-footer">
-            <p>Part of the STEM Visualization Hub</p>
-        </footer>
     </div>
 
     <!-- Main Application -->
@@ -44,33 +204,88 @@
         <aside class="left-panel">
             <div class="panel equation-panel">
                 <div class="panel-header compact">
-                    <h2>Equation</h2>
+                    <h2>Circle Definition</h2>
                     <button class="btn btn-ghost btn-xs" id="backToLanding">← Back</button>
                 </div>
                 <div class="panel-body">
                     <div id="equationDisplay" class="equation-display">x² + y² = 1</div>
-                    <input type="text" id="editEquation" class="edit-equation-input" placeholder="Edit equation...">
+
                     <div class="control-group">
-                        <label>Quick Presets</label>
-                        <select id="presetSelect" class="select">
-                            <option value="">Select a preset...</option>
-                        </select>
+                        <label>Center (h, k)</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="number" id="editCenterX" value="0" step="0.5" style="width: 50%;">
+                            <input type="number" id="editCenterY" value="0" step="0.5" style="width: 50%;">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Radius r</label>
+                        <input type="number" id="editRadius" value="1" step="0.1" min="0.1">
                     </div>
                 </div>
             </div>
-            <div class="panel controls-panel">
+
+            <!-- Parametric Point -->
+            <div class="panel">
                 <div class="panel-header compact">
-                    <h2>Display Options</h2>
+                    <h2>Parametric Point</h2>
                 </div>
                 <div class="panel-body">
-                    <div class="control-group"><label class="checkbox-label"><input type="checkbox" id="showGrid"
-                                checked><span>Show Grid</span></label></div>
-                    <div class="control-group"><label class="checkbox-label"><input type="checkbox" id="showLabels"
-                                checked><span>Show Labels</span></label></div>
-                    <div class="control-group"><label class="checkbox-label"><input type="checkbox" id="showCardinal"
-                                checked><span>Show Cardinal Points</span></label></div>
-                    <button id="resetView" class="btn btn-ghost btn-sm" style="width: 100%; margin-top: 10px;">↺ Reset
-                        View</button>
+                    <div class="parametric-display">
+                        <span class="mono">P(θ) = (h + r·cos θ, k + r·sin θ)</span>
+                    </div>
+                    <div class="control-group">
+                        <label>Angle θ (degrees)</label>
+                        <input type="range" id="paramTheta" min="0" max="360" step="1" value="0">
+                        <input type="number" id="paramThetaValue" value="0" step="5" style="width: 80px;">
+                    </div>
+                    <div class="point-display">
+                        <span>Point:</span> <span id="parametricPoint" class="mono highlight">(1, 0)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Line Tools -->
+            <div class="panel" style="flex: 1;">
+                <div class="panel-header compact">
+                    <h2>Line Tools</h2>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="lineToolsEnabled" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="panel-body" id="lineToolsBody">
+                    <div class="line-mode-selector">
+                        <button class="line-mode active" data-mode="tangent">Tangent</button>
+                        <button class="line-mode" data-mode="chord">Chord</button>
+                    </div>
+
+                    <div class="line-input-method">
+                        <label><input type="radio" name="lineMethod" value="angle" checked> At θ</label>
+                        <label><input type="radio" name="lineMethod" value="slope"> By Slope</label>
+                        <label><input type="radio" name="lineMethod" value="click"> Click</label>
+                    </div>
+
+                    <div class="line-inputs" id="lineInputs">
+                        <div class="control-group" id="theta1Input">
+                            <label>θ₁ (deg)</label>
+                            <input type="number" id="lineTheta1" value="0" step="5">
+                        </div>
+                        <div class="control-group hidden" id="theta2Input">
+                            <label>θ₂ (deg)</label>
+                            <input type="number" id="lineTheta2" value="180" step="5">
+                        </div>
+                        <div class="control-group hidden" id="slopeInput">
+                            <label>Slope m</label>
+                            <input type="number" id="lineSlope" value="1" step="0.1">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-sm btn-primary" id="generateLine" style="width: 100%;">Generate Line</button>
+                    <button class="btn btn-sm btn-ghost" id="clearLines" style="width: 100%; margin-top: 6px;">Clear
+                        All</button>
+
+                    <div class="active-lines" id="activeLines"></div>
                 </div>
             </div>
         </aside>
@@ -80,7 +295,10 @@
                 <div class="panel-header compact">
                     <h2>Circle Visualization</h2>
                     <div class="header-right">
-                        <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">Circle</span>
+                        <span class="badge">Circle</span>
+                        <label class="checkbox-label"><input type="checkbox" id="showGrid" checked> Grid</label>
+                        <label class="checkbox-label"><input type="checkbox" id="showLabels" checked> Labels</label>
+                        <button class="btn btn-xs" id="resetView">↺</button>
                         <button class="btn btn-xs" id="fullscreenBtn">⛶</button>
                     </div>
                 </div>
@@ -90,8 +308,13 @@
                         <div class="legend">
                             <div class="legend-item"><span class="legend-color conic"></span><span>Circle</span></div>
                             <div class="legend-item"><span class="legend-color center"></span><span>Center</span></div>
+                            <div class="legend-item"><span class="legend-color"
+                                    style="background: #22d3ee;"></span><span>P(θ)</span></div>
+                            <div class="legend-item"><span class="legend-color"
+                                    style="background: #06b6d4;"></span><span>Tangent</span></div>
                         </div>
                         <div class="coord-display"><span id="coordDisplay">(0, 0)</span></div>
+                        <div class="click-hint hidden" id="clickHint">Click on circle to generate line</div>
                     </div>
                 </div>
             </div>
@@ -115,46 +338,42 @@
                 <div class="panel-body">
                     <div class="property-section">
                         <div class="property-section-title">Key Values</div>
-                        <div class="property-row"><span class="property-label">Center</span><span id="propCenter"
+                        <div class="property-row"><span>Center</span><span id="propCenter"
                                 class="property-value highlight-center">(0, 0)</span></div>
-                        <div class="property-row"><span class="property-label">Radius</span><span id="propRadius"
+                        <div class="property-row"><span>Radius</span><span id="propRadius"
                                 class="property-value">1</span></div>
-                        <div class="property-row"><span class="property-label">Diameter</span><span id="propDiameter"
+                        <div class="property-row"><span>Diameter</span><span id="propDiameter"
                                 class="property-value">2</span></div>
                     </div>
                     <div class="property-section">
                         <div class="property-section-title">Measurements</div>
-                        <div class="property-row"><span class="property-label">Area</span><span id="propArea"
-                                class="property-value highlight-conic">π ≈ 3.14</span></div>
-                        <div class="property-row"><span class="property-label">Circumference</span><span id="propCircum"
+                        <div class="property-row"><span>Area</span><span id="propArea" class="property-value">π ≈
+                                3.14</span></div>
+                        <div class="property-row"><span>Circumference</span><span id="propCircum"
                                 class="property-value">2π ≈ 6.28</span></div>
-                        <div class="property-row"><span class="property-label">Eccentricity</span><span id="propEcc"
-                                class="property-value">0</span></div>
                     </div>
                     <div class="property-section">
                         <div class="property-section-title">Intercepts</div>
                         <div class="property-row" style="flex-direction: column; align-items: flex-start;">
-                            <span class="property-label">X-Intercepts</span>
-                            <div id="propXIntercepts" class="points-list"><span class="point-tag">(1, 0)</span><span
-                                    class="point-tag">(-1, 0)</span></div>
+                            <span>X-Intercepts</span>
+                            <div id="propXInt" class="points-list"></div>
                         </div>
                         <div class="property-row"
                             style="flex-direction: column; align-items: flex-start; margin-top: 6px;">
-                            <span class="property-label">Y-Intercepts</span>
-                            <div id="propYIntercepts" class="points-list"><span class="point-tag">(0, 1)</span><span
-                                    class="point-tag">(0, -1)</span></div>
+                            <span>Y-Intercepts</span>
+                            <div id="propYInt" class="points-list"></div>
                         </div>
                     </div>
                     <div class="property-section">
-                        <div class="property-section-title">Equation Forms</div>
+                        <div class="property-section-title">Equations</div>
                         <div class="equation-box"><span class="equation-label">Standard Form</span>
-                            <div id="propStandard">(x)² + (y)² = 1</div>
+                            <div id="propStandard">x² + y² = 1</div>
+                        </div>
+                        <div class="equation-box"><span class="equation-label">Parametric</span>
+                            <div id="propParametric">x = cos θ, y = sin θ</div>
                         </div>
                         <div class="equation-box"><span class="equation-label">General Form</span>
                             <div id="propGeneral">x² + y² - 1 = 0</div>
-                        </div>
-                        <div class="equation-box"><span class="equation-label">Parametric</span>
-                            <div id="propParametric">x = cos(t), y = sin(t)</div>
                         </div>
                     </div>
                 </div>
@@ -162,7 +381,6 @@
         </aside>
     </div>
 
-    <div id="tooltip" class="tooltip hidden"></div>
     <script src="circle-engine.js"></script>
     <script src="app.js"></script>
 </body>
