@@ -1,0 +1,404 @@
+/* Spectral Graph Theory - Styles */
+
+/* Main Layout Overrides */
+.main-content {
+    display: grid;
+    grid-template-columns: 280px 1fr 280px;
+    gap: 1rem;
+    padding: 1rem;
+    height: calc(100vh - 60px);
+    overflow: hidden;
+}
+
+.sidebar-left,
+.sidebar-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+.visualization-area {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-1);
+    border-radius: 12px;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* Viz Tabs */
+.viz-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.5rem 0.5rem 0;
+}
+
+.viz-tab {
+    padding: 0.6rem 1.2rem;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+}
+
+.viz-tab:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.viz-tab.active {
+    background: var(--surface-1);
+    color: var(--accent-primary);
+    border-bottom: 2px solid var(--accent-primary);
+}
+
+/* Canvas Container */
+.canvas-container {
+    flex: 1;
+    position: relative;
+    min-height: 0;
+}
+
+.canvas-container canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Spectrum Container */
+.spectrum-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--surface-1);
+}
+
+.spectrum-container canvas {
+    width: 100%;
+    height: 100%;
+}
+
+/* Laplacian Matrix Display */
+.laplacian-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-1);
+    overflow: auto;
+    padding: 2rem;
+}
+
+.laplacian-matrix {
+    display: grid;
+    gap: 4px;
+    background: var(--surface-2);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.laplacian-cell {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: transform 0.2s ease;
+}
+
+.laplacian-cell.diagonal {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: white;
+}
+
+.laplacian-cell.off-diagonal {
+    background: var(--surface-3);
+    color: var(--text-primary);
+}
+
+.laplacian-cell.zero {
+    background: var(--surface-1);
+    color: var(--text-tertiary);
+}
+
+.laplacian-cell:hover {
+    transform: scale(1.1);
+    z-index: 1;
+}
+
+/* Fiedler Container */
+.fiedler-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--surface-1);
+}
+
+/* Matrix Input Grid */
+.matrix-grid {
+    display: grid;
+    gap: 4px;
+    justify-content: center;
+}
+
+.matrix-grid input {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--surface-2);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.matrix-grid input:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+    outline: none;
+}
+
+.matrix-grid input:hover {
+    border-color: var(--accent-primary);
+}
+
+/* Eigenvalue List */
+.eigenvalue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.eigenvalue-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--surface-2);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.eigenvalue-item:hover {
+    background: var(--surface-3);
+    transform: translateX(4px);
+}
+
+.eigenvalue-item.selected {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+    border-left: 3px solid var(--accent-primary);
+}
+
+.eigenvalue-index {
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    width: 20px;
+}
+
+.eigenvalue-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    flex: 1;
+}
+
+.eigenvalue-bar {
+    width: 40px;
+    height: 6px;
+    background: var(--surface-3);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.eigenvalue-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+/* Spectral Analysis Panel */
+#spectralAnalysis {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.analysis-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.analysis-item:last-child {
+    border-bottom: none;
+}
+
+.analysis-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.analysis-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent-primary);
+    font-weight: 600;
+}
+
+.analysis-value.warning {
+    color: var(--warning);
+}
+
+.analysis-value.success {
+    color: var(--success);
+}
+
+/* Graph Properties */
+#graphProperties {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.property-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+}
+
+.property-label {
+    color: var(--text-secondary);
+}
+
+.property-value {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Panel Footer */
+.panel-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Matrix Controls */
+.matrix-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.matrix-controls label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.matrix-controls input[type="number"] {
+    width: 50px;
+    padding: 0.25rem 0.5rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+}
+
+/* Hidden utility */
+.hidden {
+    display: none !important;
+}
+
+/* Radio label styling */
+.radio-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+.radio-label:hover {
+    background: var(--surface-2);
+}
+
+.radio-label input[type="radio"] {
+    margin-top: 2px;
+    accent-color: var(--accent-primary);
+}
+
+/* Tooltip for cells */
+.cell-tooltip {
+    position: absolute;
+    background: var(--surface-3);
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+    pointer-events: none;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .main-content {
+        grid-template-columns: 240px 1fr 240px;
+    }
+}
+
+@media (max-width: 900px) {
+    .main-content {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+    }
+
+    .sidebar-left,
+    .sidebar-right {
+        flex-direction: row;
+        overflow-x: auto;
+        max-height: none;
+    }
+
+    .panel {
+        min-width: 250px;
+    }
+}

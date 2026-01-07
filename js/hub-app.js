@@ -47,6 +47,20 @@ const CATEGORIES = {
                 icon: '🕸️',
                 description: 'Visualize square matrices as directed graphs.',
                 path: 'tools/matrix-graph/index.html'
+            },
+            {
+                id: 'number-triangles',
+                name: 'Number Triangles',
+                icon: '🔺',
+                description: 'Explore famous combinatorial triangles: Pascal, Bell, Catalan, and 19 more.',
+                path: 'tools/combinatorics-triangles/index.html'
+            },
+            {
+                id: 'coordinate-geometry',
+                name: 'Coordinate Geometry',
+                icon: '📍',
+                description: 'Analyze parabolas: vertex, focus, directrix, axis of symmetry, and more.',
+                path: 'tools/geometry/coordinate-geometry/parabola-analyzer/index.html'
             }
         ]
     },

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parabola Analyzer - Coordinate Geometry</title>
+    <meta name="description"
+        content="Analyze quadratic equations and explore parabola properties: vertex, focus, directrix, axis of symmetry, and more.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Landing Page -->
+    <div id="landing" class="landing">
+        <header class="landing-header">
+            <div class="logo">
+                <span class="logo-icon">📍</span>
+                <span class="logo-text">Coordinate Geometry</span>
+            </div>
+        </header>
+
+        <main class="landing-main">
+            <h1 class="landing-title">
+                <span class="gradient-text">Parabola Analyzer</span>
+            </h1>
+            <p class="landing-subtitle">
+                Enter a quadratic equation and explore its complete coordinate geometry properties
+            </p>
+
+            <!-- Custom Input -->
+            <div class="custom-input-section">
+                <h3>📝 Enter Your Equation</h3>
+                <div class="input-row">
+                    <input type="text" id="customEquation" class="equation-input"
+                        placeholder="e.g., y = x² - 4x + 3 or y = 2x^2 + 1">
+                    <button id="analyzeBtn" class="btn btn-primary">Analyze →</button>
+                </div>
+            </div>
+
+            <!-- Preset Grid -->
+            <h3 style="margin: 32px 0 16px; color: var(--text-secondary);">Or choose a preset:</h3>
+            <div class="preset-grid" id="presetGrid">
+                <!-- Populated by JS -->
+            </div>
+        </main>
+
+        <footer class="landing-footer">
+            <p>Part of the STEM Visualization Hub</p>
+        </footer>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="app-container hidden">
+        <!-- Left Panel: Equation & Controls -->
+        <aside class="left-panel">
+            <div class="panel equation-panel">
+                <div class="panel-header compact">
+                    <h2>Equation</h2>
+                    <button class="btn btn-ghost btn-xs" id="backToLanding" title="Back to presets">← Back</button>
+                </div>
+                <div class="panel-body">
+                    <div id="equationDisplay" class="equation-display">y = x²</div>
+                    <input type="text" id="editEquation" class="edit-equation-input" placeholder="Edit equation...">
+
+                    <div class="control-group">
+                        <label>Quick Presets</label>
+                        <select id="presetSelect" class="select">
+                            <option value="">Select a preset...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel controls-panel">
+                <div class="panel-header compact">
+                    <h2>Display Options</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="control-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="showGrid" checked>
+                            <span>Show Grid</span>
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="showLabels" checked>
+                            <span>Show Labels</span>
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="showLatus" checked>
+                            <span>Show Latus Rectum</span>
+                        </label>
+                    </div>
+
+                    <button id="resetView" class="btn btn-ghost btn-sm" style="width: 100%; margin-top: 12px;">
+                        ↺ Reset View
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Panel: Visualization -->
+        <main class="main-panel">
+            <div class="panel visualization-panel">
+                <div class="panel-header compact">
+                    <h2>Parabola Visualization</h2>
+                    <div class="header-right">
+                        <span class="badge">Vertical</span>
+                        <button class="btn btn-xs" id="fullscreenBtn" title="Toggle fullscreen">⛶</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="canvas-container">
+                        <canvas id="parabolaCanvas"></canvas>
+
+                        <!-- Legend -->
+                        <div class="legend">
+                            <div class="legend-item">
+                                <span class="legend-color parabola"></span>
+                                <span>Parabola</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color vertex"></span>
+                                <span>Vertex</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color focus"></span>
+                                <span>Focus</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color directrix"></span>
+                                <span>Directrix</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color latus"></span>
+                                <span>Latus Rectum</span>
+                            </div>
+                        </div>
+
+                        <!-- Coordinate Display -->
+                        <div class="coord-display">
+                            <span id="coordDisplay">(0, 0)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-label">Vertex</span>
+                    <span id="statVertex" class="stat-value">(0, 0)</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Focus</span>
+                    <span id="statFocus" class="stat-value">(0, 0.25)</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Parameter p</span>
+                    <span id="statP" class="stat-value">0.25</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Latus Rectum</span>
+                    <span id="statLatus" class="stat-value">1</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Panel: Properties -->
+        <aside class="right-panel">
+            <div class="panel properties-panel">
+                <div class="panel-header compact">
+                    <h2>Parabola Properties</h2>
+                </div>
+                <div class="panel-body">
+                    <!-- Key Points -->
+                    <div class="property-section">
+                        <div class="property-section-title">Key Points</div>
+
+                        <div class="property-row">
+                            <span class="property-label">Vertex</span>
+                            <span id="propVertex" class="property-value highlight-vertex">(0, 0)</span>
+                        </div>
+                        <div class="property-row">
+                            <span class="property-label">Focus</span>
+                            <span id="propFocus" class="property-value highlight-focus">(0, 0.25)</span>
+                        </div>
+                    </div>
+
+                    <!-- Lines -->
+                    <div class="property-section">
+                        <div class="property-section-title">Key Lines</div>
+
+                        <div class="property-row">
+                            <span class="property-label">Directrix</span>
+                            <span id="propDirectrix" class="property-value highlight-directrix">y = -0.25</span>
+                        </div>
+                        <div class="property-row">
+                            <span class="property-label">Axis of Symmetry</span>
+                            <span id="propAxis" class="property-value">x = 0</span>
+                        </div>
+                    </div>
+
+                    <!-- Parameters -->
+                    <div class="property-section">
+                        <div class="property-section-title">Parameters</div>
+
+                        <div class="property-row">
+                            <span class="property-label">Parameter p</span>
+                            <span id="propP" class="property-value">0.25</span>
+                        </div>
+                        <div class="property-row">
+                            <span class="property-label">Latus Rectum</span>
+                            <span id="propLatus" class="property-value highlight-latus">1</span>
+                        </div>
+                        <div class="property-row">
+                            <span class="property-label">Eccentricity</span>
+                            <span id="propEccentricity" class="property-value">1</span>
+                        </div>
+                        <div class="property-row">
+                            <span class="property-label">Direction</span>
+                            <span id="propDirection" class="direction-indicator">
+                                <span class="direction-arrow">↑</span> Opens up
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Intercepts -->
+                    <div class="property-section">
+                        <div class="property-section-title">Intercepts</div>
+
+                        <div class="property-row" style="flex-direction: column; align-items: flex-start;">
+                            <span class="property-label">X-Intercepts</span>
+                            <div id="propXIntercepts" class="intercepts-list">
+                                <span class="intercept-point">(0, 0)</span>
+                            </div>
+                        </div>
+                        <div class="property-row"
+                            style="flex-direction: column; align-items: flex-start; margin-top: 8px;">
+                            <span class="property-label">Y-Intercept</span>
+                            <div id="propYIntercept" class="intercepts-list">
+                                <span class="intercept-point">(0, 0)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Equations -->
+                    <div class="property-section">
+                        <div class="property-section-title">Equation Forms</div>
+
+                        <div class="equation-box">
+                            <span class="equation-label">General Form</span>
+                            <div id="propGeneralForm">y = x²</div>
+                        </div>
+                        <div class="equation-box">
+                            <span class="equation-label">Vertex Form</span>
+                            <div id="propVertexForm">y = (x)²</div>
+                        </div>
+                        <div class="equation-box">
+                            <span class="equation-label">Standard Form</span>
+                            <div id="propStandardForm">(x)² = 1(y)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Tooltip -->
+    <div id="tooltip" class="tooltip hidden"></div>
+
+    <!-- Scripts -->
+    <script src="parabola-engine.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

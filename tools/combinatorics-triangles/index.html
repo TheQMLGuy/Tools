@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Triangles - Combinatorics Visualizer</title>
+    <meta name="description"
+        content="Explore 22 famous combinatorial triangles: Pascal, Bell, Catalan, Fibonacci, Eulerian, and more with interactive visualization.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Landing Page -->
+    <div id="landing" class="landing">
+        <header class="landing-header">
+            <div class="logo">
+                <span class="logo-icon">🔺</span>
+                <span class="logo-text">Number Triangles</span>
+            </div>
+        </header>
+
+        <main class="landing-main">
+            <h1 class="landing-title">
+                <span class="gradient-text">Number Triangles</span>
+            </h1>
+            <p class="landing-subtitle">
+                Explore 22 famous combinatorial triangles and discover their beautiful patterns
+            </p>
+
+            <div class="category-cards" id="categoryCards">
+                <!-- Category cards populated by JS -->
+            </div>
+
+            <div class="landing-info">
+                <div class="info-box">
+                    <h3>💡 What are Number Triangles?</h3>
+                    <p>
+                        <strong>Number triangles</strong> are infinite arrays of numbers arranged in rows,
+                        where each entry is computed from entries in previous rows. They reveal deep
+                        connections between combinatorics, sequences, and counting problems.
+                    </p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="landing-footer">
+            <p>Part of the STEM Visualization Hub</p>
+        </footer>
+    </div>
+
+    <!-- Triangle Selection Page -->
+    <div id="triangleSelect" class="triangle-select-page hidden">
+        <header class="select-header">
+            <button class="btn btn-ghost" id="backToLanding">← Categories</button>
+            <div class="category-info">
+                <span id="categoryIcon" class="category-icon">📐</span>
+                <h2 id="categoryTitle">Classic Triangles</h2>
+            </div>
+        </header>
+
+        <div class="triangle-grid" id="triangleGrid">
+            <!-- Triangle cards populated by JS -->
+        </div>
+    </div>
+
+    <!-- Main Visualizer -->
+    <div id="app" class="app-container hidden">
+        <!-- Left Panel: Info -->
+        <aside class="left-panel">
+            <div class="panel info-panel">
+                <div class="panel-header compact">
+                    <h2>Triangle Info</h2>
+                    <button class="btn btn-ghost btn-xs" id="backToSelect" title="Back to selection">← Back</button>
+                </div>
+                <div class="panel-body">
+                    <div id="triangleInfo" class="triangle-info-content">
+                        <h3 id="triangleName">Pascal's Triangle</h3>
+                        <div class="info-row">
+                            <span class="info-label">Symbol</span>
+                            <span id="triangleSymbol" class="info-value mono">C(n,k)</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">OEIS</span>
+                            <a id="oeisLink" href="#" target="_blank" class="info-value oeis-link">A007318</a>
+                        </div>
+                        <div id="triangleDesc" class="info-description">
+                            Binomial coefficients - the most famous number triangle
+                        </div>
+                        <div class="formula-box">
+                            <span class="formula-label">Formula</span>
+                            <code id="triangleFormula">C(n,k) = C(n-1,k-1) + C(n-1,k)</code>
+                        </div>
+                        <div id="triangleExample" class="example-box">
+                            <span class="example-label">Example</span>
+                            <span class="example-text">Row 4: 1, 4, 6, 4, 1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel controls-panel">
+                <div class="panel-header compact">
+                    <h2>Controls</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="control-group">
+                        <label>Rows <span id="rowsValue" class="param-value">10</span></label>
+                        <input type="range" class="slider" id="rowsSlider" min="3" max="20" value="10">
+                    </div>
+                    <div class="control-group">
+                        <label>Color Scheme</label>
+                        <select class="select" id="colorScheme">
+                            <option value="gradient">Value Gradient</option>
+                            <option value="heatmap">Heatmap</option>
+                            <option value="monochrome">Monochrome</option>
+                            <option value="rainbow">Rainbow</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="showValues" checked>
+                            <span>Show Values</span>
+                        </label>
+                    </div>
+                    <div class="control-group">
+                        <label>Display Mode</label>
+                        <select class="select" id="displayMode">
+                            <option value="numeric">Numeric (1, 4, 6...)</option>
+                            <option value="symbolic">Symbolic (C(n,k)...)</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="animateGeneration">
+                            <span>Animate Generation</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Panel: Triangle Visualization -->
+        <main class="main-panel">
+            <div class="panel visualization-panel">
+                <div class="panel-header compact">
+                    <h2 id="vizTitle">Pascal's Triangle</h2>
+                    <div class="header-right">
+                        <span id="triangleBadge" class="badge badge-primary">Classic</span>
+                        <button class="btn btn-xs btn-fullscreen" id="fullscreenBtn"
+                            title="Toggle fullscreen">⛶</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="triangleContainer" class="triangle-container">
+                        <div id="triangleDisplay" class="triangle-display">
+                            <!-- Triangle cells rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-label">Rows</span>
+                    <span id="statRows" class="stat-value">10</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Total Values</span>
+                    <span id="statTotal" class="stat-value">55</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Max Value</span>
+                    <span id="statMax" class="stat-value">252</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Row Sum</span>
+                    <span id="statSum" class="stat-value">512</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Panel: Cell Details -->
+        <aside class="right-panel">
+            <div class="params-header">
+                <span>Cell Details</span>
+            </div>
+
+            <div id="cellDetails" class="cell-details">
+                <p class="muted">Hover over a cell to see details</p>
+            </div>
+
+            <div class="params-divider"></div>
+
+            <div class="row-preview-section">
+                <div class="row-header">Row Preview</div>
+                <div id="rowPreview" class="row-preview">
+                    <p class="muted">Select a row</p>
+                </div>
+            </div>
+
+            <div class="params-divider"></div>
+
+            <div class="sequence-section">
+                <div class="sequence-header">Sequences Found</div>
+                <div id="sequences" class="sequences-list">
+                    <!-- Dynamic sequences -->
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Tooltip -->
+    <div id="tooltip" class="tooltip hidden"></div>
+
+    <!-- Scripts -->
+    <script src="triangle-engine.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
