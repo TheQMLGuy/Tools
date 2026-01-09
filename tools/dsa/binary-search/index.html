@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Search - DSA Visualization</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../shared/dsa-style.css">
+    <style>
+        .array-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 4px;
+            padding: 60px 20px 20px;
+            height: 100%;
+        }
+
+        .array-cell {
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(137, 180, 250, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+            background: rgba(17, 17, 27, 0.5);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .array-cell.left {
+            border-color: var(--dsa-success);
+            background: rgba(166, 227, 161, 0.1);
+        }
+
+        .array-cell.right {
+            border-color: var(--dsa-error);
+            background: rgba(243, 139, 168, 0.1);
+        }
+
+        .array-cell.mid {
+            border-color: var(--dsa-warning);
+            background: rgba(249, 226, 175, 0.2);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(249, 226, 175, 0.3);
+        }
+
+        .array-cell.found {
+            border-color: var(--dsa-success);
+            background: rgba(166, 227, 161, 0.3);
+            transform: scale(1.15);
+            box-shadow: 0 0 25px rgba(166, 227, 161, 0.5);
+        }
+
+        .array-cell.eliminated {
+            opacity: 0.3;
+        }
+
+        .array-cell .index {
+            position: absolute;
+            top: -25px;
+            font-size: 11px;
+            color: #6c7086;
+        }
+
+        .array-cell .pointer {
+            position: absolute;
+            bottom: -30px;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .array-cell .pointer.left-ptr {
+            background: rgba(166, 227, 161, 0.2);
+            color: var(--dsa-success);
+        }
+
+        .array-cell .pointer.right-ptr {
+            background: rgba(243, 139, 168, 0.2);
+            color: var(--dsa-error);
+        }
+
+        .array-cell .pointer.mid-ptr {
+            background: rgba(249, 226, 175, 0.2);
+            color: var(--dsa-warning);
+        }
+
+        .search-info {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+        }
+
+        .search-info span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .search-info .label {
+            color: #6c7086;
+        }
+
+        .search-info .value {
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dsa-container">
+        <!-- Visualization Panel -->
+        <div class="viz-panel">
+            <div class="viz-header">
+                <h2>🔍 Binary Search</h2>
+                <div class="search-info">
+                    <span><span class="label">Target:</span> <span class="value" id="target-display">-</span></span>
+                    <span><span class="label">Comparisons:</span> <span class="value" id="comparisons">0</span></span>
+                </div>
+            </div>
+
+            <div class="viz-canvas">
+                <div class="array-container" id="viz-area">
+                    <!-- Array cells will be rendered here -->
+                </div>
+            </div>
+
+            <div class="viz-controls">
+                <button class="btn btn-secondary" onclick="generateArray()">🔀 New Array</button>
+                <input type="number" id="search-target" placeholder="Target" style="width: 80px;">
+                <button class="btn btn-primary" id="search-btn" onclick="startSearch()">🔍 Search</button>
+                <div class="speed-control">
+                    <label>Speed:</label>
+                    <input type="range" id="speed" min="200" max="1500" value="800">
+                </div>
+                <span class="status-badge" id="status">Ready</span>
+            </div>
+        </div>
+
+        <!-- Code Panel -->
+        <div id="code-container"></div>
+    </div>
+
+    <script src="../shared/code-viewer.js"></script>
+    <script src="binary-search.js"></script>
+</body>
+
+</html>

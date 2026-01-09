@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack & Queue - DSA Visualization</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../shared/dsa-style.css">
+    <style>
+        .structures-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            height: 100%;
+            padding: 20px;
+        }
+
+        .structure-box {
+            background: rgba(17, 17, 27, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .structure-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stack-viz {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 4px;
+            flex: 1;
+            justify-content: flex-start;
+            padding: 10px;
+            border: 2px dashed rgba(137, 180, 250, 0.2);
+            border-radius: 8px;
+            min-height: 200px;
+            overflow-y: auto;
+        }
+
+        .queue-viz {
+            display: flex;
+            flex-direction: row;
+            gap: 4px;
+            flex: 1;
+            align-items: center;
+            padding: 10px;
+            border: 2px dashed rgba(137, 180, 250, 0.2);
+            border-radius: 8px;
+            min-height: 80px;
+            overflow-x: auto;
+        }
+
+        .element {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--dsa-accent) 0%, rgba(137, 180, 250, 0.6) 100%);
+            border-radius: 6px;
+            font-weight: 600;
+            color: #1e1e2e;
+            animation: slideIn 0.3s ease;
+            white-space: nowrap;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .element.highlight {
+            background: linear-gradient(135deg, var(--dsa-warning) 0%, rgba(249, 226, 175, 0.6) 100%);
+        }
+
+        .element.removing {
+            animation: fadeOut 0.3s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+        }
+
+        .stack-labels,
+        .queue-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #6c7086;
+            margin-top: 8px;
+        }
+
+        .structure-controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .empty-msg {
+            color: #45475a;
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        .mode-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .mode-tab {
+            padding: 8px 20px;
+            border-radius: 6px;
+            border: 1px solid rgba(137, 180, 250, 0.2);
+            background: transparent;
+            color: #6c7086;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .mode-tab.active {
+            background: rgba(137, 180, 250, 0.2);
+            color: var(--dsa-accent);
+            border-color: var(--dsa-accent);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dsa-container">
+        <!-- Visualization Panel -->
+        <div class="viz-panel">
+            <div class="viz-header">
+                <h2>📚 Stack & Queue</h2>
+                <div class="mode-tabs">
+                    <button class="mode-tab active" data-mode="stack">Stack (LIFO)</button>
+                    <button class="mode-tab" data-mode="queue">Queue (FIFO)</button>
+                </div>
+            </div>
+
+            <div class="viz-canvas">
+                <div class="structures-container">
+                    <!-- Stack -->
+                    <div class="structure-box" id="stack-section">
+                        <div class="structure-title">📥 Stack (LIFO)</div>
+                        <div class="stack-viz" id="stack-viz">
+                            <div class="empty-msg">Stack is empty</div>
+                        </div>
+                        <div class="stack-labels">
+                            <span>← Bottom</span>
+                            <span>Top →</span>
+                        </div>
+                        <div class="structure-controls">
+                            <input type="number" id="stack-value" value="10" style="width: 70px;">
+                            <button class="btn btn-primary" onclick="pushStack()">Push</button>
+                            <button class="btn btn-secondary" onclick="popStack()">Pop</button>
+                            <button class="btn btn-secondary" onclick="peekStack()">Peek</button>
+                        </div>
+                    </div>
+
+                    <!-- Queue -->
+                    <div class="structure-box" id="queue-section">
+                        <div class="structure-title">📤 Queue (FIFO)</div>
+                        <div class="queue-viz" id="queue-viz">
+                            <div class="empty-msg">Queue is empty</div>
+                        </div>
+                        <div class="queue-labels">
+                            <span>← Front (Dequeue)</span>
+                            <span>Rear (Enqueue) →</span>
+                        </div>
+                        <div class="structure-controls">
+                            <input type="number" id="queue-value" value="10" style="width: 70px;">
+                            <button class="btn btn-primary" onclick="enqueue()">Enqueue</button>
+                            <button class="btn btn-secondary" onclick="dequeue()">Dequeue</button>
+                            <button class="btn btn-secondary" onclick="peekQueue()">Peek</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-controls">
+                <span class="status-badge" id="status">Ready</span>
+                <button class="btn btn-danger" onclick="resetAll()">Reset All</button>
+            </div>
+        </div>
+
+        <!-- Code Panel -->
+        <div id="code-container"></div>
+    </div>
+
+    <script src="../shared/code-viewer.js"></script>
+    <script src="stack-queue.js"></script>
+</body>
+
+</html>

@@ -124,13 +124,73 @@ class CircuitRenderer {
     renderControlLines(grid) {
         // Find multi-qubit gates and draw control lines
         const multiGates = this.circuit.filter(g =>
-            ['CNOT', 'CZ'].includes(g.type)
+            ['CNOT', 'CZ', 'SWAP'].includes(g.type)
         );
 
+        // Create an SVG overlay for control lines
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.classList.add('control-lines-svg');
+        svg.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;';
+
         for (const gate of multiGates) {
-            // Control lines are rendered via CSS positioned elements
-            // This is a simplified version - full implementation would use SVG
+            let qubit1, qubit2;
+
+            if (gate.type === 'CNOT' || gate.type === 'CZ') {
+                qubit1 = gate.control;
+                qubit2 = gate.target;
+            } else if (gate.type === 'SWAP') {
+                qubit1 = gate.qubit1;
+                qubit2 = gate.qubit2;
+            }
+
+            if (qubit1 === undefined || qubit2 === undefined) continue;
+
+            const col = gate.column;
+            const minQ = Math.min(qubit1, qubit2);
+            const maxQ = Math.max(qubit1, qubit2);
+
+            // Find the slot elements to get positions
+            const slot1 = grid.querySelector(`.gate-slot[data-qubit="${qubit1}"][data-column="${col}"]`);
+            const slot2 = grid.querySelector(`.gate-slot[data-qubit="${qubit2}"][data-column="${col}"]`);
+
+            if (slot1 && slot2) {
+                // Use setTimeout to ensure DOM is rendered
+                setTimeout(() => {
+                    const rect1 = slot1.getBoundingClientRect();
+                    const rect2 = slot2.getBoundingClientRect();
+                    const gridRect = grid.getBoundingClientRect();
+
+                    const x = rect1.left + rect1.width / 2 - gridRect.left;
+                    const y1 = rect1.top + rect1.height / 2 - gridRect.top;
+                    const y2 = rect2.top + rect2.height / 2 - gridRect.top;
+
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', x);
+                    line.setAttribute('y1', y1);
+                    line.setAttribute('x2', x);
+                    line.setAttribute('y2', y2);
+                    line.setAttribute('stroke', gate.type === 'CNOT' ? '#22d3ee' : gate.type === 'CZ' ? '#a78bfa' : '#f59e0b');
+                    line.setAttribute('stroke-width', '2');
+                    line.setAttribute('stroke-dasharray', gate.type === 'SWAP' ? '4,2' : 'none');
+
+                    svg.appendChild(line);
+
+                    // Add control dot for CNOT/CZ
+                    if (gate.type === 'CNOT' || gate.type === 'CZ') {
+                        const controlY = gate.control === qubit1 ? y1 : y2;
+                        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        dot.setAttribute('cx', x);
+                        dot.setAttribute('cy', controlY);
+                        dot.setAttribute('r', '5');
+                        dot.setAttribute('fill', gate.type === 'CNOT' ? '#22d3ee' : '#a78bfa');
+                        svg.appendChild(dot);
+                    }
+                }, 0);
+            }
         }
+
+        grid.style.position = 'relative';
+        grid.appendChild(svg);
     }
 
     getGateAt(qubit, column) {
@@ -261,10 +321,116 @@ class CircuitRenderer {
     }
 
     showGateMenu(slot) {
-        // Could show a popup menu - for now just add H gate
+        // Remove any existing menu
+        const existingMenu = document.querySelector('.gate-menu-popup');
+        if (existingMenu) existingMenu.remove();
+
         const qubit = parseInt(slot.dataset.qubit);
         const column = parseInt(slot.dataset.column);
-        this.addGate('H', qubit, column);
+
+        // Create popup menu
+        const menu = document.createElement('div');
+        menu.className = 'gate-menu-popup';
+        menu.innerHTML = `
+            <div class="gate-menu-title">Add Gate</div>
+            <div class="gate-menu-section">Single-Qubit</div>
+            <div class="gate-menu-grid">
+                <button data-gate="H">H</button>
+                <button data-gate="X">X</button>
+                <button data-gate="Y">Y</button>
+                <button data-gate="Z">Z</button>
+                <button data-gate="S">S</button>
+                <button data-gate="T">T</button>
+            </div>
+            ${this.numQubits > 1 ? `
+            <div class="gate-menu-section">Multi-Qubit</div>
+            <div class="gate-menu-grid">
+                <button data-gate="CNOT">⊕</button>
+                <button data-gate="SWAP">⨉</button>
+                <button data-gate="CZ">CZ</button>
+            </div>
+            ` : ''}
+            <div class="gate-menu-section">Other</div>
+            <div class="gate-menu-grid">
+                <button data-gate="M">📏</button>
+            </div>
+        `;
+
+        // Position menu near the slot
+        const rect = slot.getBoundingClientRect();
+        menu.style.cssText = `
+            position: fixed;
+            left: ${rect.right + 5}px;
+            top: ${rect.top}px;
+            background: var(--bg-card, #1e1e2e);
+            border: 1px solid var(--border-color, #3f3f5a);
+            border-radius: 8px;
+            padding: 8px;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        `;
+
+        // Add styles for menu elements
+        const style = document.createElement('style');
+        style.textContent = `
+            .gate-menu-popup .gate-menu-title {
+                font-size: 0.75rem;
+                color: #a0a0b0;
+                margin-bottom: 6px;
+                font-weight: 600;
+            }
+            .gate-menu-popup .gate-menu-section {
+                font-size: 0.65rem;
+                color: #707080;
+                margin: 6px 0 4px;
+                text-transform: uppercase;
+            }
+            .gate-menu-popup .gate-menu-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 4px;
+            }
+            .gate-menu-popup button {
+                width: 32px;
+                height: 32px;
+                background: #2a2a3e;
+                border: 1px solid #3f3f5a;
+                border-radius: 4px;
+                color: #e0e0e0;
+                cursor: pointer;
+                font-size: 0.85rem;
+                transition: all 0.15s;
+            }
+            .gate-menu-popup button:hover {
+                background: #6366f1;
+                border-color: #818cf8;
+            }
+        `;
+        menu.appendChild(style);
+
+        document.body.appendChild(menu);
+
+        // Handle button clicks
+        menu.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const gateType = btn.dataset.gate;
+                if (['CNOT', 'SWAP', 'CZ'].includes(gateType)) {
+                    this.handleMultiQubitGateDrop(gateType, qubit, column);
+                } else {
+                    this.addGate(gateType, qubit, column);
+                }
+                menu.remove();
+            });
+        });
+
+        // Close menu on outside click
+        const closeHandler = (e) => {
+            if (!menu.contains(e.target) && e.target !== slot) {
+                menu.remove();
+                document.removeEventListener('click', closeHandler);
+            }
+        };
+        setTimeout(() => document.addEventListener('click', closeHandler), 0);
     }
 
     // Load preset circuits

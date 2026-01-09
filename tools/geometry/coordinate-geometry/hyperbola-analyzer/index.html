@@ -4,11 +4,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hyperbola Analyzer - Coordinate Geometry</title>
-    <meta name="description" content="Analyze hyperbola equations: foci, vertices, asymptotes, eccentricity, and more.">
+    <title>Hyperbola Analyzer - Advanced Coordinate Geometry</title>
+    <meta name="description" content="Comprehensive hyperbola analysis: parametric form, asymptotes, tangent, normal.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../conic-shared.css">
+    <style>
+        .parametric-display {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-align: center;
+            padding: 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        .point-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            padding: 8px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 4px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .line-mode-selector {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .line-mode {
+            flex: 1;
+            padding: 6px 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .line-mode:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .line-mode.active {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .active-lines {
+            margin-top: 10px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .line-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            margin-bottom: 4px;
+            font-size: 0.75rem;
+        }
+
+        .line-item .line-type {
+            font-weight: 500;
+            text-transform: uppercase;
+            color: #ef4444;
+        }
+
+        .line-item .remove-line {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .asymptote-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            padding: 8px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+    </style>
 </head>
 
 <body>
@@ -19,21 +108,20 @@
         </header>
         <main class="landing-main">
             <h1 class="landing-title"><span class="gradient-text">Hyperbola Analyzer</span></h1>
-            <p class="landing-subtitle">Enter a hyperbola equation and explore foci, asymptotes, eccentricity, and more
-            </p>
+            <p class="landing-subtitle">Interactive hyperbola exploration with asymptotes, parametric points, and
+                tangents</p>
+
             <div class="custom-input-section">
                 <h3>📝 Enter Your Equation</h3>
                 <div class="input-row">
-                    <input type="text" id="customEquation" class="equation-input" placeholder="e.g., x²/4 - y²/9 = 1">
+                    <input type="text" id="customEquation" class="equation-input" placeholder="x²/4 - y²/1 = 1">
                     <button id="analyzeBtn" class="btn btn-primary">Analyze →</button>
                 </div>
             </div>
+
             <h3 style="margin: 28px 0 14px; color: var(--text-secondary); font-size: 0.95rem;">Or choose a preset:</h3>
             <div class="preset-grid" id="presetGrid"></div>
         </main>
-        <footer class="landing-footer">
-            <p>Part of the STEM Visualization Hub</p>
-        </footer>
     </div>
 
     <!-- Main Application -->
@@ -41,29 +129,79 @@
         <aside class="left-panel">
             <div class="panel equation-panel">
                 <div class="panel-header compact">
-                    <h2>Equation</h2><button class="btn btn-ghost btn-xs" id="backToLanding">← Back</button>
+                    <h2>Hyperbola Definition</h2>
+                    <button class="btn btn-ghost btn-xs" id="backToLanding">← Back</button>
                 </div>
                 <div class="panel-body">
-                    <div id="equationDisplay" class="equation-display">x²/4 - y²/9 = 1</div>
-                    <input type="text" id="editEquation" class="edit-equation-input" placeholder="Edit equation...">
-                    <div class="control-group"><label>Quick Presets</label><select id="presetSelect" class="select">
-                            <option value="">Select a preset...</option>
-                        </select></div>
+                    <div id="equationDisplay" class="equation-display">x²/4 - y²/1 = 1</div>
+
+                    <div class="control-group">
+                        <label>Center (h, k)</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="number" id="editCenterX" value="0" step="0.5" style="width: 50%;">
+                            <input type="number" id="editCenterY" value="0" step="0.5" style="width: 50%;">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Semi-axes (a, b)</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="number" id="editA" value="2" step="0.1" min="0.1" style="width: 50%;">
+                            <input type="number" id="editB" value="1" step="0.1" min="0.1" style="width: 50%;">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Orientation</label>
+                        <select id="editOrientation">
+                            <option value="horizontal">Horizontal (x²/a² - y²/b² = 1)</option>
+                            <option value="vertical">Vertical (y²/a² - x²/b² = 1)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            <div class="panel controls-panel">
+
+            <!-- Parametric Point -->
+            <div class="panel">
                 <div class="panel-header compact">
-                    <h2>Display Options</h2>
+                    <h2>Parametric Point</h2>
                 </div>
                 <div class="panel-body">
-                    <div class="control-group"><label class="checkbox-label"><input type="checkbox" id="showGrid"
-                                checked><span>Show Grid</span></label></div>
-                    <div class="control-group"><label class="checkbox-label"><input type="checkbox" id="showLabels"
-                                checked><span>Show Labels</span></label></div>
-                    <div class="control-group"><label class="checkbox-label"><input type="checkbox" id="showAsymptotes"
-                                checked><span>Show Asymptotes</span></label></div>
-                    <button id="resetView" class="btn btn-ghost btn-sm" style="width: 100%; margin-top: 10px;">↺ Reset
-                        View</button>
+                    <div class="parametric-display">
+                        <span class="mono">P(θ) = (a·sec θ, b·tan θ)</span>
+                    </div>
+                    <div class="control-group">
+                        <label>Angle θ (degrees)</label>
+                        <input type="range" id="paramTheta" min="-80" max="80" step="1" value="45">
+                        <input type="number" id="paramThetaValue" value="45" step="5" style="width: 80px;">
+                    </div>
+                    <div class="point-display">
+                        <span>Point:</span> <span id="parametricPoint" class="mono highlight">(2.83, 1)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Line Tools -->
+            <div class="panel" style="flex: 1;">
+                <div class="panel-header compact">
+                    <h2>Line Tools</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="line-mode-selector">
+                        <button class="line-mode active" data-mode="tangent">Tangent</button>
+                        <button class="line-mode" data-mode="normal">Normal</button>
+                    </div>
+
+                    <div class="control-group">
+                        <label>At θ (degrees)</label>
+                        <input type="number" id="lineTheta" value="45" step="5">
+                    </div>
+
+                    <button class="btn btn-sm btn-primary" id="generateLine" style="width: 100%;">Generate Line</button>
+                    <button class="btn btn-sm btn-ghost" id="clearLines" style="width: 100%; margin-top: 6px;">Clear
+                        All</button>
+
+                    <div class="active-lines" id="activeLines"></div>
                 </div>
             </div>
         </aside>
@@ -74,36 +212,37 @@
                     <h2>Hyperbola Visualization</h2>
                     <div class="header-right">
                         <span class="badge"
-                            style="background: rgba(168, 85, 247, 0.2); color: #a855f7;">Hyperbola</span>
-                        <button class="btn btn-xs" id="fullscreenBtn">⛶</button>
+                            style="background: linear-gradient(135deg, #ef4444, #dc2626);">Hyperbola</span>
+                        <label class="checkbox-label"><input type="checkbox" id="showGrid" checked> Grid</label>
+                        <label class="checkbox-label"><input type="checkbox" id="showLabels" checked> Labels</label>
+                        <label class="checkbox-label"><input type="checkbox" id="showAsymptotes" checked>
+                            Asymptotes</label>
+                        <button class="btn btn-xs" id="resetView">↺</button>
                     </div>
                 </div>
                 <div class="panel-body">
                     <div class="canvas-container">
                         <canvas id="hyperbolaCanvas"></canvas>
                         <div class="legend">
-                            <div class="legend-item"><span class="legend-color conic"></span><span>Hyperbola</span>
-                            </div>
+                            <div class="legend-item"><span class="legend-color"
+                                    style="background: #ef4444;"></span><span>Hyperbola</span></div>
                             <div class="legend-item"><span class="legend-color center"></span><span>Center</span></div>
-                            <div class="legend-item"><span class="legend-color focus"></span><span>Foci</span></div>
-                            <div class="legend-item"><span class="legend-color vertex"></span><span>Vertices</span>
-                            </div>
-                            <div class="legend-item"><span class="legend-color asymptote"></span><span>Asymptotes</span>
-                            </div>
+                            <div class="legend-item"><span class="legend-color focus"></span><span>Focus</span></div>
+                            <div class="legend-item"><span class="legend-color"
+                                    style="background: #8b5cf6;"></span><span>Asymptotes</span></div>
                         </div>
                         <div class="coord-display"><span id="coordDisplay">(0, 0)</span></div>
                     </div>
                 </div>
             </div>
             <div class="stats-bar">
-                <div class="stat"><span class="stat-label">Center</span><span id="statCenter" class="stat-value">(0,
-                        0)</span></div>
-                <div class="stat"><span class="stat-label">Trans. Axis a</span><span id="statA"
-                        class="stat-value">2</span></div>
-                <div class="stat"><span class="stat-label">Conj. Axis b</span><span id="statB"
-                        class="stat-value">3</span></div>
-                <div class="stat"><span class="stat-label">Eccentricity</span><span id="statEcc"
-                        class="stat-value">1.803</span></div>
+                <div class="stat"><span class="stat-label">a</span><span id="statA" class="stat-value">2</span></div>
+                <div class="stat"><span class="stat-label">b</span><span id="statB" class="stat-value">1</span></div>
+                <div class="stat"><span class="stat-label">c</span><span id="statC" class="stat-value">√5</span></div>
+                <div class="stat"><span class="stat-label">e</span><span id="statE" class="stat-value">1.118</span>
+                </div>
+                <div class="stat"><span class="stat-label">Type</span><span id="statType"
+                        class="stat-value">Standard</span></div>
             </div>
         </main>
 
@@ -115,51 +254,52 @@
                 <div class="panel-body">
                     <div class="property-section">
                         <div class="property-section-title">Key Values</div>
-                        <div class="property-row"><span class="property-label">Center</span><span id="propCenter"
+                        <div class="property-row"><span>Center</span><span id="propCenter"
                                 class="property-value highlight-center">(0, 0)</span></div>
-                        <div class="property-row"><span class="property-label">Semi-Transverse a</span><span id="propA"
+                        <div class="property-row"><span>Transverse (a)</span><span id="propA"
                                 class="property-value">2</span></div>
-                        <div class="property-row"><span class="property-label">Semi-Conjugate b</span><span id="propB"
-                                class="property-value">3</span></div>
-                        <div class="property-row"><span class="property-label">Orientation</span><span
-                                id="propOrientation" class="property-value">Horizontal</span></div>
+                        <div class="property-row"><span>Conjugate (b)</span><span id="propB"
+                                class="property-value">1</span></div>
+                        <div class="property-row"><span>c = √(a²+b²)</span><span id="propC"
+                                class="property-value">√5</span></div>
                     </div>
                     <div class="property-section">
                         <div class="property-section-title">Foci & Vertices</div>
                         <div class="property-row" style="flex-direction: column; align-items: flex-start;">
-                            <span class="property-label">Foci</span>
-                            <div id="propFoci" class="points-list"><span class="point-tag">(√13, 0)</span><span
-                                    class="point-tag">(-√13, 0)</span></div>
+                            <span>Foci</span>
+                            <div id="propFoci" class="points-list"></div>
                         </div>
-                        <div class="property-row"
-                            style="flex-direction: column; align-items: flex-start; margin-top: 6px;">
-                            <span class="property-label">Vertices</span>
-                            <div id="propVertices" class="points-list"><span class="point-tag">(2, 0)</span><span
-                                    class="point-tag">(-2, 0)</span></div>
+                        <div class="property-row" style="flex-direction: column; align-items: flex-start;">
+                            <span>Vertices</span>
+                            <div id="propVertices" class="points-list"></div>
                         </div>
+                        <div class="property-row"><span>Directrices</span><span id="propDirectrices"
+                                class="property-value">x = ±a/e</span></div>
                     </div>
                     <div class="property-section">
                         <div class="property-section-title">Asymptotes</div>
-                        <div class="equation-box"><span class="equation-label">Asymptote 1</span>
-                            <div id="propAsym1">y = 1.5x</div>
-                        </div>
-                        <div class="equation-box"><span class="equation-label">Asymptote 2</span>
-                            <div id="propAsym2">y = -1.5x</div>
-                        </div>
+                        <div class="property-row"><span>Line 1</span><span id="propAsym1" class="property-value">y =
+                                (b/a)x</span></div>
+                        <div class="property-row"><span>Line 2</span><span id="propAsym2" class="property-value">y =
+                                -(b/a)x</span></div>
                     </div>
                     <div class="property-section">
-                        <div class="property-section-title">Parameters</div>
-                        <div class="property-row"><span class="property-label">Focal Distance c</span><span id="propC"
-                                class="property-value highlight-focus">√13</span></div>
-                        <div class="property-row"><span class="property-label">Eccentricity e</span><span id="propEcc"
-                                class="property-value">1.803</span></div>
-                        <div class="property-row"><span class="property-label">Latus Rectum</span><span id="propLatus"
-                                class="property-value">9</span></div>
+                        <div class="property-section-title">Measurements</div>
+                        <div class="property-row"><span>Eccentricity</span><span id="propE"
+                                class="property-value highlight">1.118</span></div>
+                        <div class="property-row"><span>Latus Rectum</span><span id="propLR"
+                                class="property-value">2b²/a</span></div>
                     </div>
                     <div class="property-section">
-                        <div class="property-section-title">Equation</div>
-                        <div class="equation-box"><span class="equation-label">Standard Form</span>
-                            <div id="propStandard">x²/4 - y²/9 = 1</div>
+                        <div class="property-section-title">Equations</div>
+                        <div class="equation-box"><span class="equation-label">Standard</span>
+                            <div id="propStandard">x²/4 - y²/1 = 1</div>
+                        </div>
+                        <div class="equation-box"><span class="equation-label">Parametric</span>
+                            <div id="propParametric">x = 2sec θ, y = tan θ</div>
+                        </div>
+                        <div class="equation-box"><span class="equation-label">Conjugate</span>
+                            <div id="propConjugate">-x²/4 + y²/1 = 1</div>
                         </div>
                     </div>
                 </div>
@@ -167,7 +307,6 @@
         </aside>
     </div>
 
-    <div id="tooltip" class="tooltip hidden"></div>
     <script src="hyperbola-engine.js"></script>
     <script src="app.js"></script>
 </body>

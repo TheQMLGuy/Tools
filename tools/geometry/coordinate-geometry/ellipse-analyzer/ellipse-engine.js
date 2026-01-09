@@ -1,285 +1,441 @@
 /**
- * Ellipse Engine - Coordinate Geometry Calculations
- * Computes all properties of an ellipse from its equation
+ * Advanced Ellipse Engine - Comprehensive Coordinate Geometry
+ * 
+ * Features:
+ * - Multiple forms: x²/a² + y²/b² = 1, shifted, general
+ * - Parametric representation: (a cos θ, b sin θ)
+ * - Tangent forms: point, parametric, slope
+ * - Normal forms: point, parametric
+ * - Director circle, chord of contact
  */
 
-class EllipseEngine {
+class AdvancedEllipseEngine {
     constructor() {
         this.reset();
     }
 
     reset() {
-        // Standard form: (x-h)²/a² + (y-k)²/b² = 1
-        this.h = 0;  // center x
-        this.k = 0;  // center y
-        this.a = 2;  // semi-major axis
-        this.b = 1;  // semi-minor axis
-        this.orientation = 'horizontal'; // 'horizontal' or 'vertical'
+        this.h = 0;          // Center x
+        this.k = 0;          // Center y
+        this.a = 2;          // Semi-major axis
+        this.b = 1;          // Semi-minor axis
+        this.isHorizontal = true; // Major axis along x
+
         this.properties = null;
+        this.currentTheta = 0;
     }
 
-    /**
-     * Parse equation string
-     * Supports: (x-h)²/a² + (y-k)²/b² = 1, x²/a² + y²/b² = 1
-     */
-    parseEquation(equation) {
+    // =====================================================
+    // BIDIRECTIONAL SETTERS
+    // =====================================================
+
+    setFromEquation(equation) {
         let eq = equation.replace(/\s+/g, '').toLowerCase();
         eq = eq.replace(/²/g, '^2');
 
-        // Try pattern: (x-h)²/a² + (y-k)²/b² = 1
-        // Or: x²/a² + y²/b² = 1
-
-        let h = 0, k = 0, aSquared = 1, bSquared = 1;
-
-        // Extract x term: (x-h)²/a² or x²/a²
-        const xPattern = /\(x([+-][\d.]+)?\)\^2\/(\d+\.?\d*)|x\^2\/(\d+\.?\d*)/;
-        const xMatch = eq.match(xPattern);
-        if (xMatch) {
-            h = xMatch[1] ? -parseFloat(xMatch[1]) : 0;
-            aSquared = parseFloat(xMatch[2] || xMatch[3]);
+        // x²/a² + y²/b² = 1
+        let match = eq.match(/x\^2\/(\d+\.?\d*)\+y\^2\/(\d+\.?\d*)=1/);
+        if (match) {
+            const a2 = parseFloat(match[1]);
+            const b2 = parseFloat(match[2]);
+            this.h = 0; this.k = 0;
+            if (a2 >= b2) {
+                this.a = Math.sqrt(a2); this.b = Math.sqrt(b2); this.isHorizontal = true;
+            } else {
+                this.a = Math.sqrt(b2); this.b = Math.sqrt(a2); this.isHorizontal = false;
+            }
+            return this.calculate();
         }
 
-        // Extract y term: (y-k)²/b² or y²/b²
-        const yPattern = /\(y([+-][\d.]+)?\)\^2\/(\d+\.?\d*)|y\^2\/(\d+\.?\d*)/;
-        const yMatch = eq.match(yPattern);
-        if (yMatch) {
-            k = yMatch[1] ? -parseFloat(yMatch[1]) : 0;
-            bSquared = parseFloat(yMatch[2] || yMatch[3]);
+        // (x-h)²/a² + (y-k)²/b² = 1
+        match = eq.match(/\(x([+-][\d.]+)?\)\^2\/(\d+\.?\d*)\+\(y([+-][\d.]+)?\)\^2\/(\d+\.?\d*)=1/);
+        if (match) {
+            this.h = match[1] ? -parseFloat(match[1]) : 0;
+            this.k = match[3] ? -parseFloat(match[3]) : 0;
+            const a2 = parseFloat(match[2]);
+            const b2 = parseFloat(match[4]);
+            if (a2 >= b2) {
+                this.a = Math.sqrt(a2); this.b = Math.sqrt(b2); this.isHorizontal = true;
+            } else {
+                this.a = Math.sqrt(b2); this.b = Math.sqrt(a2); this.isHorizontal = false;
+            }
+            return this.calculate();
         }
 
-        this.h = h;
-        this.k = k;
-
-        // Determine semi-major and semi-minor axes
-        if (aSquared >= bSquared) {
-            this.a = Math.sqrt(aSquared);
-            this.b = Math.sqrt(bSquared);
-            this.orientation = 'horizontal';
-        } else {
-            this.a = Math.sqrt(bSquared);
-            this.b = Math.sqrt(aSquared);
-            this.orientation = 'vertical';
-        }
-
-        return { h: this.h, k: this.k, a: this.a, b: this.b };
+        return { error: 'Could not parse ellipse equation' };
     }
 
-    /**
-     * Set ellipse parameters directly
-     */
-    setEllipse(h, k, a, b) {
+    setFromParameters(a, b, h = 0, k = 0, isHorizontal = true) {
+        this.a = Math.max(a, b);
+        this.b = Math.min(a, b);
         this.h = h;
         this.k = k;
-        if (a >= b) {
-            this.a = a;
-            this.b = b;
-            this.orientation = 'horizontal';
-        } else {
-            this.a = b;
-            this.b = a;
-            this.orientation = 'vertical';
-        }
+        this.isHorizontal = isHorizontal;
+        return this.calculate();
     }
 
-    /**
-     * Calculate all ellipse properties
-     */
+    setFromFoci(f1, f2) {
+        // Foci determine center and c value
+        this.h = (f1.x + f2.x) / 2;
+        this.k = (f1.y + f2.y) / 2;
+        const c = Math.sqrt((f2.x - f1.x) ** 2 + (f2.y - f1.y) ** 2) / 2;
+        this.isHorizontal = Math.abs(f2.x - f1.x) > Math.abs(f2.y - f1.y);
+        // Need a to complete: b² = a² - c², so a must be set separately
+        // For now, set a = c * 1.5 as default
+        this.a = c * 1.5;
+        this.b = Math.sqrt(this.a * this.a - c * c);
+        return this.calculate();
+    }
+
+    setCenter(h, k) {
+        this.h = h;
+        this.k = k;
+        return this.calculate();
+    }
+
+    // =====================================================
+    // CALCULATE ALL PROPERTIES
+    // =====================================================
+
     calculate() {
-        const { h, k, a, b, orientation } = this;
+        const { h, k, a, b, isHorizontal } = this;
 
-        if (a <= 0 || b <= 0) {
-            return { error: 'Invalid ellipse (a or b ≤ 0)' };
-        }
+        if (a <= 0 || b <= 0) return { error: 'Axes must be positive' };
+        if (a < b) return { error: 'a must be ≥ b for standard form' };
 
-        // Center
+        const c = Math.sqrt(a * a - b * b);
+        const e = c / a;
+
         const center = { x: h, y: k };
 
-        // c = distance from center to focus = √(a² - b²)
-        const c = Math.sqrt(a * a - b * b);
-
         // Foci
-        let foci;
-        if (orientation === 'horizontal') {
-            foci = [
-                { x: h + c, y: k },
-                { x: h - c, y: k }
-            ];
-        } else {
-            foci = [
-                { x: h, y: k + c },
-                { x: h, y: k - c }
-            ];
-        }
+        const foci = isHorizontal
+            ? [{ x: h - c, y: k }, { x: h + c, y: k }]
+            : [{ x: h, y: k - c }, { x: h, y: k + c }];
 
-        // Vertices (endpoints of major axis)
-        let vertices;
-        if (orientation === 'horizontal') {
-            vertices = [
-                { x: h + a, y: k },
-                { x: h - a, y: k }
-            ];
-        } else {
-            vertices = [
-                { x: h, y: k + a },
-                { x: h, y: k - a }
-            ];
-        }
+        // Vertices (on major axis)
+        const vertices = isHorizontal
+            ? [{ x: h - a, y: k }, { x: h + a, y: k }]
+            : [{ x: h, y: k - a }, { x: h, y: k + a }];
 
-        // Co-vertices (endpoints of minor axis)
-        let coVertices;
-        if (orientation === 'horizontal') {
-            coVertices = [
-                { x: h, y: k + b },
-                { x: h, y: k - b }
-            ];
-        } else {
-            coVertices = [
-                { x: h + b, y: k },
-                { x: h - b, y: k }
-            ];
-        }
-
-        // Eccentricity e = c/a (0 < e < 1 for ellipse)
-        const eccentricity = c / a;
-
-        // Major and minor axis lengths
-        const majorAxisLength = 2 * a;
-        const minorAxisLength = 2 * b;
-
-        // Circumference (approximation using Ramanujan's formula)
-        const circumference = Math.PI * (3 * (a + b) - Math.sqrt((3 * a + b) * (a + 3 * b)));
-
-        // Area
-        const area = Math.PI * a * b;
+        // Co-vertices (on minor axis)
+        const coVertices = isHorizontal
+            ? [{ x: h, y: k - b }, { x: h, y: k + b }]
+            : [{ x: h - b, y: k }, { x: h + b, y: k }];
 
         // Directrices
-        let directrices;
-        if (orientation === 'horizontal') {
-            directrices = [
-                { type: 'vertical', value: h + a / eccentricity, equation: `x = ${this._formatNumber(h + a / eccentricity)}` },
-                { type: 'vertical', value: h - a / eccentricity, equation: `x = ${this._formatNumber(h - a / eccentricity)}` }
-            ];
-        } else {
-            directrices = [
-                { type: 'horizontal', value: k + a / eccentricity, equation: `y = ${this._formatNumber(k + a / eccentricity)}` },
-                { type: 'horizontal', value: k - a / eccentricity, equation: `y = ${this._formatNumber(k - a / eccentricity)}` }
-            ];
-        }
+        const directrices = isHorizontal
+            ? { type: 'vertical', values: [h - a / e, h + a / e] }
+            : { type: 'horizontal', values: [k - a / e, k + a / e] };
 
-        // Latus rectum length = 2b²/a
-        const latusRectumLength = (2 * b * b) / a;
+        // Latus rectum
+        const latusRectum = (2 * b * b) / a;
 
-        // X-intercepts
-        const xIntercepts = [];
-        // (x-h)²/a² + k²/b² = 1 when y=0
-        const xVal = 1 - (k * k) / (b * b);
-        if (xVal > 0 && orientation === 'horizontal') {
-            xIntercepts.push({ x: h + a * Math.sqrt(xVal), y: 0 });
-            xIntercepts.push({ x: h - a * Math.sqrt(xVal), y: 0 });
-        } else if (xVal > 0) {
-            const xV = 1 - (k * k) / (a * a);
-            if (xV > 0) {
-                xIntercepts.push({ x: h + b * Math.sqrt(xV), y: 0 });
-                xIntercepts.push({ x: h - b * Math.sqrt(xV), y: 0 });
-            }
-        }
+        // Area and perimeter (Ramanujan approximation)
+        const area = Math.PI * a * b;
+        const perimeter = Math.PI * (3 * (a + b) - Math.sqrt((3 * a + b) * (a + 3 * b)));
 
-        // Y-intercepts
-        const yIntercepts = [];
-        const yVal = 1 - (h * h) / (a * a);
-        if (yVal > 0 && orientation === 'horizontal') {
-            yIntercepts.push({ x: 0, y: k + b * Math.sqrt(yVal) });
-            yIntercepts.push({ x: 0, y: k - b * Math.sqrt(yVal) });
-        }
+        // Intercepts
+        const xIntercepts = this._getXIntercepts();
+        const yIntercepts = this._getYIntercepts();
 
-        // Equation forms
-        const aSquared = orientation === 'horizontal' ? a * a : b * b;
-        const bSquared = orientation === 'horizontal' ? b * b : a * a;
-        const standardForm = `(x ${this._formatOffset(-h)})²/${this._formatNumber(aSquared)} + (y ${this._formatOffset(-k)})²/${this._formatNumber(bSquared)} = 1`;
-        const parametricForm = `x = ${this._formatNumber(h)} + ${this._formatNumber(orientation === 'horizontal' ? a : b)}cos(t), y = ${this._formatNumber(k)} + ${this._formatNumber(orientation === 'horizontal' ? b : a)}sin(t)`;
+        // Equations
+        const equations = this._getEquationForms();
+
+        // Director circle
+        const directorCircle = { center, radius: Math.sqrt(a * a + b * b) };
 
         this.properties = {
             center,
-            semiMajorAxis: a,
-            semiMinorAxis: b,
-            majorAxisLength,
-            minorAxisLength,
-            orientation,
+            semiMajor: a,
+            semiMinor: b,
             foci,
-            focalDistance: c,
             vertices,
             coVertices,
-            eccentricity,
+            c,
+            eccentricity: e,
             directrices,
-            latusRectumLength,
-            circumference,
+            latusRectum,
             area,
+            perimeter,
             xIntercepts,
             yIntercepts,
-            standardForm,
-            parametricForm
+            equations,
+            directorCircle,
+            isHorizontal
         };
 
         return this.properties;
     }
 
-    _formatNumber(num) {
-        if (Number.isInteger(num)) return num.toString();
-        return num.toFixed(4).replace(/\.?0+$/, '');
+    _getXIntercepts() {
+        const { h, k, a, b, isHorizontal } = this;
+        const intercepts = [];
+
+        // At y = 0: check if ellipse intersects x-axis
+        if (isHorizontal) {
+            const disc = 1 - (k * k) / (b * b);
+            if (disc >= 0) {
+                const xOffset = a * Math.sqrt(disc);
+                intercepts.push({ x: h + xOffset, y: 0 });
+                if (xOffset > 0.0001) intercepts.push({ x: h - xOffset, y: 0 });
+            }
+        } else {
+            const disc = 1 - (k * k) / (a * a);
+            if (disc >= 0) {
+                const xOffset = b * Math.sqrt(disc);
+                intercepts.push({ x: h + xOffset, y: 0 });
+                if (xOffset > 0.0001) intercepts.push({ x: h - xOffset, y: 0 });
+            }
+        }
+        return intercepts;
     }
 
-    _formatOffset(num) {
-        if (Math.abs(num) < 0.0001) return '';
-        if (num > 0) return `+ ${this._formatNumber(num)}`;
-        return `- ${this._formatNumber(Math.abs(num))}`;
+    _getYIntercepts() {
+        const { h, k, a, b, isHorizontal } = this;
+        const intercepts = [];
+
+        if (isHorizontal) {
+            const disc = 1 - (h * h) / (a * a);
+            if (disc >= 0) {
+                const yOffset = b * Math.sqrt(disc);
+                intercepts.push({ x: 0, y: k + yOffset });
+                if (yOffset > 0.0001) intercepts.push({ x: 0, y: k - yOffset });
+            }
+        } else {
+            const disc = 1 - (h * h) / (b * b);
+            if (disc >= 0) {
+                const yOffset = a * Math.sqrt(disc);
+                intercepts.push({ x: 0, y: k + yOffset });
+                if (yOffset > 0.0001) intercepts.push({ x: 0, y: k - yOffset });
+            }
+        }
+        return intercepts;
+    }
+
+    _getEquationForms() {
+        const { h, k, a, b, isHorizontal } = this;
+
+        let standard, parametric;
+
+        if (h === 0 && k === 0) {
+            standard = isHorizontal
+                ? `x²/${this._fmt(a * a)} + y²/${this._fmt(b * b)} = 1`
+                : `x²/${this._fmt(b * b)} + y²/${this._fmt(a * a)} = 1`;
+        } else {
+            standard = isHorizontal
+                ? `(x ${this._fmtOff(-h)})²/${this._fmt(a * a)} + (y ${this._fmtOff(-k)})²/${this._fmt(b * b)} = 1`
+                : `(x ${this._fmtOff(-h)})²/${this._fmt(b * b)} + (y ${this._fmtOff(-k)})²/${this._fmt(a * a)} = 1`;
+        }
+
+        if (isHorizontal) {
+            parametric = h === 0 && k === 0
+                ? `x = ${this._fmt(a)}cos(θ), y = ${this._fmt(b)}sin(θ)`
+                : `x = ${this._fmt(h)} + ${this._fmt(a)}cos(θ), y = ${this._fmt(k)} + ${this._fmt(b)}sin(θ)`;
+        } else {
+            parametric = h === 0 && k === 0
+                ? `x = ${this._fmt(b)}cos(θ), y = ${this._fmt(a)}sin(θ)`
+                : `x = ${this._fmt(h)} + ${this._fmt(b)}cos(θ), y = ${this._fmt(k)} + ${this._fmt(a)}sin(θ)`;
+        }
+
+        return { standard, parametric };
+    }
+
+    // =====================================================
+    // PARAMETRIC REPRESENTATION
+    // =====================================================
+
+    getParametricPoint(theta) {
+        const { h, k, a, b, isHorizontal } = this;
+        if (isHorizontal) {
+            return { x: h + a * Math.cos(theta), y: k + b * Math.sin(theta), theta };
+        } else {
+            return { x: h + b * Math.cos(theta), y: k + a * Math.sin(theta), theta };
+        }
+    }
+
+    getAngleFromPoint(x, y) {
+        const { h, k, a, b, isHorizontal } = this;
+        if (isHorizontal) {
+            return Math.atan2((y - k) / b, (x - h) / a);
+        } else {
+            return Math.atan2((y - k) / a, (x - h) / b);
+        }
+    }
+
+    // =====================================================
+    // LINE TOOLS: TANGENT, NORMAL
+    // =====================================================
+
+    /**
+     * Tangent at parametric point θ
+     * For x²/a² + y²/b² = 1, tangent at (a cos θ, b sin θ):
+     * (x cos θ)/a + (y sin θ)/b = 1
+     */
+    getTangentAt(theta) {
+        const { h, k, a, b, isHorizontal } = this;
+        const point = this.getParametricPoint(theta);
+        const cosT = Math.cos(theta), sinT = Math.sin(theta);
+
+        // Coefficients for Ax + By + C = 0
+        let A, B, C;
+        if (isHorizontal) {
+            A = cosT / a;
+            B = sinT / b;
+            C = -(A * h + B * k + 1);
+        } else {
+            A = cosT / b;
+            B = sinT / a;
+            C = -(A * h + B * k + 1);
+        }
+
+        // Convert to y = mx + c if not vertical
+        if (Math.abs(B) < 0.0001) {
+            return {
+                type: 'tangent', point, theta,
+                isVertical: true, equation: `x = ${this._fmt(point.x)}`
+            };
+        }
+
+        const m = -A / B;
+        const c = -C / B;
+
+        return {
+            type: 'tangent', point, theta,
+            slope: m,
+            equation: this._formatLineEquation(m, c),
+            getY: (x) => m * x + c
+        };
     }
 
     /**
-     * Generate points for plotting the ellipse
+     * Tangent by slope m
+     * y = mx ± √(a²m² + b²)
      */
+    getTangentBySlope(m) {
+        const { h, k, a, b, isHorizontal } = this;
+        const a2 = isHorizontal ? a : b;
+        const b2 = isHorizontal ? b : a;
+
+        const offset = Math.sqrt(a2 * a2 * m * m + b2 * b2);
+        const c1 = k - m * h + offset;
+        const c2 = k - m * h - offset;
+
+        return [
+            { type: 'tangent', slope: m, equation: this._formatLineEquation(m, c1), getY: (x) => m * x + c1 },
+            { type: 'tangent', slope: m, equation: this._formatLineEquation(m, c2), getY: (x) => m * x + c2 }
+        ];
+    }
+
+    /**
+     * Normal at parametric point θ
+     */
+    getNormalAt(theta) {
+        const { h, k, a, b, isHorizontal } = this;
+        const point = this.getParametricPoint(theta);
+        const cosT = Math.cos(theta), sinT = Math.sin(theta);
+
+        // Normal: ax/cos θ - by/sin θ = a² - b²
+        if (Math.abs(sinT) < 0.0001) {
+            // At ends of major axis, normal is vertical
+            return {
+                type: 'normal', point, theta,
+                isVertical: true, equation: `x = ${this._fmt(point.x)}`
+            };
+        }
+        if (Math.abs(cosT) < 0.0001) {
+            // At ends of minor axis, normal is horizontal
+            return {
+                type: 'normal', point, theta,
+                isHorizontal: true, equation: `y = ${this._fmt(point.y)}`,
+                getY: () => point.y
+            };
+        }
+
+        const a2 = isHorizontal ? a : b;
+        const b2 = isHorizontal ? b : a;
+
+        const m = (a2 * sinT) / (b2 * cosT);
+        const c = point.y - m * point.x;
+
+        return {
+            type: 'normal', point, theta,
+            slope: m,
+            equation: this._formatLineEquation(m, c),
+            getY: (x) => m * x + c
+        };
+    }
+
+    /**
+     * Check if point is inside, on, or outside ellipse
+     */
+    getPointPosition(px, py) {
+        const { h, k, a, b, isHorizontal } = this;
+        const a2 = isHorizontal ? a : b;
+        const b2 = isHorizontal ? b : a;
+
+        const value = ((px - h) ** 2) / (a2 ** 2) + ((py - k) ** 2) / (b2 ** 2);
+
+        if (Math.abs(value - 1) < 0.01) return 'on';
+        if (value < 1) return 'inside';
+        return 'outside';
+    }
+
+    // =====================================================
+    // PLOTTING
+    // =====================================================
+
     generatePlotPoints(steps = 100) {
         const points = [];
-        const { h, k, a, b, orientation } = this;
-        const semiA = orientation === 'horizontal' ? a : b;
-        const semiB = orientation === 'horizontal' ? b : a;
-
+        const dTheta = (2 * Math.PI) / steps;
         for (let i = 0; i <= steps; i++) {
-            const t = (i / steps) * 2 * Math.PI;
-            points.push({
-                x: h + semiA * Math.cos(t),
-                y: k + semiB * Math.sin(t)
-            });
+            points.push(this.getParametricPoint(i * dTheta));
         }
         return points;
     }
 
-    /**
-     * Get view bounds for visualization
-     */
-    getViewBounds(padding = 2) {
-        const { h, k, a, b, orientation } = this;
-        const semiA = orientation === 'horizontal' ? a : b;
-        const semiB = orientation === 'horizontal' ? b : a;
-
+    getViewBounds(padding = 1) {
+        const { h, k, a, b } = this;
+        const maxAxis = Math.max(a, b);
         return {
-            minX: h - semiA - padding,
-            maxX: h + semiA + padding,
-            minY: k - semiB - padding,
-            maxY: k + semiB + padding
+            minX: h - maxAxis - padding,
+            maxX: h + maxAxis + padding,
+            minY: k - maxAxis - padding,
+            maxY: k + maxAxis + padding
         };
+    }
+
+    // =====================================================
+    // FORMATTING HELPERS
+    // =====================================================
+
+    _fmt(n) {
+        if (Number.isInteger(n)) return n.toString();
+        if (Math.abs(n) < 0.0001) return '0';
+        return n.toFixed(3).replace(/\.?0+$/, '');
+    }
+
+    _fmtOff(n) {
+        if (Math.abs(n) < 0.0001) return '';
+        return n > 0 ? `+ ${this._fmt(n)}` : `- ${this._fmt(Math.abs(n))}`;
+    }
+
+    _formatLineEquation(m, c) {
+        if (Math.abs(m) < 0.0001) return `y = ${this._fmt(c)}`;
+        if (Math.abs(c) < 0.0001) return `y = ${this._fmt(m)}x`;
+        return c > 0 ? `y = ${this._fmt(m)}x + ${this._fmt(c)}` : `y = ${this._fmt(m)}x - ${this._fmt(Math.abs(c))}`;
     }
 }
 
-// Preset ellipse examples
 const ELLIPSE_PRESETS = [
-    { id: 'basic-h', name: 'Horizontal Ellipse', equation: 'x²/9 + y²/4 = 1', description: 'a=3, b=2, horizontal major axis' },
-    { id: 'basic-v', name: 'Vertical Ellipse', equation: 'x²/4 + y²/9 = 1', description: 'a=3, b=2, vertical major axis' },
-    { id: 'wide', name: 'Wide Ellipse', equation: 'x²/25 + y²/4 = 1', description: 'a=5, b=2, very eccentric' },
-    { id: 'near-circle', name: 'Near Circle', equation: 'x²/16 + y²/15 = 1', description: 'Low eccentricity' },
-    { id: 'shifted', name: 'Shifted Center', equation: '(x-2)²/9 + (y-1)²/4 = 1', description: 'Center at (2, 1)' },
-    { id: 'earth-orbit', name: 'Earth Orbit (scaled)', equation: 'x²/100 + y²/99.72 = 1', description: 'e ≈ 0.0167, nearly circular' }
+    { name: 'Standard', equation: 'x²/9 + y²/4 = 1', description: 'a=3, b=2, horizontal' },
+    { name: 'Vertical', equation: 'x²/4 + y²/9 = 1', description: 'a=3, b=2, vertical' },
+    { name: 'Circle-like', equation: 'x²/4 + y²/3 = 1', description: 'e ≈ 0.5' },
+    { name: 'Elongated', equation: 'x²/25 + y²/4 = 1', description: 'e ≈ 0.92' },
+    { name: 'Shifted', equation: '(x-2)²/9 + (y-1)²/4 = 1', description: 'Center (2,1)' },
+    { name: 'Unit Circle', equation: 'x²/1 + y²/1 = 1', description: 'Circle, e=0' }
 ];
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { EllipseEngine, ELLIPSE_PRESETS };
+    module.exports = { AdvancedEllipseEngine, ELLIPSE_PRESETS };
 }

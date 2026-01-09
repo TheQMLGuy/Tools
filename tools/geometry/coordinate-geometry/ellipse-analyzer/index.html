@@ -4,11 +4,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ellipse Analyzer - Coordinate Geometry</title>
-    <meta name="description" content="Analyze ellipse equations: foci, vertices, eccentricity, and more.">
+    <title>Ellipse Analyzer - Advanced Coordinate Geometry</title>
+    <meta name="description"
+        content="Comprehensive ellipse analysis: parametric form, tangent, normal, director circle.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../conic-shared.css">
+    <style>
+        .parametric-display {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-align: center;
+            padding: 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        .point-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            padding: 8px;
+            background: rgba(34, 211, 238, 0.1);
+            border-radius: 4px;
+            border: 1px solid rgba(34, 211, 238, 0.3);
+        }
+
+        .line-mode-selector {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .line-mode {
+            flex: 1;
+            padding: 6px 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .line-mode:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .line-mode.active {
+            border-color: #f59e0b;
+            color: #f59e0b;
+        }
+
+        .active-lines {
+            margin-top: 10px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .line-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            margin-bottom: 4px;
+            font-size: 0.75rem;
+        }
+
+        .line-item .line-type {
+            font-weight: 500;
+            text-transform: uppercase;
+            color: #f59e0b;
+        }
+
+        .line-item .remove-line {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
@@ -19,20 +98,20 @@
         </header>
         <main class="landing-main">
             <h1 class="landing-title"><span class="gradient-text">Ellipse Analyzer</span></h1>
-            <p class="landing-subtitle">Enter an ellipse equation and explore foci, vertices, eccentricity, and more</p>
+            <p class="landing-subtitle">Interactive ellipse exploration with parametric points, tangents, and director
+                circle</p>
+
             <div class="custom-input-section">
                 <h3>📝 Enter Your Equation</h3>
                 <div class="input-row">
-                    <input type="text" id="customEquation" class="equation-input" placeholder="e.g., x²/9 + y²/4 = 1">
+                    <input type="text" id="customEquation" class="equation-input" placeholder="x²/9 + y²/4 = 1">
                     <button id="analyzeBtn" class="btn btn-primary">Analyze →</button>
                 </div>
             </div>
+
             <h3 style="margin: 28px 0 14px; color: var(--text-secondary); font-size: 0.95rem;">Or choose a preset:</h3>
             <div class="preset-grid" id="presetGrid"></div>
         </main>
-        <footer class="landing-footer">
-            <p>Part of the STEM Visualization Hub</p>
-        </footer>
     </div>
 
     <!-- Main Application -->
@@ -40,29 +119,79 @@
         <aside class="left-panel">
             <div class="panel equation-panel">
                 <div class="panel-header compact">
-                    <h2>Equation</h2><button class="btn btn-ghost btn-xs" id="backToLanding">← Back</button>
+                    <h2>Ellipse Definition</h2>
+                    <button class="btn btn-ghost btn-xs" id="backToLanding">← Back</button>
                 </div>
                 <div class="panel-body">
                     <div id="equationDisplay" class="equation-display">x²/9 + y²/4 = 1</div>
-                    <input type="text" id="editEquation" class="edit-equation-input" placeholder="Edit equation...">
-                    <div class="control-group"><label>Quick Presets</label><select id="presetSelect" class="select">
-                            <option value="">Select a preset...</option>
-                        </select></div>
+
+                    <div class="control-group">
+                        <label>Center (h, k)</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="number" id="editCenterX" value="0" step="0.5" style="width: 50%;">
+                            <input type="number" id="editCenterY" value="0" step="0.5" style="width: 50%;">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Semi-axes (a, b)</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="number" id="editA" value="3" step="0.1" min="0.1" style="width: 50%;">
+                            <input type="number" id="editB" value="2" step="0.1" min="0.1" style="width: 50%;">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Orientation</label>
+                        <select id="editOrientation">
+                            <option value="horizontal">Horizontal (major axis along x)</option>
+                            <option value="vertical">Vertical (major axis along y)</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            <div class="panel controls-panel">
+
+            <!-- Parametric Point -->
+            <div class="panel">
                 <div class="panel-header compact">
-                    <h2>Display Options</h2>
+                    <h2>Parametric Point</h2>
                 </div>
                 <div class="panel-body">
-                    <div class="control-group"><label class="checkbox-label"><input type="checkbox" id="showGrid"
-                                checked><span>Show Grid</span></label></div>
-                    <div class="control-group"><label class="checkbox-label"><input type="checkbox" id="showLabels"
-                                checked><span>Show Labels</span></label></div>
-                    <div class="control-group"><label class="checkbox-label"><input type="checkbox" id="showDirectrices"
-                                checked><span>Show Directrices</span></label></div>
-                    <button id="resetView" class="btn btn-ghost btn-sm" style="width: 100%; margin-top: 10px;">↺ Reset
-                        View</button>
+                    <div class="parametric-display">
+                        <span class="mono">P(θ) = (a·cos θ, b·sin θ)</span>
+                    </div>
+                    <div class="control-group">
+                        <label>Angle θ (degrees)</label>
+                        <input type="range" id="paramTheta" min="0" max="360" step="1" value="0">
+                        <input type="number" id="paramThetaValue" value="0" step="5" style="width: 80px;">
+                    </div>
+                    <div class="point-display">
+                        <span>Point:</span> <span id="parametricPoint" class="mono highlight">(3, 0)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Line Tools -->
+            <div class="panel" style="flex: 1;">
+                <div class="panel-header compact">
+                    <h2>Line Tools</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="line-mode-selector">
+                        <button class="line-mode active" data-mode="tangent">Tangent</button>
+                        <button class="line-mode" data-mode="normal">Normal</button>
+                    </div>
+
+                    <div class="control-group">
+                        <label>At θ (degrees)</label>
+                        <input type="number" id="lineTheta" value="45" step="5">
+                    </div>
+
+                    <button class="btn btn-sm btn-primary" id="generateLine" style="width: 100%;">Generate Line</button>
+                    <button class="btn btn-sm btn-ghost" id="clearLines" style="width: 100%; margin-top: 6px;">Clear
+                        All</button>
+
+                    <div class="active-lines" id="activeLines"></div>
                 </div>
             </div>
         </aside>
@@ -72,35 +201,37 @@
                 <div class="panel-header compact">
                     <h2>Ellipse Visualization</h2>
                     <div class="header-right">
-                        <span class="badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b;">Ellipse</span>
-                        <button class="btn btn-xs" id="fullscreenBtn">⛶</button>
+                        <span class="badge"
+                            style="background: linear-gradient(135deg, #f59e0b, #d97706);">Ellipse</span>
+                        <label class="checkbox-label"><input type="checkbox" id="showGrid" checked> Grid</label>
+                        <label class="checkbox-label"><input type="checkbox" id="showLabels" checked> Labels</label>
+                        <label class="checkbox-label"><input type="checkbox" id="showDirector"> Director</label>
+                        <button class="btn btn-xs" id="resetView">↺</button>
                     </div>
                 </div>
                 <div class="panel-body">
                     <div class="canvas-container">
                         <canvas id="ellipseCanvas"></canvas>
                         <div class="legend">
-                            <div class="legend-item"><span class="legend-color conic"></span><span>Ellipse</span></div>
+                            <div class="legend-item"><span class="legend-color"
+                                    style="background: #f59e0b;"></span><span>Ellipse</span></div>
                             <div class="legend-item"><span class="legend-color center"></span><span>Center</span></div>
-                            <div class="legend-item"><span class="legend-color focus"></span><span>Foci</span></div>
-                            <div class="legend-item"><span class="legend-color vertex"></span><span>Vertices</span>
-                            </div>
-                            <div class="legend-item"><span
-                                    class="legend-color directrix"></span><span>Directrices</span></div>
+                            <div class="legend-item"><span class="legend-color focus"></span><span>Focus</span></div>
+                            <div class="legend-item"><span class="legend-color"
+                                    style="background: #22d3ee;"></span><span>P(θ)</span></div>
                         </div>
                         <div class="coord-display"><span id="coordDisplay">(0, 0)</span></div>
                     </div>
                 </div>
             </div>
             <div class="stats-bar">
-                <div class="stat"><span class="stat-label">Center</span><span id="statCenter" class="stat-value">(0,
-                        0)</span></div>
-                <div class="stat"><span class="stat-label">Semi-Major a</span><span id="statA"
-                        class="stat-value">3</span></div>
-                <div class="stat"><span class="stat-label">Semi-Minor b</span><span id="statB"
-                        class="stat-value">2</span></div>
-                <div class="stat"><span class="stat-label">Eccentricity</span><span id="statEcc"
-                        class="stat-value">0.745</span></div>
+                <div class="stat"><span class="stat-label">a</span><span id="statA" class="stat-value">3</span></div>
+                <div class="stat"><span class="stat-label">b</span><span id="statB" class="stat-value">2</span></div>
+                <div class="stat"><span class="stat-label">c</span><span id="statC" class="stat-value">√5</span></div>
+                <div class="stat"><span class="stat-label">e</span><span id="statE" class="stat-value">0.745</span>
+                </div>
+                <div class="stat"><span class="stat-label">Area</span><span id="statArea" class="stat-value">6π</span>
+                </div>
             </div>
         </main>
 
@@ -112,61 +243,56 @@
                 <div class="panel-body">
                     <div class="property-section">
                         <div class="property-section-title">Key Values</div>
-                        <div class="property-row"><span class="property-label">Center</span><span id="propCenter"
+                        <div class="property-row"><span>Center</span><span id="propCenter"
                                 class="property-value highlight-center">(0, 0)</span></div>
-                        <div class="property-row"><span class="property-label">Semi-Major a</span><span id="propA"
+                        <div class="property-row"><span>Semi-major (a)</span><span id="propA"
                                 class="property-value">3</span></div>
-                        <div class="property-row"><span class="property-label">Semi-Minor b</span><span id="propB"
+                        <div class="property-row"><span>Semi-minor (b)</span><span id="propB"
                                 class="property-value">2</span></div>
-                        <div class="property-row"><span class="property-label">Orientation</span><span
-                                id="propOrientation" class="property-value">Horizontal</span></div>
+                        <div class="property-row"><span>c = √(a²-b²)</span><span id="propC"
+                                class="property-value">√5</span></div>
                     </div>
                     <div class="property-section">
                         <div class="property-section-title">Foci & Vertices</div>
                         <div class="property-row" style="flex-direction: column; align-items: flex-start;">
-                            <span class="property-label">Foci</span>
-                            <div id="propFoci" class="points-list"><span class="point-tag">(√5, 0)</span><span
-                                    class="point-tag">(-√5, 0)</span></div>
+                            <span>Foci</span>
+                            <div id="propFoci" class="points-list"></div>
                         </div>
-                        <div class="property-row"
-                            style="flex-direction: column; align-items: flex-start; margin-top: 6px;">
-                            <span class="property-label">Vertices</span>
-                            <div id="propVertices" class="points-list"><span class="point-tag">(3, 0)</span><span
-                                    class="point-tag">(-3, 0)</span></div>
+                        <div class="property-row" style="flex-direction: column; align-items: flex-start;">
+                            <span>Vertices</span>
+                            <div id="propVertices" class="points-list"></div>
                         </div>
-                        <div class="property-row"
-                            style="flex-direction: column; align-items: flex-start; margin-top: 6px;">
-                            <span class="property-label">Co-Vertices</span>
-                            <div id="propCoVertices" class="points-list"><span class="point-tag">(0, 2)</span><span
-                                    class="point-tag">(0, -2)</span></div>
-                        </div>
+                        <div class="property-row"><span>Directrices</span><span id="propDirectrices"
+                                class="property-value">x = ±a/e</span></div>
                     </div>
                     <div class="property-section">
-                        <div class="property-section-title">Parameters</div>
-                        <div class="property-row"><span class="property-label">Focal Distance c</span><span id="propC"
-                                class="property-value highlight-focus">√5</span></div>
-                        <div class="property-row"><span class="property-label">Eccentricity e</span><span id="propEcc"
-                                class="property-value">0.745</span></div>
-                        <div class="property-row"><span class="property-label">Latus Rectum</span><span id="propLatus"
-                                class="property-value">2.67</span></div>
-                        <div class="property-row"><span class="property-label">Area</span><span id="propArea"
-                                class="property-value highlight-conic">6π</span></div>
+                        <div class="property-section-title">Measurements</div>
+                        <div class="property-row"><span>Eccentricity</span><span id="propE"
+                                class="property-value highlight">0.745</span></div>
+                        <div class="property-row"><span>Latus Rectum</span><span id="propLR"
+                                class="property-value">2b²/a</span></div>
+                        <div class="property-row"><span>Area</span><span id="propArea" class="property-value">πab</span>
+                        </div>
                     </div>
                     <div class="property-section">
                         <div class="property-section-title">Equations</div>
-                        <div class="equation-box"><span class="equation-label">Standard Form</span>
+                        <div class="equation-box"><span class="equation-label">Standard</span>
                             <div id="propStandard">x²/9 + y²/4 = 1</div>
                         </div>
                         <div class="equation-box"><span class="equation-label">Parametric</span>
-                            <div id="propParametric">x=3cos(t), y=2sin(t)</div>
+                            <div id="propParametric">x = 3cosθ, y = 2sinθ</div>
                         </div>
+                    </div>
+                    <div class="property-section">
+                        <div class="property-section-title">Director Circle</div>
+                        <div class="property-row"><span>Equation</span><span id="propDirector" class="property-value">x²
+                                + y² = 13</span></div>
                     </div>
                 </div>
             </div>
         </aside>
     </div>
 
-    <div id="tooltip" class="tooltip hidden"></div>
     <script src="ellipse-engine.js"></script>
     <script src="app.js"></script>
 </body>

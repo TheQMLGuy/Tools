@@ -1,309 +1,425 @@
 /**
- * Hyperbola Engine - Coordinate Geometry Calculations
- * Computes all properties of a hyperbola from its equation
+ * Advanced Hyperbola Engine - Comprehensive Coordinate Geometry
+ * 
+ * Features:
+ * - Multiple forms: x²/a² - y²/b² = 1, y²/a² - x²/b² = 1, shifted, rectangular
+ * - Parametric representation: (a sec θ, b tan θ)
+ * - Tangent and normal forms
+ * - Asymptotes, conjugate hyperbola
+ * - Director circle (when a > b)
  */
 
-class HyperbolaEngine {
+class AdvancedHyperbolaEngine {
     constructor() {
         this.reset();
     }
 
     reset() {
-        // Standard form: (x-h)²/a² - (y-k)²/b² = 1 (horizontal)
-        // Or: (y-k)²/a² - (x-h)²/b² = 1 (vertical)
-        this.h = 0;  // center x
-        this.k = 0;  // center y
-        this.a = 2;  // semi-transverse axis
-        this.b = 1;  // semi-conjugate axis
-        this.orientation = 'horizontal'; // 'horizontal' or 'vertical'
+        this.h = 0;          // Center x
+        this.k = 0;          // Center y
+        this.a = 2;          // Transverse semi-axis
+        this.b = 1;          // Conjugate semi-axis
+        this.isHorizontal = true;  // x²/a² - y²/b² = 1 (opens left/right)
+
         this.properties = null;
+        this.currentTheta = Math.PI / 4;  // Default 45°
     }
 
-    /**
-     * Parse equation string
-     * Supports: (x-h)²/a² - (y-k)²/b² = 1, x²/a² - y²/b² = 1
-     */
-    parseEquation(equation) {
+    // =====================================================
+    // BIDIRECTIONAL SETTERS
+    // =====================================================
+
+    setFromEquation(equation) {
         let eq = equation.replace(/\s+/g, '').toLowerCase();
         eq = eq.replace(/²/g, '^2');
 
-        let h = 0, k = 0, aSquared = 1, bSquared = 1;
-
-        // Check if it's horizontal (x² first with +) or vertical (y² first with +)
-        const xFirst = eq.indexOf('x') < eq.indexOf('y');
-        const minusBeforeY = eq.match(/[+-]\s*\(y|\-y\^2/);
-
-        if (xFirst && minusBeforeY) {
-            this.orientation = 'horizontal';
-        } else {
-            this.orientation = 'vertical';
+        // x²/a² - y²/b² = 1
+        let match = eq.match(/x\^2\/(\d+\.?\d*)-y\^2\/(\d+\.?\d*)=1/);
+        if (match) {
+            this.h = 0; this.k = 0;
+            this.a = Math.sqrt(parseFloat(match[1]));
+            this.b = Math.sqrt(parseFloat(match[2]));
+            this.isHorizontal = true;
+            return this.calculate();
         }
 
-        // Extract x term: (x-h)²/a² or x²/a²
-        const xPattern = /\(x([+-][\d.]+)?\)\^2\/(\d+\.?\d*)|x\^2\/(\d+\.?\d*)/;
-        const xMatch = eq.match(xPattern);
-        if (xMatch) {
-            h = xMatch[1] ? -parseFloat(xMatch[1]) : 0;
-            aSquared = parseFloat(xMatch[2] || xMatch[3]);
+        // y²/a² - x²/b² = 1
+        match = eq.match(/y\^2\/(\d+\.?\d*)-x\^2\/(\d+\.?\d*)=1/);
+        if (match) {
+            this.h = 0; this.k = 0;
+            this.a = Math.sqrt(parseFloat(match[1]));
+            this.b = Math.sqrt(parseFloat(match[2]));
+            this.isHorizontal = false;
+            return this.calculate();
         }
 
-        // Extract y term: (y-k)²/b² or y²/b²
-        const yPattern = /\(y([+-][\d.]+)?\)\^2\/(\d+\.?\d*)|y\^2\/(\d+\.?\d*)/;
-        const yMatch = eq.match(yPattern);
-        if (yMatch) {
-            k = yMatch[1] ? -parseFloat(yMatch[1]) : 0;
-            bSquared = parseFloat(yMatch[2] || yMatch[3]);
+        // (x-h)²/a² - (y-k)²/b² = 1
+        match = eq.match(/\(x([+-][\d.]+)?\)\^2\/(\d+\.?\d*)-\(y([+-][\d.]+)?\)\^2\/(\d+\.?\d*)=1/);
+        if (match) {
+            this.h = match[1] ? -parseFloat(match[1]) : 0;
+            this.k = match[3] ? -parseFloat(match[3]) : 0;
+            this.a = Math.sqrt(parseFloat(match[2]));
+            this.b = Math.sqrt(parseFloat(match[4]));
+            this.isHorizontal = true;
+            return this.calculate();
         }
 
-        this.h = h;
-        this.k = k;
-
-        if (this.orientation === 'horizontal') {
-            this.a = Math.sqrt(aSquared);
-            this.b = Math.sqrt(bSquared);
-        } else {
-            this.a = Math.sqrt(bSquared);
-            this.b = Math.sqrt(aSquared);
+        // xy = c² (rectangular hyperbola)
+        match = eq.match(/xy=(\d+\.?\d*)/);
+        if (match) {
+            const c = Math.sqrt(parseFloat(match[1]));
+            this.h = 0; this.k = 0;
+            this.a = c * Math.sqrt(2);
+            this.b = c * Math.sqrt(2);
+            this.isHorizontal = true;  // We'll handle this specially
+            this.isRectangular = true;
+            return this.calculate();
         }
 
-        return { h: this.h, k: this.k, a: this.a, b: this.b, orientation: this.orientation };
+        return { error: 'Could not parse hyperbola equation' };
     }
 
-    /**
-     * Set hyperbola parameters directly
-     */
-    setHyperbola(h, k, a, b, orientation = 'horizontal') {
-        this.h = h;
-        this.k = k;
+    setFromParameters(a, b, h = 0, k = 0, isHorizontal = true) {
         this.a = a;
         this.b = b;
-        this.orientation = orientation;
+        this.h = h;
+        this.k = k;
+        this.isHorizontal = isHorizontal;
+        return this.calculate();
     }
 
-    /**
-     * Calculate all hyperbola properties
-     */
+    setCenter(h, k) {
+        this.h = h;
+        this.k = k;
+        return this.calculate();
+    }
+
+    // =====================================================
+    // CALCULATE ALL PROPERTIES
+    // =====================================================
+
     calculate() {
-        const { h, k, a, b, orientation } = this;
+        const { h, k, a, b, isHorizontal } = this;
 
-        if (a <= 0 || b <= 0) {
-            return { error: 'Invalid hyperbola (a or b ≤ 0)' };
-        }
+        if (a <= 0 || b <= 0) return { error: 'Axes must be positive' };
 
-        // Center
+        const c = Math.sqrt(a * a + b * b);
+        const e = c / a;
+
         const center = { x: h, y: k };
 
-        // c = distance from center to focus = √(a² + b²)
-        const c = Math.sqrt(a * a + b * b);
-
         // Foci
-        let foci;
-        if (orientation === 'horizontal') {
-            foci = [
-                { x: h + c, y: k },
-                { x: h - c, y: k }
-            ];
-        } else {
-            foci = [
-                { x: h, y: k + c },
-                { x: h, y: k - c }
-            ];
-        }
+        const foci = isHorizontal
+            ? [{ x: h - c, y: k }, { x: h + c, y: k }]
+            : [{ x: h, y: k - c }, { x: h, y: k + c }];
 
-        // Vertices (endpoints of transverse axis)
-        let vertices;
-        if (orientation === 'horizontal') {
-            vertices = [
-                { x: h + a, y: k },
-                { x: h - a, y: k }
-            ];
-        } else {
-            vertices = [
-                { x: h, y: k + a },
-                { x: h, y: k - a }
-            ];
-        }
-
-        // Co-vertices (endpoints of conjugate axis)
-        let coVertices;
-        if (orientation === 'horizontal') {
-            coVertices = [
-                { x: h, y: k + b },
-                { x: h, y: k - b }
-            ];
-        } else {
-            coVertices = [
-                { x: h + b, y: k },
-                { x: h - b, y: k }
-            ];
-        }
-
-        // Eccentricity e = c/a (e > 1 for hyperbola)
-        const eccentricity = c / a;
-
-        // Transverse and conjugate axis lengths
-        const transverseAxisLength = 2 * a;
-        const conjugateAxisLength = 2 * b;
-
-        // Asymptotes: y - k = ±(b/a)(x - h) for horizontal
-        //             y - k = ±(a/b)(x - h) for vertical
-        let asymptotes;
-        if (orientation === 'horizontal') {
-            const slope = b / a;
-            asymptotes = [
-                { slope: slope, equation: `y = ${this._formatNumber(k)} + ${this._formatNumber(slope)}(x ${this._formatOffset(-h)})` },
-                { slope: -slope, equation: `y = ${this._formatNumber(k)} - ${this._formatNumber(slope)}(x ${this._formatOffset(-h)})` }
-            ];
-        } else {
-            const slope = a / b;
-            asymptotes = [
-                { slope: slope, equation: `y = ${this._formatNumber(k)} + ${this._formatNumber(slope)}(x ${this._formatOffset(-h)})` },
-                { slope: -slope, equation: `y = ${this._formatNumber(k)} - ${this._formatNumber(slope)}(x ${this._formatOffset(-h)})` }
-            ];
-        }
+        // Vertices (on transverse axis)
+        const vertices = isHorizontal
+            ? [{ x: h - a, y: k }, { x: h + a, y: k }]
+            : [{ x: h, y: k - a }, { x: h, y: k + a }];
 
         // Directrices
-        let directrices;
-        if (orientation === 'horizontal') {
-            directrices = [
-                { type: 'vertical', value: h + a / eccentricity, equation: `x = ${this._formatNumber(h + a / eccentricity)}` },
-                { type: 'vertical', value: h - a / eccentricity, equation: `x = ${this._formatNumber(h - a / eccentricity)}` }
+        const directrices = isHorizontal
+            ? { type: 'vertical', values: [h - a / e, h + a / e] }
+            : { type: 'horizontal', values: [k - a / e, k + a / e] };
+
+        // Asymptotes: y - k = ±(b/a)(x - h) for horizontal
+        const asymptotes = isHorizontal
+            ? [
+                { slope: b / a, intercept: k - (b / a) * h },
+                { slope: -b / a, intercept: k + (b / a) * h }
+            ]
+            : [
+                { slope: a / b, intercept: k - (a / b) * h },
+                { slope: -a / b, intercept: k + (a / b) * h }
             ];
-        } else {
-            directrices = [
-                { type: 'horizontal', value: k + a / eccentricity, equation: `y = ${this._formatNumber(k + a / eccentricity)}` },
-                { type: 'horizontal', value: k - a / eccentricity, equation: `y = ${this._formatNumber(k - a / eccentricity)}` }
-            ];
+
+        // Latus rectum
+        const latusRectum = (2 * b * b) / a;
+
+        // Equations
+        const equations = this._getEquationForms();
+
+        // Director circle (only exists if a > b)
+        let directorCircle = null;
+        if (a > b) {
+            directorCircle = { center, radius: Math.sqrt(a * a - b * b) };
         }
 
-        // Latus rectum length = 2b²/a
-        const latusRectumLength = (2 * b * b) / a;
+        // Conjugate hyperbola
+        const conjugate = isHorizontal
+            ? `-x²/${this._fmt(a * a)} + y²/${this._fmt(b * b)} = 1`
+            : `x²/${this._fmt(b * b)} - y²/${this._fmt(a * a)} = 1`;
 
-        // X-intercepts (for horizontal hyperbola only if center is at origin)
-        const xIntercepts = [];
-        if (orientation === 'horizontal' && Math.abs(k) < 0.0001) {
-            xIntercepts.push({ x: h + a, y: 0 });
-            xIntercepts.push({ x: h - a, y: 0 });
-        }
-
-        // Y-intercepts (for vertical hyperbola only if center is at origin)
-        const yIntercepts = [];
-        if (orientation === 'vertical' && Math.abs(h) < 0.0001) {
-            yIntercepts.push({ x: 0, y: k + a });
-            yIntercepts.push({ x: 0, y: k - a });
-        }
-
-        // Equation forms
-        let standardForm;
-        if (orientation === 'horizontal') {
-            standardForm = `(x ${this._formatOffset(-h)})²/${this._formatNumber(a * a)} - (y ${this._formatOffset(-k)})²/${this._formatNumber(b * b)} = 1`;
-        } else {
-            standardForm = `(y ${this._formatOffset(-k)})²/${this._formatNumber(a * a)} - (x ${this._formatOffset(-h)})²/${this._formatNumber(b * b)} = 1`;
-        }
+        // Is rectangular?
+        const isRectangular = Math.abs(a - b) < 0.01;
 
         this.properties = {
             center,
-            semiTransverseAxis: a,
-            semiConjugateAxis: b,
-            transverseAxisLength,
-            conjugateAxisLength,
-            orientation,
+            transverseAxis: a,
+            conjugateAxis: b,
             foci,
-            focalDistance: c,
             vertices,
-            coVertices,
-            eccentricity,
-            asymptotes,
+            c,
+            eccentricity: e,
             directrices,
-            latusRectumLength,
-            xIntercepts,
-            yIntercepts,
-            standardForm
+            asymptotes,
+            latusRectum,
+            equations,
+            directorCircle,
+            conjugate,
+            isHorizontal,
+            isRectangular
         };
 
         return this.properties;
     }
 
-    _formatNumber(num) {
-        if (Number.isInteger(num)) return num.toString();
-        return num.toFixed(4).replace(/\.?0+$/, '');
+    _getEquationForms() {
+        const { h, k, a, b, isHorizontal } = this;
+
+        let standard, parametric;
+
+        if (h === 0 && k === 0) {
+            standard = isHorizontal
+                ? `x²/${this._fmt(a * a)} - y²/${this._fmt(b * b)} = 1`
+                : `y²/${this._fmt(a * a)} - x²/${this._fmt(b * b)} = 1`;
+        } else {
+            standard = isHorizontal
+                ? `(x ${this._fmtOff(-h)})²/${this._fmt(a * a)} - (y ${this._fmtOff(-k)})²/${this._fmt(b * b)} = 1`
+                : `(y ${this._fmtOff(-k)})²/${this._fmt(a * a)} - (x ${this._fmtOff(-h)})²/${this._fmt(b * b)} = 1`;
+        }
+
+        if (isHorizontal) {
+            parametric = h === 0 && k === 0
+                ? `x = ${this._fmt(a)}sec(θ), y = ${this._fmt(b)}tan(θ)`
+                : `x = ${this._fmt(h)} + ${this._fmt(a)}sec(θ), y = ${this._fmt(k)} + ${this._fmt(b)}tan(θ)`;
+        } else {
+            parametric = h === 0 && k === 0
+                ? `x = ${this._fmt(b)}tan(θ), y = ${this._fmt(a)}sec(θ)`
+                : `x = ${this._fmt(h)} + ${this._fmt(b)}tan(θ), y = ${this._fmt(k)} + ${this._fmt(a)}sec(θ)`;
+        }
+
+        const asymptote1 = isHorizontal
+            ? `y = ${this._fmt(b / a)}x` : `y = ${this._fmt(a / b)}x`;
+        const asymptote2 = isHorizontal
+            ? `y = ${this._fmt(-b / a)}x` : `y = ${this._fmt(-a / b)}x`;
+
+        return { standard, parametric, asymptote1, asymptote2 };
     }
 
-    _formatOffset(num) {
-        if (Math.abs(num) < 0.0001) return '';
-        if (num > 0) return `+ ${this._formatNumber(num)}`;
-        return `- ${this._formatNumber(Math.abs(num))}`;
+    // =====================================================
+    // PARAMETRIC REPRESENTATION
+    // =====================================================
+
+    /**
+     * Get point on hyperbola at angle θ
+     * For x²/a² - y²/b² = 1: (a sec θ, b tan θ)
+     */
+    getParametricPoint(theta) {
+        const { h, k, a, b, isHorizontal } = this;
+        const secT = 1 / Math.cos(theta);
+        const tanT = Math.tan(theta);
+
+        if (isHorizontal) {
+            return { x: h + a * secT, y: k + b * tanT, theta };
+        } else {
+            return { x: h + b * tanT, y: k + a * secT, theta };
+        }
     }
 
     /**
-     * Generate points for plotting the hyperbola
+     * Check which branch point is on: right (+1), left (-1)
      */
-    generatePlotPoints(tRange = 3, steps = 100) {
-        const points = { branch1: [], branch2: [] };
-        const { h, k, a, b, orientation } = this;
+    getPointBranch(theta) {
+        const cosT = Math.cos(theta);
+        return cosT >= 0 ? 1 : -1;
+    }
 
-        // Parametric: x = h + a*sec(t), y = k + b*tan(t) for horizontal
-        //             x = h + b*tan(t), y = k + a*sec(t) for vertical
+    // =====================================================
+    // LINE TOOLS: TANGENT, NORMAL
+    // =====================================================
+
+    /**
+     * Tangent at parametric point θ
+     * For x²/a² - y²/b² = 1, tangent at (a sec θ, b tan θ):
+     * (x sec θ)/a - (y tan θ)/b = 1
+     */
+    getTangentAt(theta) {
+        const { h, k, a, b, isHorizontal } = this;
+        const point = this.getParametricPoint(theta);
+        const secT = 1 / Math.cos(theta);
+        const tanT = Math.tan(theta);
+
+        let A, B, C;
+        if (isHorizontal) {
+            A = secT / a;
+            B = -tanT / b;
+            C = -(A * h + B * k + 1);
+        } else {
+            A = -tanT / b;
+            B = secT / a;
+            C = -(A * h + B * k + 1);
+        }
+
+        if (Math.abs(B) < 0.0001) {
+            return {
+                type: 'tangent', point, theta,
+                isVertical: true, equation: `x = ${this._fmt(point.x)}`
+            };
+        }
+
+        const m = -A / B;
+        const c = -C / B;
+
+        return {
+            type: 'tangent', point, theta,
+            slope: m,
+            equation: this._formatLineEquation(m, c),
+            getY: (x) => m * x + c
+        };
+    }
+
+    /**
+     * Tangent by slope m
+     * y = mx ± √(a²m² - b²) (only if a²m² > b²)
+     */
+    getTangentBySlope(m) {
+        const { h, k, a, b, isHorizontal } = this;
+        const a2 = isHorizontal ? a : b;
+        const b2 = isHorizontal ? b : a;
+
+        const disc = a2 * a2 * m * m - b2 * b2;
+        if (disc < 0) return { error: 'No real tangent for this slope' };
+
+        const offset = Math.sqrt(disc);
+        const c1 = k - m * h + offset;
+        const c2 = k - m * h - offset;
+
+        return [
+            { type: 'tangent', slope: m, equation: this._formatLineEquation(m, c1), getY: (x) => m * x + c1 },
+            { type: 'tangent', slope: m, equation: this._formatLineEquation(m, c2), getY: (x) => m * x + c2 }
+        ];
+    }
+
+    /**
+     * Normal at parametric point θ
+     */
+    getNormalAt(theta) {
+        const { h, k, a, b, isHorizontal } = this;
+        const point = this.getParametricPoint(theta);
+        const secT = 1 / Math.cos(theta);
+        const tanT = Math.tan(theta);
+
+        if (Math.abs(tanT) < 0.0001) {
+            return {
+                type: 'normal', point, theta,
+                isHorizontal: true, equation: `y = ${this._fmt(point.y)}`,
+                getY: () => point.y
+            };
+        }
+
+        const a2 = isHorizontal ? a : b;
+        const b2 = isHorizontal ? b : a;
+
+        const m = (a2 * tanT) / (b2 * secT);
+        const c = point.y - m * point.x;
+
+        return {
+            type: 'normal', point, theta,
+            slope: m,
+            equation: this._formatLineEquation(m, c),
+            getY: (x) => m * x + c
+        };
+    }
+
+    /**
+     * Check if point is inside, on, or outside hyperbola region
+     */
+    getPointPosition(px, py) {
+        const { h, k, a, b, isHorizontal } = this;
+
+        let value;
+        if (isHorizontal) {
+            value = ((px - h) ** 2) / (a ** 2) - ((py - k) ** 2) / (b ** 2);
+        } else {
+            value = ((py - k) ** 2) / (a ** 2) - ((px - h) ** 2) / (b ** 2);
+        }
+
+        if (Math.abs(value - 1) < 0.01) return 'on';
+        if (value > 1) return 'outside (hyperbola region)';
+        return 'inside (between branches)';
+    }
+
+    // =====================================================
+    // PLOTTING
+    // =====================================================
+
+    generatePlotPoints(steps = 60, branch = 1) {
+        const points = [];
+        const { a, b, isHorizontal } = this;
+
+        // Parametric: use t from -limit to +limit, avoiding asymptotes
+        const limit = 1.3;  // Limits how far the curve extends
+        const dt = (2 * limit) / steps;
 
         for (let i = 0; i <= steps; i++) {
-            const t = -tRange + (2 * tRange * i) / steps;
-            const coshT = Math.cosh(t);
-            const sinhT = Math.sinh(t);
+            const t = -limit + i * dt;
+            const tanT = Math.sinh(t);  // Use sinh for smooth parametrization
+            const secT = Math.cosh(t) * branch;  // cosh for sec (always positive), branch for direction
 
-            if (orientation === 'horizontal') {
-                // Right branch (x > h)
-                points.branch1.push({
-                    x: h + a * coshT,
-                    y: k + b * sinhT
-                });
-                // Left branch (x < h)
-                points.branch2.push({
-                    x: h - a * coshT,
-                    y: k + b * sinhT
-                });
+            if (isHorizontal) {
+                points.push({ x: this.h + a * secT, y: this.k + b * tanT });
             } else {
-                // Top branch (y > k)
-                points.branch1.push({
-                    x: h + b * sinhT,
-                    y: k + a * coshT
-                });
-                // Bottom branch (y < k)
-                points.branch2.push({
-                    x: h + b * sinhT,
-                    y: k - a * coshT
-                });
+                points.push({ x: this.h + b * tanT, y: this.k + a * secT });
             }
         }
 
         return points;
     }
 
-    /**
-     * Get view bounds for visualization
-     */
-    getViewBounds(padding = 2) {
-        const { h, k, a, b } = this;
-        const maxExtent = Math.max(a, b) * 2 + padding;
-
+    getViewBounds(padding = 1) {
+        const { h, k, a, b, c } = this;
+        const maxVal = Math.max(a, b, c || a) + padding;
         return {
-            minX: h - maxExtent,
-            maxX: h + maxExtent,
-            minY: k - maxExtent,
-            maxY: k + maxExtent
+            minX: h - maxVal - padding,
+            maxX: h + maxVal + padding,
+            minY: k - maxVal - padding,
+            maxY: k + maxVal + padding
         };
+    }
+
+    // =====================================================
+    // FORMATTING HELPERS
+    // =====================================================
+
+    _fmt(n) {
+        if (Number.isInteger(n)) return n.toString();
+        if (Math.abs(n) < 0.0001) return '0';
+        return n.toFixed(3).replace(/\.?0+$/, '');
+    }
+
+    _fmtOff(n) {
+        if (Math.abs(n) < 0.0001) return '';
+        return n > 0 ? `+ ${this._fmt(n)}` : `- ${this._fmt(Math.abs(n))}`;
+    }
+
+    _formatLineEquation(m, c) {
+        if (Math.abs(m) < 0.0001) return `y = ${this._fmt(c)}`;
+        if (Math.abs(c) < 0.0001) return `y = ${this._fmt(m)}x`;
+        return c > 0 ? `y = ${this._fmt(m)}x + ${this._fmt(c)}` : `y = ${this._fmt(m)}x - ${this._fmt(Math.abs(c))}`;
     }
 }
 
-// Preset hyperbola examples
 const HYPERBOLA_PRESETS = [
-    { id: 'basic-h', name: 'Horizontal Hyperbola', equation: 'x²/4 - y²/9 = 1', description: 'Opens left-right, a=2, b=3' },
-    { id: 'basic-v', name: 'Vertical Hyperbola', equation: 'y²/4 - x²/9 = 1', description: 'Opens up-down, a=2, b=3' },
-    { id: 'equal', name: 'Rectangular Hyperbola', equation: 'x²/4 - y²/4 = 1', description: 'Equal axes (a=b), asymptotes at 45°' },
-    { id: 'wide', name: 'Wide Hyperbola', equation: 'x²/1 - y²/9 = 1', description: 'Steep asymptotes' },
-    { id: 'narrow', name: 'Narrow Hyperbola', equation: 'x²/9 - y²/1 = 1', description: 'Shallow asymptotes' },
-    { id: 'shifted', name: 'Shifted Center', equation: '(x-2)²/4 - (y-1)²/9 = 1', description: 'Center at (2, 1)' }
+    { name: 'Standard', equation: 'x²/4 - y²/1 = 1', description: 'a=2, b=1, horizontal' },
+    { name: 'Vertical', equation: 'y²/4 - x²/1 = 1', description: 'a=2, b=1, vertical' },
+    { name: 'Rectangular', equation: 'x²/4 - y²/4 = 1', description: 'a=b=2, e=√2' },
+    { name: 'Elongated', equation: 'x²/9 - y²/4 = 1', description: 'a=3, b=2' },
+    { name: 'Shifted', equation: '(x-1)²/4 - (y-2)²/1 = 1', description: 'Center (1,2)' },
+    { name: 'xy = 4', equation: 'xy=4', description: 'Rectangular hyperbola' }
 ];
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { HyperbolaEngine, HYPERBOLA_PRESETS };
+    module.exports = { AdvancedHyperbolaEngine, HYPERBOLA_PRESETS };
 }

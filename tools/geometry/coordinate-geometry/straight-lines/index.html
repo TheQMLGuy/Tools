@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Straight Lines Analyzer - Coordinate Geometry</title>
+    <meta name="description"
+        content="Interactive straight line analysis: multiple forms, two-line operations, triangle centers.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../conic-shared.css">
+    <style>
+        .mode-selector {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .mode-btn:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .mode-btn.active {
+            background: var(--accent-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        .line-list {
+            margin-top: 12px;
+        }
+
+        .line-entry {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            margin-bottom: 6px;
+        }
+
+        .line-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .line-eq {
+            flex: 1;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+
+        .line-remove {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .line-remove:hover {
+            color: #ef4444;
+        }
+
+        .two-line-result {
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+
+        .two-line-result h4 {
+            font-size: 0.75rem;
+            color: var(--accent-primary);
+            margin-bottom: 8px;
+        }
+
+        .triangle-mode .vertex-input {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .triangle-mode label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .triangle-mode input {
+            width: 60px;
+        }
+
+        .center-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            margin: 2px;
+        }
+
+        .center-badge.centroid {
+            background: rgba(99, 102, 241, 0.2);
+            color: #6366f1;
+        }
+
+        .center-badge.incentre {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .center-badge.circumcentre {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .center-badge.orthocentre {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .family-slider {
+            margin: 12px 0;
+        }
+
+        .family-slider label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .family-slider input[type="range"] {
+            width: 100%;
+        }
+
+        .family-slider .k-value {
+            font-family: var(--font-mono);
+            color: var(--accent-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Landing Page -->
+    <div id="landing" class="landing">
+        <header class="landing-header">
+            <div class="logo"><span class="logo-icon">📏</span><span class="logo-text">Coordinate Geometry</span></div>
+        </header>
+        <main class="landing-main">
+            <h1 class="landing-title"><span class="gradient-text">Straight Lines Analyzer</span></h1>
+            <p class="landing-subtitle">Explore line equations, two-line operations, triangle centers, and more</p>
+
+            <div class="custom-input-section">
+                <h3>📝 Enter Line Equation</h3>
+                <div class="input-row">
+                    <input type="text" id="customEquation" class="equation-input"
+                        placeholder="y = 2x + 3, x/4 + y/3 = 1, 2x + 3y - 6 = 0">
+                    <button id="analyzeBtn" class="btn btn-primary">Add Line →</button>
+                </div>
+            </div>
+
+            <h3 style="margin: 28px 0 14px; color: var(--text-secondary); font-size: 0.95rem;">Quick Presets:</h3>
+            <div class="preset-grid" id="presetGrid"></div>
+
+            <div style="margin-top: 24px;">
+                <button id="startTriangle" class="btn btn-ghost">🔺 Triangle Mode</button>
+                <button id="startTwoLines" class="btn btn-ghost">⚔️ Two-Line Analysis</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Main Application -->
+    <div id="app" class="app-container hidden">
+        <aside class="left-panel">
+            <!-- Mode Selection -->
+            <div class="panel">
+                <div class="panel-header compact">
+                    <h2>Mode</h2>
+                    <button class="btn btn-ghost btn-xs" id="backToLanding">← Back</button>
+                </div>
+                <div class="panel-body">
+                    <div class="mode-selector">
+                        <button class="mode-btn active" data-mode="lines">Lines</button>
+                        <button class="mode-btn" data-mode="two-line">Two Lines</button>
+                        <button class="mode-btn" data-mode="triangle">Triangle</button>
+                        <button class="mode-btn" data-mode="family">Family</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lines Mode -->
+            <div class="panel mode-panel" id="linesMode">
+                <div class="panel-header compact">
+                    <h2>Add Lines</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="control-group">
+                        <label>Equation Form</label>
+                        <select id="lineForm">
+                            <option value="slope-intercept">y = mx + c</option>
+                            <option value="point-slope">Point-Slope</option>
+                            <option value="two-point">Two Points</option>
+                            <option value="intercept">x/a + y/b = 1</option>
+                            <option value="normal">Normal Form</option>
+                            <option value="general">Ax + By + C = 0</option>
+                        </select>
+                    </div>
+
+                    <div id="formInputs">
+                        <!-- Slope-intercept (default) -->
+                        <div class="form-slope-intercept">
+                            <div class="control-group">
+                                <label>Slope (m)</label>
+                                <input type="number" id="inputM" value="1" step="0.1">
+                            </div>
+                            <div class="control-group">
+                                <label>Y-Intercept (c)</label>
+                                <input type="number" id="inputC" value="0" step="0.5">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="addLineBtn" class="btn btn-primary btn-sm" style="width: 100%;">Add Line</button>
+
+                    <div class="line-list" id="lineList"></div>
+                </div>
+            </div>
+
+            <!-- Two-Line Mode -->
+            <div class="panel mode-panel hidden" id="twoLineMode">
+                <div class="panel-header compact">
+                    <h2>Two-Line Analysis</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="control-group">
+                        <label>Line 1</label>
+                        <input type="text" id="line1Input" value="y = 2x + 1" class="equation-input"
+                            style="font-size: 0.85rem;">
+                    </div>
+                    <div class="control-group">
+                        <label>Line 2</label>
+                        <input type="text" id="line2Input" value="y = -x + 4" class="equation-input"
+                            style="font-size: 0.85rem;">
+                    </div>
+                    <button id="analyzeTwo" class="btn btn-primary btn-sm" style="width: 100%;">Analyze</button>
+
+                    <div class="two-line-result" id="twoLineResult"></div>
+                </div>
+            </div>
+
+            <!-- Triangle Mode -->
+            <div class="panel mode-panel hidden" id="triangleMode">
+                <div class="panel-header compact">
+                    <h2>Triangle Centers</h2>
+                </div>
+                <div class="panel-body triangle-mode">
+                    <div class="vertex-input">
+                        <label>A:</label>
+                        <input type="number" id="ax" value="0" step="0.5">
+                        <input type="number" id="ay" value="0" step="0.5">
+                    </div>
+                    <div class="vertex-input">
+                        <label>B:</label>
+                        <input type="number" id="bx" value="4" step="0.5">
+                        <input type="number" id="by" value="0" step="0.5">
+                    </div>
+                    <div class="vertex-input">
+                        <label>C:</label>
+                        <input type="number" id="cx" value="2" step="0.5">
+                        <input type="number" id="cy" value="3" step="0.5">
+                    </div>
+                    <button id="calcTriangle" class="btn btn-primary btn-sm" style="width: 100%;">Calculate</button>
+
+                    <div class="control-group" style="margin-top: 12px;">
+                        <label>Show:</label>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px;">
+                            <label class="checkbox-label"><input type="checkbox" id="showMedians"> Medians</label>
+                            <label class="checkbox-label"><input type="checkbox" id="showAltitudes"> Altitudes</label>
+                            <label class="checkbox-label"><input type="checkbox" id="showBisectors"> Bisectors</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Family Mode -->
+            <div class="panel mode-panel hidden" id="familyMode">
+                <div class="panel-header compact">
+                    <h2>Family of Lines</h2>
+                </div>
+                <div class="panel-body">
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 12px;">
+                        L₁ + λL₂ = 0 (all lines through intersection)
+                    </p>
+                    <div class="control-group">
+                        <label>Line L₁</label>
+                        <input type="text" id="familyL1" value="x + y - 2 = 0" class="equation-input"
+                            style="font-size: 0.85rem;">
+                    </div>
+                    <div class="control-group">
+                        <label>Line L₂</label>
+                        <input type="text" id="familyL2" value="2x - y - 1 = 0" class="equation-input"
+                            style="font-size: 0.85rem;">
+                    </div>
+                    <div class="family-slider">
+                        <label>λ = <span class="k-value" id="lambdaValue">0</span></label>
+                        <input type="range" id="lambdaSlider" min="-5" max="5" step="0.1" value="0">
+                    </div>
+                    <div id="familyLineEq"
+                        style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-primary);"></div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-panel">
+            <div class="panel visualization-panel">
+                <div class="panel-header compact">
+                    <h2>Straight Lines Visualization</h2>
+                    <div class="header-right">
+                        <label class="checkbox-label"><input type="checkbox" id="showGrid" checked> Grid</label>
+                        <label class="checkbox-label"><input type="checkbox" id="showLabels" checked> Labels</label>
+                        <button class="btn btn-xs" id="resetView">↺</button>
+                        <button class="btn btn-xs" id="clearAll">Clear</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="canvas-container">
+                        <canvas id="linesCanvas"></canvas>
+                        <div class="coord-display"><span id="coordDisplay">(0, 0)</span></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="right-panel">
+            <!-- Line Properties (hover details) -->
+            <div class="panel properties-panel">
+                <div class="panel-header compact">
+                    <h2>Line Properties</h2>
+                </div>
+                <div class="panel-body" id="lineProperties">
+                    <p class="muted" style="font-size: 0.8rem;">Add a line or hover to see details</p>
+                </div>
+            </div>
+
+            <!-- Triangle Centers (when in triangle mode) -->
+            <div class="panel hidden" id="triangleCentersPanel">
+                <div class="panel-header compact">
+                    <h2>Triangle Centers</h2>
+                </div>
+                <div class="panel-body" id="triangleCenters"></div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="straight-lines-engine.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

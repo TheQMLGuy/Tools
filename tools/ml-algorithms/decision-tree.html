@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Tree - ML Visualizer</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <aside class="left-panel">
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>🌳 Decision Tree</h2>
+                </div>
+                <div class="panel-body">
+                    <p class="description">Watch a decision tree grow node-by-node as it learns to split data.</p>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Data</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-group">
+                        <label>Dataset</label>
+                        <select id="dataset-select" class="select">
+                            <option value="two-clusters">Two Clusters</option>
+                            <option value="xor">XOR Pattern</option>
+                            <option value="three-clusters">Three Classes</option>
+                            <option value="spiral">Spiral</option>
+                        </select>
+                    </div>
+                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Parameters</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-group">
+                        <label>Max Depth</label>
+                        <input type="range" id="max-depth" min="1" max="10" value="5" class="slider">
+                        <span id="max-depth-value" class="value-display">5</span>
+                    </div>
+                    <div class="param-group">
+                        <label>Min Samples Split</label>
+                        <input type="range" id="min-samples" min="2" max="20" value="2" class="slider">
+                        <span id="min-samples-value" class="value-display">2</span>
+                    </div>
+                    <div class="param-group">
+                        <label>Criterion</label>
+                        <select id="criterion-select" class="select">
+                            <option value="gini">Gini Impurity</option>
+                            <option value="entropy">Information Gain</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header compact">
+                    <h2>Training</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="button-row">
+                        <button id="train-btn" class="btn btn-primary">▶ Train</button>
+                        <button id="step-btn" class="btn btn-secondary">Step</button>
+                        <button id="reset-btn" class="btn btn-ghost">Reset</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel stats-panel">
+                <div class="panel-header compact">
+                    <h2>Tree Info</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="stat-row">
+                        <span class="stat-label">Nodes</span>
+                        <span id="node-count" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Depth</span>
+                        <span id="current-depth" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Accuracy</span>
+                        <span id="accuracy" class="stat-value">-</span>
+                    </div>
+                </div>
+            </section>
+        </aside>
+
+        <main class="main-panel">
+            <div class="visualization-area">
+                <div class="viz-container">
+                    <h3>Decision Boundary</h3>
+                    <canvas id="boundary-canvas"></canvas>
+                </div>
+                <div class="viz-container">
+                    <h3>Tree Structure</h3>
+                    <canvas id="tree-canvas"></canvas>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/decision-tree.js"></script>
+</body>
+
+</html>

@@ -1,5 +1,5 @@
 /**
- * STEM Visualization Hub - Main Application
+ * QML Visualization Hub - Main Application
  * Handles navigation between categories and tools
  */
 
@@ -34,13 +34,7 @@ const CATEGORIES = {
                 description: '2D/3D function analysis with derivatives, integrals, and Taylor series.',
                 path: 'tools/function-analyzer/index.html'
             },
-            {
-                id: 'cylinderviz',
-                name: 'CylinderViz Plotter',
-                icon: '⬡',
-                description: 'Multi-dimensional feature relationship visualizer using cylindrical coordinates.',
-                path: 'tools/cylinder-viz/index.html'
-            },
+
             {
                 id: 'matrix-graph',
                 name: 'Matrix to Graph',
@@ -54,6 +48,13 @@ const CATEGORIES = {
                 icon: '🔺',
                 description: 'Explore famous combinatorial triangles: Pascal, Bell, Catalan, and 19 more.',
                 path: 'tools/combinatorics-triangles/index.html'
+            },
+            {
+                id: 'straight-lines',
+                name: 'Straight Lines',
+                icon: '📏',
+                description: 'Line equations, two-line operations, triangle centers, family of lines.',
+                path: 'tools/geometry/coordinate-geometry/straight-lines/index.html'
             },
             {
                 id: 'coordinate-geometry',
@@ -89,6 +90,48 @@ const CATEGORIES = {
                 icon: '🌊',
                 description: 'Explore eigenvalues, Laplacian matrices, Fiedler vectors, and graph connectivity.',
                 path: 'tools/spectral-graph/index.html'
+            }
+        ]
+    },
+    dsa: {
+        name: 'Data Structures & Algorithms',
+        icon: '💻',
+        description: 'Master Data Structures & Algorithms with interactive visualizations and multi-language code.',
+        subcategories: true,
+        tools: [
+            // Data Structures
+            {
+                id: 'linked-list',
+                name: 'Linked List Explorer',
+                icon: '🔗',
+                description: 'Visualize Singly, Doubly, and Circular Linked Lists with standard operations.',
+                path: 'tools/dsa/linked-list/index.html',
+                category: 'Data Structures'
+            },
+            {
+                id: 'stack-queue',
+                name: 'Stack & Queue',
+                icon: '📚',
+                description: 'Understand LIFO and FIFO principles with visual animations.',
+                path: 'tools/dsa/stack-queue/index.html',
+                category: 'Data Structures'
+            },
+            // Algorithms
+            {
+                id: 'sorting',
+                name: 'Sorting Visualizer',
+                icon: '📶',
+                description: 'Compare Bubble, Selection, Insertion, Merge, Quick, and Heap sort.',
+                path: 'tools/dsa/sorting/index.html',
+                category: 'Algorithms'
+            },
+            {
+                id: 'binary-search',
+                name: 'Binary Search',
+                icon: '🔍',
+                description: 'Visualize how Binary Search finds elements in a sorted array.',
+                path: 'tools/dsa/binary-search/index.html',
+                category: 'Algorithms'
             }
         ]
     },
