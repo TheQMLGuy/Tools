@@ -98,13 +98,17 @@
             <section class="panel circuit-panel">
                 <div class="panel-header compact">
                     <h2>Quantum Circuit</h2>
-                    <div class="header-right">
+                    <!-- Internal buttons hidden, controlled via toolbar -->
+                    <div class="header-right internal-controls" style="display:none;">
                         <button id="add-qubit-btn" class="btn btn-xs btn-secondary">+ Qubit</button>
                         <button id="remove-qubit-btn" class="btn btn-xs btn-secondary">- Qubit</button>
                         <button id="clear-circuit-btn" class="btn btn-xs btn-danger">Clear</button>
                     </div>
                 </div>
                 <div class="panel-body">
+                    <div class="initial-states-bar" id="initial-states-bar">
+                        <!-- Initial state selectors rendered here -->
+                    </div>
                     <div id="circuit-container" class="circuit-container">
                         <!-- Circuit will be rendered here -->
                     </div>
@@ -114,7 +118,8 @@
             <section class="panel state-panel">
                 <div class="panel-header compact">
                     <h2>Quantum State</h2>
-                    <div class="header-right">
+                    <!-- Hidden, controlled via toolbar -->
+                    <div class="header-right" style="display:none;">
                         <button id="run-circuit-btn" class="btn btn-primary btn-sm">▶ Simulate</button>
                     </div>
                 </div>
@@ -134,15 +139,12 @@
 
             <section class="panel bloch-panel">
                 <div class="panel-header compact">
-                    <h2>Bloch Sphere</h2>
-                    <div class="header-right">
-                        <select id="bloch-qubit-select" class="select select-sm">
-                            <option value="0">Qubit 0</option>
-                        </select>
-                    </div>
+                    <h2>Bloch Spheres</h2>
                 </div>
                 <div class="panel-body">
-                    <canvas id="bloch-canvas"></canvas>
+                    <div id="bloch-container" class="bloch-container">
+                        <!-- Multiple Bloch spheres will be rendered here -->
+                    </div>
                 </div>
             </section>
         </main>
@@ -208,6 +210,7 @@
     <script src="quantum-simulator.js"></script>
     <script src="circuit-renderer.js"></script>
     <script src="bloch-sphere.js"></script>
+    <script src="panel-view-manager.js"></script>
     <script src="app.js"></script>
 </body>
 

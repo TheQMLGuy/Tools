@@ -2,9 +2,354 @@
    Quantum Circuit Playground - Styles
    ============================================ */
 
-/* Layout Adjustments */
+/* Original layout hidden when dynamic is active */
 .app-container.three-column {
     grid-template-columns: 250px 1fr 220px;
+}
+
+/* ============================================
+   Top Toolbar
+   ============================================ */
+
+.top-toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 1000;
+}
+
+.toolbar-left,
+.toolbar-center,
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toolbar-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.toolbar-btn {
+    padding: 6px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.toolbar-btn:hover {
+    background: var(--bg-tertiary, #3a3a4e);
+    border-color: var(--accent-primary);
+}
+
+.toolbar-btn.btn-primary {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
+}
+
+.toolbar-btn.btn-primary:hover {
+    background: #5558e0;
+}
+
+.toolbar-btn.btn-danger {
+    color: #ef4444;
+    border-color: #ef4444;
+}
+
+.toolbar-btn.btn-danger:hover {
+    background: #ef4444;
+    color: white;
+}
+
+.toolbar-btn.btn-close {
+    font-size: 1rem;
+    padding: 6px 10px;
+}
+
+.toolbar-btn.btn-close:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: white;
+}
+
+/* Hide old view control bar */
+.view-control-bar {
+    display: none;
+}
+
+.view-btn {
+    padding: 8px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.view-btn:hover {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+
+/* Dropdown */
+.view-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 5px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    min-width: 180px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+}
+
+.view-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.view-dropdown-header {
+    padding: 10px 14px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.view-toggle-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.view-toggle-item:hover {
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.view-toggle-item.active {
+    color: var(--accent-primary);
+}
+
+.toggle-check {
+    width: 16px;
+    color: var(--accent-primary);
+}
+
+.toggle-label {
+    font-size: 0.85rem;
+}
+
+.view-dropdown-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 6px 0;
+}
+
+.view-preset {
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    color: var(--accent-secondary);
+    cursor: pointer;
+}
+
+.view-preset:hover {
+    background: rgba(16, 185, 129, 0.1);
+}
+
+/* Dynamic Layout Container */
+.dynamic-layout {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 10px;
+    background: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+}
+
+/* Uniform Grid Layout System */
+.uniform-grid {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 10px;
+    background: var(--bg-primary);
+    display: grid;
+    gap: 10px;
+    overflow: hidden;
+}
+
+.grid-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+}
+
+.grid-panel .panel-header {
+    flex-shrink: 0;
+}
+
+.grid-panel .panel-body {
+    flex: 1;
+    overflow: auto;
+}
+
+/* 1 panel - full screen */
+.grid-1 {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
+
+/* 2 panels - equal split */
+.grid-2 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+}
+
+/* 3 panels - first spans 2 cols */
+.grid-3 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+/* 4 panels - 2x2 grid */
+.grid-4 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+/* 5+ panels - 3 columns */
+.grid-5plus {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.span-2 {
+    grid-column: span 2;
+}
+
+.empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+}
+
+.dynamic-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.dynamic-panel .panel-header {
+    flex-shrink: 0;
+}
+
+.dynamic-panel .panel-body {
+    flex: 1;
+    overflow: auto;
+}
+
+/* Layout: 1 panel - full screen */
+.layout-1 .dynamic-panel {
+    flex: 1;
+}
+
+/* Layout: 2 panels - vertical stack */
+.layout-2 .dynamic-panel {
+    flex: 1;
+}
+
+/* Layout: 3 panels - 1 top, 2 bottom */
+.layout-3>.dynamic-panel {
+    flex: 1;
+}
+
+.layout-3>.layout-row {
+    flex: 1;
+}
+
+/* Layout: 4 panels - 2x2 */
+.layout-4>.layout-row {
+    flex: 1;
+}
+
+/* Layout: 5+ panels - 3 top, 2 bottom (fill all space) */
+.layout-5plus {
+    display: flex;
+    flex-direction: column;
+}
+
+.layout-5plus>.layout-row {
+    flex: 1;
+    min-height: 0;
+}
+
+/* Shared row styles */
+.layout-row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.layout-row>.dynamic-panel {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Empty state */
+.empty-layout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+    font-size: 1.2rem;
 }
 
 /* Gate Palette */
@@ -111,7 +456,8 @@
 
 /* Circuit Container */
 .circuit-panel {
-    flex: 2;
+    flex: 2 1 auto;
+    min-height: 180px;
 }
 
 .circuit-container {
@@ -193,6 +539,36 @@
     background: rgba(99, 102, 241, 0.2);
 }
 
+/* Two-click multi-qubit gate highlighting */
+.gate-slot.multi-qubit-target {
+    border-color: #10b981 !important;
+    background: rgba(16, 185, 129, 0.2) !important;
+    animation: pulse-target 0.8s ease-in-out infinite;
+}
+
+.gate-slot.multi-qubit-first {
+    border-color: var(--accent-primary) !important;
+    background: rgba(99, 102, 241, 0.3) !important;
+}
+
+.pending-gate {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+@keyframes pulse-target {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.1);
+    }
+}
+
 .placed-gate {
     width: 44px;
     height: 44px;
@@ -270,7 +646,8 @@
 
 /* State Display */
 .state-panel {
-    flex: 1;
+    flex: 1 1 auto;
+    min-height: 160px;
 }
 
 .state-display {
@@ -370,22 +747,48 @@
     color: var(--text-primary);
 }
 
-/* Bloch Sphere */
+/* Bloch Sphere - Multi-qubit view */
 .bloch-panel {
     flex: 0 0 auto;
+    min-height: 160px;
 }
 
 .bloch-panel .panel-body {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 220px;
     padding: 10px;
 }
 
-#bloch-canvas {
-    background: transparent;
+.bloch-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.bloch-sphere-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    background: rgba(139, 92, 246, 0.05);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 8px;
+}
+
+.bloch-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--accent-primary);
+    margin-bottom: 4px;
+}
+
+.bloch-canvas-item {
     display: block;
+    background: transparent;
 }
 
 /* Parameters Panel */
@@ -449,4 +852,176 @@
         flex-direction: row;
         overflow-x: auto;
     }
+}
+
+/* ============================================
+   Back Button and Header Layout
+   ============================================ */
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
+}
+
+/* ============================================
+   Initial State Selector Bar
+   ============================================ */
+
+.initial-states-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 10px;
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: 10px;
+}
+
+.initial-state-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.initial-state-item label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.initial-state-item select {
+    padding: 4px 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    cursor: pointer;
+}
+
+.initial-state-item select:hover {
+    border-color: var(--accent-primary);
+}
+
+/* ============================================
+   Updated Parameters Panel Styling
+   ============================================ */
+
+.right-panel {
+    padding: 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+}
+
+.params-header {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.param-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.param-group>label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.qubit-counter,
+.depth-counter {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent-primary);
+    font-family: var(--font-mono);
+}
+
+.params-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 4px 0;
+}
+
+.param-group .select {
+    padding: 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    width: 100%;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px 0;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.result-section {
+    margin-top: auto;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius-sm);
+}
+
+.result-header {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.measurement-result {
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    color: var(--accent-primary);
+}
+
+.result-placeholder {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: normal;
 }

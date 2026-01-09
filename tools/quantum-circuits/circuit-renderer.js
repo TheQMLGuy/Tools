@@ -108,7 +108,8 @@ class CircuitRenderer {
         // Display symbol
         const symbols = {
             'H': 'H', 'X': 'X', 'Y': 'Y', 'Z': 'Z', 'S': 'S', 'T': 'T',
-            'CNOT': '⊕', 'SWAP': '⨉', 'CZ': 'CZ', 'M': '📏'
+            'CNOT': '⊕', 'SWAP': '⨉', 'CZ': 'CZ', 'M': '📏',
+            'QFT': 'QFT', 'IQFT': 'QFT†'
         };
         el.textContent = symbols[gate.type] || gate.type;
 
@@ -198,6 +199,9 @@ class CircuitRenderer {
             if (g.qubit === qubit && g.column === column) return true;
             if (g.target === qubit && g.column === column) return true;
             if (g.control === qubit && g.column === column) return true;
+            // Also check SWAP gates which use qubit1 and qubit2
+            if (g.qubit1 === qubit && g.column === column) return true;
+            if (g.qubit2 === qubit && g.column === column) return true;
             return false;
         });
     }
@@ -312,12 +316,210 @@ class CircuitRenderer {
     }
 
     handleMultiQubitGateDrop(gateType, controlQubit, column) {
-        // For simplicity, target the next qubit
-        const targetQubit = (controlQubit + 1) % this.numQubits;
+        // Two-click system: set pending state and highlight available targets
+        this.pendingMultiQubitGate = {
+            type: gateType,
+            qubit1: controlQubit,
+            column: column
+        };
 
-        if (controlQubit !== targetQubit) {
-            this.addMultiQubitGate(gateType, controlQubit, targetQubit, column);
+        // Highlight available target slots in the same column
+        this.container.querySelectorAll('.gate-slot').forEach(slot => {
+            const q = parseInt(slot.dataset.qubit);
+            const c = parseInt(slot.dataset.column);
+
+            if (c === column && q !== controlQubit && !this.getGateAt(q, c)) {
+                slot.classList.add('multi-qubit-target');
+                slot.onclick = (e) => {
+                    e.stopPropagation();
+                    this.completePendingMultiQubitGate(q);
+                };
+            }
+        });
+
+        // Mark the first qubit
+        const firstSlot = this.container.querySelector(`.gate-slot[data-qubit="${controlQubit}"][data-column="${column}"]`);
+        if (firstSlot) {
+            firstSlot.classList.add('multi-qubit-first');
+            firstSlot.innerHTML = `<div class="pending-gate">${gateType === 'CNOT' ? '⊕' : gateType === 'SWAP' ? '⨉' : 'CZ'}</div>`;
         }
+
+        // Show instruction
+        this.showMultiQubitInstruction(gateType);
+
+        // Cancel on outside click
+        const cancelHandler = (e) => {
+            if (!this.container.contains(e.target)) {
+                this.cancelPendingMultiQubitGate();
+                document.removeEventListener('click', cancelHandler);
+            }
+        };
+        setTimeout(() => document.addEventListener('click', cancelHandler), 0);
+    }
+
+    completePendingMultiQubitGate(targetQubit) {
+        if (!this.pendingMultiQubitGate) return;
+
+        const { type, qubit1, column } = this.pendingMultiQubitGate;
+        this.addMultiQubitGate(type, qubit1, targetQubit, column);
+        this.cancelPendingMultiQubitGate();
+    }
+
+    cancelPendingMultiQubitGate() {
+        this.pendingMultiQubitGate = null;
+
+        // Remove highlights
+        this.container.querySelectorAll('.multi-qubit-target').forEach(slot => {
+            slot.classList.remove('multi-qubit-target');
+            // Reset onclick to original menu handler
+            slot.onclick = null;
+        });
+        this.container.querySelectorAll('.multi-qubit-first').forEach(slot => {
+            slot.classList.remove('multi-qubit-first');
+            slot.innerHTML = '';
+        });
+
+        // Remove instruction
+        const instruction = document.querySelector('.multi-qubit-instruction');
+        if (instruction) instruction.remove();
+
+        // DON'T call render() here - it wipes event handlers and breaks everything
+    }
+
+    showMultiQubitInstruction(gateType) {
+        const existing = document.querySelector('.multi-qubit-instruction');
+        if (existing) existing.remove();
+
+        const instruction = document.createElement('div');
+        instruction.className = 'multi-qubit-instruction';
+        instruction.textContent = `Click on another qubit to connect ${gateType}`;
+        instruction.style.cssText = `
+            position: fixed;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-primary, #6366f1);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.5);
+        `;
+        document.body.appendChild(instruction);
+    }
+
+    showTargetQubitSelector(gateType, controlQubit, column) {
+        // Remove any existing selector
+        const existingSelector = document.querySelector('.target-qubit-selector');
+        if (existingSelector) existingSelector.remove();
+
+        const selector = document.createElement('div');
+        selector.className = 'target-qubit-selector';
+
+        // Build qubit options (exclude the control qubit)
+        let options = '';
+        for (let q = 0; q < this.numQubits; q++) {
+            if (q !== controlQubit) {
+                const label = gateType === 'SWAP' ? `q${q}` : `q${q} (target)`;
+                options += `<button class="target-btn" data-target="${q}">${label}</button>`;
+            }
+        }
+
+        const title = gateType === 'SWAP' ? 'Swap with:' : 'Target qubit:';
+        selector.innerHTML = `
+            <div class="selector-title">${title}</div>
+            <div class="selector-options">${options}</div>
+            <button class="selector-cancel">Cancel</button>
+        `;
+
+        // Position near the slot
+        const slot = this.container.querySelector(`.gate-slot[data-qubit="${controlQubit}"][data-column="${column}"]`);
+        if (slot) {
+            const rect = slot.getBoundingClientRect();
+            selector.style.cssText = `
+                position: fixed;
+                left: ${rect.right + 10}px;
+                top: ${rect.top}px;
+                background: var(--bg-card, #1e1e2e);
+                border: 1px solid var(--accent-primary, #6366f1);
+                border-radius: 8px;
+                padding: 10px;
+                z-index: 1001;
+                box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+            `;
+        }
+
+        // Add inline styles for selector elements
+        const style = document.createElement('style');
+        style.textContent = `
+            .target-qubit-selector .selector-title {
+                font-size: 0.75rem;
+                color: #a0a0b0;
+                margin-bottom: 8px;
+                font-weight: 600;
+            }
+            .target-qubit-selector .selector-options {
+                display: flex;
+                gap: 6px;
+                margin-bottom: 8px;
+            }
+            .target-qubit-selector .target-btn {
+                padding: 8px 12px;
+                background: #2a2a3e;
+                border: 1px solid #3f3f5a;
+                border-radius: 6px;
+                color: #e0e0e0;
+                cursor: pointer;
+                font-size: 0.85rem;
+                transition: all 0.15s;
+            }
+            .target-qubit-selector .target-btn:hover {
+                background: #6366f1;
+                border-color: #818cf8;
+                color: white;
+            }
+            .target-qubit-selector .selector-cancel {
+                width: 100%;
+                padding: 6px;
+                background: transparent;
+                border: 1px solid #3f3f5a;
+                border-radius: 4px;
+                color: #707080;
+                cursor: pointer;
+                font-size: 0.75rem;
+            }
+            .target-qubit-selector .selector-cancel:hover {
+                border-color: #ef4444;
+                color: #ef4444;
+            }
+        `;
+        selector.appendChild(style);
+
+        document.body.appendChild(selector);
+
+        // Handle target selection
+        selector.querySelectorAll('.target-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetQubit = parseInt(btn.dataset.target);
+                this.addMultiQubitGate(gateType, controlQubit, targetQubit, column);
+                selector.remove();
+            });
+        });
+
+        // Handle cancel
+        selector.querySelector('.selector-cancel').addEventListener('click', () => {
+            selector.remove();
+        });
+
+        // Close on outside click
+        const closeHandler = (e) => {
+            if (!selector.contains(e.target)) {
+                selector.remove();
+                document.removeEventListener('click', closeHandler);
+            }
+        };
+        setTimeout(() => document.addEventListener('click', closeHandler), 0);
     }
 
     showGateMenu(slot) {
@@ -350,6 +552,11 @@ class CircuitRenderer {
                 <button data-gate="CZ">CZ</button>
             </div>
             ` : ''}
+            <div class="gate-menu-section">Transforms</div>
+            <div class="gate-menu-grid">
+                <button data-gate="QFT" style="font-size:0.6rem">QFT</button>
+                <button data-gate="IQFT" style="font-size:0.6rem">QFT†</button>
+            </div>
             <div class="gate-menu-section">Other</div>
             <div class="gate-menu-grid">
                 <button data-gate="M">📏</button>

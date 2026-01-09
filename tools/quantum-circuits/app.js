@@ -6,9 +6,10 @@ class QuantumPlaygroundApp {
     constructor() {
         this.simulator = new QuantumSimulator(2);
         this.circuitRenderer = new CircuitRenderer('circuit-container', (circuit) => this.onCircuitChange(circuit));
-        this.blochSphere = new BlochSphere('bloch-canvas');
+        this.blochSpheres = new BlochSphereMulti('bloch-container');
 
-        this.currentQubit = 0;
+        // Initial states for each qubit
+        this.initialStates = ['0', '0'];
 
         this.initUI();
         this.setupEventListeners();
@@ -16,8 +17,44 @@ class QuantumPlaygroundApp {
     }
 
     initUI() {
-        // Update qubit selector
-        this.updateQubitSelector();
+        this.updateQubitCount();
+        this.renderInitialStateSelectors();
+    }
+
+    renderInitialStateSelectors() {
+        const container = document.getElementById('initial-states-bar');
+        if (!container) return;
+
+        const numQubits = this.circuitRenderer.getNumQubits();
+
+        // Ensure initialStates array matches qubit count
+        while (this.initialStates.length < numQubits) {
+            this.initialStates.push('0');
+        }
+        this.initialStates = this.initialStates.slice(0, numQubits);
+
+        container.innerHTML = this.initialStates.map((state, i) => `
+            <div class="initial-state-item">
+                <label>q${i}:</label>
+                <select data-qubit="${i}" class="initial-state-select">
+                    <option value="0" ${state === '0' ? 'selected' : ''}>|0⟩</option>
+                    <option value="1" ${state === '1' ? 'selected' : ''}>|1⟩</option>
+                    <option value="+" ${state === '+' ? 'selected' : ''}>|+⟩</option>
+                    <option value="-" ${state === '-' ? 'selected' : ''}>|-⟩</option>
+                    <option value="i" ${state === 'i' ? 'selected' : ''}>|i⟩</option>
+                    <option value="-i" ${state === '-i' ? 'selected' : ''}>|-i⟩</option>
+                </select>
+            </div>
+        `).join('');
+
+        // Add event listeners
+        container.querySelectorAll('.initial-state-select').forEach(select => {
+            select.addEventListener('change', (e) => {
+                const qubit = parseInt(e.target.dataset.qubit);
+                this.initialStates[qubit] = e.target.value;
+                this.runSimulation();
+            });
+        });
     }
 
     setupEventListeners() {
@@ -27,8 +64,9 @@ class QuantumPlaygroundApp {
             if (current < 5) {
                 this.circuitRenderer.setNumQubits(current + 1);
                 this.simulator.setNumQubits(current + 1);
-                this.updateQubitSelector();
+                this.blochSpheres.setNumQubits(current + 1);
                 this.updateQubitCount();
+                this.renderInitialStateSelectors();
             }
         });
 
@@ -37,8 +75,9 @@ class QuantumPlaygroundApp {
             if (current > 1) {
                 this.circuitRenderer.setNumQubits(current - 1);
                 this.simulator.setNumQubits(current - 1);
-                this.updateQubitSelector();
+                this.blochSpheres.setNumQubits(current - 1);
                 this.updateQubitCount();
+                this.renderInitialStateSelectors();
             }
         });
 
@@ -62,11 +101,7 @@ class QuantumPlaygroundApp {
             }
         });
 
-        // Bloch qubit selector
-        document.getElementById('bloch-qubit-select').addEventListener('change', (e) => {
-            this.currentQubit = parseInt(e.target.value);
-            this.updateBlochSphere();
-        });
+        // Bloch qubit selector removed - now shows all qubits
 
         // Gate info on hover
         document.querySelectorAll('.gate-item').forEach(item => {
@@ -92,7 +127,7 @@ class QuantumPlaygroundApp {
     runSimulation() {
         const circuit = this.circuitRenderer.getCircuitForSimulation();
         this.simulator.setNumQubits(this.circuitRenderer.getNumQubits());
-        const state = this.simulator.simulate(circuit);
+        const state = this.simulator.simulate(circuit, this.initialStates);
 
         this.displayState(state);
         this.updateBlochSphere();
@@ -124,8 +159,7 @@ class QuantumPlaygroundApp {
             if (showAmplitudes) {
                 const value = document.createElement('div');
                 value.className = 'amplitude-value';
-                const sign = amp.amplitude.im >= 0 ? '+' : '';
-                value.textContent = `${amp.amplitude.re.toFixed(3)}${sign}${amp.amplitude.im.toFixed(3)}i`;
+                value.innerHTML = this.formatAmplitudeSymbolic(amp.amplitude);
                 item.appendChild(value);
             }
 
@@ -175,29 +209,49 @@ class QuantumPlaygroundApp {
         container.innerHTML = `<span class="result-value">|${result}⟩</span>`;
     }
 
+    // Format amplitude with symbolic values (1/√2 instead of 0.707)
+    formatAmplitudeSymbolic(c) {
+        const re = c.re;
+        const im = c.im;
+
+        let reStr = this.toSymbolic(re);
+        let imStr = this.toSymbolic(Math.abs(im));
+
+        if (Math.abs(im) < 0.001) {
+            return reStr;
+        }
+        if (Math.abs(re) < 0.001) {
+            return im >= 0 ? `${imStr}i` : `-${imStr}i`;
+        }
+
+        const sign = im >= 0 ? '+' : '-';
+        return `${reStr}${sign}${imStr}i`;
+    }
+
+    toSymbolic(val) {
+        const abs = Math.abs(val);
+        const sign = val < 0 ? '-' : '';
+
+        if (abs < 0.001) return '0';
+        if (Math.abs(abs - 1) < 0.001) return sign + '1';
+        if (Math.abs(abs - 0.5) < 0.001) return sign + '½';
+        if (Math.abs(abs - 1 / Math.sqrt(2)) < 0.01) return sign + '1/√2';
+        if (Math.abs(abs - Math.sqrt(3) / 2) < 0.01) return sign + '√3/2';
+        if (Math.abs(abs - 1 / Math.sqrt(3)) < 0.01) return sign + '1/√3';
+        if (Math.abs(abs - 1 / (2 * Math.sqrt(2))) < 0.01) return sign + '1/2√2';
+
+        return val.toFixed(3);
+    }
+
     updateBlochSphere() {
-        const coords = this.simulator.getBlochCoordinates(this.currentQubit);
-        this.blochSphere.setState(coords.x, coords.y, coords.z);
-    }
-
-    updateQubitSelector() {
-        const select = document.getElementById('bloch-qubit-select');
         const numQubits = this.circuitRenderer.getNumQubits();
-
-        select.innerHTML = '';
         for (let i = 0; i < numQubits; i++) {
-            const option = document.createElement('option');
-            option.value = i;
-            option.textContent = `Qubit ${i}`;
-            select.appendChild(option);
+            const coords = this.simulator.getBlochCoordinates(i);
+            this.blochSpheres.setState(i, coords.x, coords.y, coords.z);
         }
-
-        // Reset current qubit if out of range
-        if (this.currentQubit >= numQubits) {
-            this.currentQubit = 0;
-        }
-        select.value = this.currentQubit;
     }
+
+    // updateQubitSelector removed - now shows all qubits
 
     updateQubitCount() {
         document.getElementById('qubit-count').textContent = this.circuitRenderer.getNumQubits();
@@ -213,8 +267,9 @@ class QuantumPlaygroundApp {
 
     loadPreset(preset) {
         this.circuitRenderer.loadPreset(preset);
-        this.simulator.setNumQubits(this.circuitRenderer.getNumQubits());
-        this.updateQubitSelector();
+        const numQubits = this.circuitRenderer.getNumQubits();
+        this.simulator.setNumQubits(numQubits);
+        this.blochSpheres.setNumQubits(numQubits);
         this.updateQubitCount();
         this.runSimulation();
     }

@@ -213,6 +213,62 @@ class QuantumSimulator {
         }
     }
 
+    // Apply QFT (Quantum Fourier Transform) on all qubits
+    applyQFT() {
+        const n = this.numQubits;
+
+        for (let i = 0; i < n; i++) {
+            // Apply Hadamard to qubit i
+            this.applySingleQubitGate('H', i);
+
+            // Apply controlled rotations
+            for (let j = i + 1; j < n; j++) {
+                const k = j - i + 1;
+                this.applyControlledPhase(j, i, Math.PI / Math.pow(2, k));
+            }
+        }
+
+        // Swap qubits to reverse order
+        for (let i = 0; i < Math.floor(n / 2); i++) {
+            this.applySWAP(i, n - 1 - i);
+        }
+    }
+
+    // Apply inverse QFT
+    applyIQFT() {
+        const n = this.numQubits;
+
+        // Swap qubits to reverse order first
+        for (let i = 0; i < Math.floor(n / 2); i++) {
+            this.applySWAP(i, n - 1 - i);
+        }
+
+        for (let i = n - 1; i >= 0; i--) {
+            // Apply inverse controlled rotations
+            for (let j = n - 1; j > i; j--) {
+                const k = j - i + 1;
+                this.applyControlledPhase(j, i, -Math.PI / Math.pow(2, k));
+            }
+            // Apply Hadamard
+            this.applySingleQubitGate('H', i);
+        }
+    }
+
+    // Apply controlled phase rotation
+    applyControlledPhase(controlQubit, targetQubit, angle) {
+        const size = Math.pow(2, this.numQubits);
+        const phase = { re: Math.cos(angle), im: Math.sin(angle) };
+
+        for (let i = 0; i < size; i++) {
+            const controlBit = (i >> controlQubit) & 1;
+            const targetBit = (i >> targetQubit) & 1;
+
+            if (controlBit === 1 && targetBit === 1) {
+                this.stateVector[i] = this.complexMul(this.stateVector[i], phase);
+            }
+        }
+    }
+
     // Apply a gate from circuit
     applyGate(gate) {
         if (['H', 'X', 'Y', 'Z', 'S', 'T', 'I'].includes(gate.type)) {
@@ -223,13 +279,22 @@ class QuantumSimulator {
             this.applySWAP(gate.qubit1, gate.qubit2);
         } else if (gate.type === 'CZ') {
             this.applyCZ(gate.control, gate.target);
+        } else if (gate.type === 'QFT') {
+            this.applyQFT();
+        } else if (gate.type === 'IQFT') {
+            this.applyIQFT();
         }
         // M (measurement) is handled separately
     }
 
-    // Simulate entire circuit
-    simulate(circuit) {
+    // Simulate entire circuit with optional initial states
+    simulate(circuit, initialStates = null) {
         this.reset();
+
+        // Apply initial states if provided
+        if (initialStates && initialStates.length > 0) {
+            this.applyInitialStates(initialStates);
+        }
 
         for (const gate of circuit) {
             if (gate.type !== 'M') {
@@ -238,6 +303,45 @@ class QuantumSimulator {
         }
 
         return this.getState();
+    }
+
+    // Apply initial states to each qubit
+    // States: '0' = |0⟩, '1' = |1⟩, '+' = |+⟩, '-' = |-⟩, 'i' = |i⟩, '-i' = |-i⟩
+    applyInitialStates(initialStates) {
+        for (let q = 0; q < Math.min(initialStates.length, this.numQubits); q++) {
+            const state = initialStates[q];
+
+            switch (state) {
+                case '1':
+                    // Apply X to flip to |1⟩
+                    this.applySingleQubitGate('X', q);
+                    break;
+                case '+':
+                    // Apply H to get |+⟩
+                    this.applySingleQubitGate('H', q);
+                    break;
+                case '-':
+                    // Apply X then H to get |-⟩
+                    this.applySingleQubitGate('X', q);
+                    this.applySingleQubitGate('H', q);
+                    break;
+                case 'i':
+                    // H then S to get |i⟩ = (|0⟩ + i|1⟩)/√2
+                    this.applySingleQubitGate('H', q);
+                    this.applySingleQubitGate('S', q);
+                    break;
+                case '-i':
+                    // H then S† (Z then S) to get |-i⟩ = (|0⟩ - i|1⟩)/√2
+                    this.applySingleQubitGate('H', q);
+                    this.applySingleQubitGate('Z', q);
+                    this.applySingleQubitGate('S', q);
+                    break;
+                case '0':
+                default:
+                    // Already in |0⟩, do nothing
+                    break;
+            }
+        }
     }
 
     // Get current state info
@@ -252,8 +356,10 @@ class QuantumSimulator {
             const phase = this.complexPhase(amp);
             const prob = mag * mag;
 
-            // Create basis state string like |00⟩, |01⟩, etc.
-            const basisState = '|' + i.toString(2).padStart(this.numQubits, '0') + '⟩';
+            // Create basis state string with q0 leftmost (reversed from standard binary)
+            const bitStr = i.toString(2).padStart(this.numQubits, '0');
+            const reversedBits = bitStr.split('').reverse().join('');
+            const basisState = '|' + reversedBits + '⟩';
 
             amplitudes.push({
                 basis: basisState,
