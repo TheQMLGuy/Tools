@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K-Means Clustering - ML Visualizer</title>
+    <title>Hierarchical Clustering - ML Visualizer</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
@@ -126,7 +126,6 @@
 
         .calc-step.active {
             border-color: var(--accent-primary);
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
         }
 
         .calc-step.completed {
@@ -149,7 +148,6 @@
             align-items: center;
             justify-content: center;
             font-size: 0.75rem;
-            font-weight: 600;
             color: white;
         }
 
@@ -186,7 +184,6 @@
         .calc-result-label {
             font-size: 0.75rem;
             color: var(--text-muted);
-            text-transform: uppercase;
         }
 
         .calc-result-value {
@@ -207,6 +204,11 @@
             border-radius: 6px;
             padding: 8px;
             text-align: center;
+        }
+
+        .feature-card.merged {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
         }
 
         .feature-name {
@@ -274,18 +276,6 @@
             font-size: 0.75rem;
         }
 
-        .param-value {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            color: var(--accent-primary);
-        }
-
-        .param-description {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
         .taming-list {
             list-style: none;
             padding: 0;
@@ -308,7 +298,6 @@
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(10px);
             }
 
             to {
@@ -321,7 +310,7 @@
 <body>
     <div class="app-container">
         <header class="app-header">
-            <h1 class="app-title">🔵 K-Means Clustering</h1>
+            <h1 class="app-title">🌿 Hierarchical Clustering</h1>
             <div class="header-right">
                 <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
                 <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
@@ -342,184 +331,130 @@
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>📐 Clustering Steps</h2>
+                    <h2>📐 Agglomerative Steps</h2>
                     <span style="font-size:0.75rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
                             id="total-steps">0</span></span>
                 </div>
                 <div class="panel-body">
                     <div id="calc-steps" class="calc-steps">
                         <div class="calc-placeholder">
-                            <p>Click <strong>Step</strong> to start clustering</p>
+                            <p>Click <strong>Step</strong> to cluster</p>
                         </div>
                     </div>
                 </div>
             </section>
             <section class="panel viz-panel">
                 <div class="panel-header">
-                    <h2>🎨 Clusters</h2>
+                    <h2>🎨 Dendrogram</h2>
                 </div>
                 <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
                 <div class="panel-footer">
                     <div class="viz-stats">
-                        <span>Iteration: <strong id="viz-iter">0</strong></span>
-                        <span>Inertia: <strong id="viz-inertia">-</strong></span>
+                        <span>Clusters: <strong id="viz-clusters">0</strong></span>
+                        <span>Merge Height: <strong id="viz-height">-</strong></span>
                     </div>
                 </div>
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>⚙️ Hyperparameters</h2>
+                    <h2>⚙️ Linkage</h2>
                 </div>
                 <div class="panel-body">
                     <div class="param-section">
-                        <div class="param-section-title">Algorithm</div>
-                        <div class="param-item">
-                            <div class="param-header">
-                                <span class="param-name"><code>n_clusters</code></span>
-                                <span class="param-value" id="k-value">3</span>
-                            </div>
-                            <input type="range" id="k-slider" class="slider" min="2" max="5" value="3"
-                                style="width:100%">
-                            <div class="param-description">Number of clusters (k)</div>
-                        </div>
+                        <div class="param-section-title">Method</div>
+                        <select id="linkage-select" class="select" style="width:100%">
+                            <option value="single">Single (Min)</option>
+                            <option value="complete">Complete (Max)</option>
+                            <option value="average" selected>Average</option>
+                        </select>
+                        <div style="font-size:0.7rem;color:var(--text-muted);margin-top:8px">How to measure cluster
+                            distance</div>
                     </div>
                     <div class="param-section">
-                        <div class="param-section-title">💡 Tips</div>
+                        <div class="param-section-title">💡 Linkage Types</div>
                         <ul class="taming-list">
-                            <li>Use elbow method to find optimal k</li>
-                            <li>Random init can lead to different results</li>
-                            <li>Inertia decreases as k increases</li>
+                            <li><b>Single:</b> min dist between points</li>
+                            <li><b>Complete:</b> max dist between points</li>
+                            <li><b>Average:</b> mean dist between points</li>
                         </ul>
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button id="apply-btn" class="btn btn-primary btn-block">Restart with New Init</button>
+                    <button id="apply-btn" class="btn btn-primary btn-block">Regenerate Data</button>
                 </div>
             </section>
         </main>
     </div>
     <script>
-        // Generate clustered data
         function generateData() {
             const data = [];
-            [[2, 2], [7, 7], [2, 7]].forEach((center, ci) => {
-                for (let i = 0; i < 10; i++) {
-                    data.push({ x: center[0] + (Math.random() - 0.5) * 2, y: center[1] + (Math.random() - 0.5) * 2 });
-                }
+            [[2, 2], [6, 6], [2, 6]].forEach(c => {
+                for (let i = 0; i < 3; i++) data.push({ x: c[0] + (Math.random() - 0.5) * 1.5, y: c[1] + (Math.random() - 0.5) * 1.5 });
             });
             return data;
         }
 
-        const colors = ['#ef4444', '#10b981', '#6366f1', '#f59e0b', '#ec4899'];
+        const colors = ['#ef4444', '#10b981', '#6366f1', '#f59e0b', '#ec4899', '#14b8a6', '#8b5cf6', '#f97316', '#06b6d4'];
         let data = generateData();
-        let params = { k: 3 };
-        let centroids = [], assignments = [], steps = [], currentStep = 0;
+        let linkage = 'average';
+        let merges = [], steps = [], currentStep = 0;
         let isAutoRunning = false, autoInterval = null;
 
         function distance(a, b) { return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2); }
 
+        function clusterDistance(c1, c2, clusters) {
+            const dists = [];
+            c1.forEach(i => c2.forEach(j => dists.push(distance(data[i], data[j]))));
+            if (linkage === 'single') return Math.min(...dists);
+            if (linkage === 'complete') return Math.max(...dists);
+            return dists.reduce((a, b) => a + b) / dists.length;
+        }
+
         function renderTable() {
-            const thead = document.querySelector('#data-table thead');
-            const tbody = document.querySelector('#data-table tbody');
-            thead.innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>Cluster</th></tr>';
-            tbody.innerHTML = data.map((d, i) =>
-                `<tr><td style="color:var(--text-muted)">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td><td id="cluster-${i}" style="color:${colors[assignments[i] || 0]}">-</td></tr>`
+            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th></tr>';
+            document.querySelector('#data-table tbody').innerHTML = data.map((d, i) =>
+                `<tr><td style="color:var(--text-muted)">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td></tr>`
             ).join('');
         }
 
-        function updateTableClusters() {
-            assignments.forEach((c, i) => {
-                const cell = document.getElementById(`cluster-${i}`);
-                if (cell) { cell.textContent = c + 1; cell.style.color = colors[c]; }
-            });
-        }
-
-        function inertia() {
-            return data.reduce((sum, d, i) => sum + distance(d, centroids[assignments[i]]) ** 2, 0);
-        }
-
         function generateSteps() {
-            steps = []; centroids = []; assignments = new Array(data.length).fill(0);
-
-            // Random init
-            const indices = [];
-            while (indices.length < params.k) {
-                const idx = Math.floor(Math.random() * data.length);
-                if (!indices.includes(idx)) indices.push(idx);
-            }
-            centroids = indices.map(i => ({ x: data[i].x, y: data[i].y }));
+            steps = []; merges = [];
+            let clusters = data.map((_, i) => [i]);
 
             steps.push({
-                title: 'Initialize Centroids',
-                content: `<p>Randomly select ${params.k} points as initial centroids:</p>
-                    <div class="feature-comparison">
-                        ${centroids.map((c, i) => `<div class="feature-card" style="border:2px solid ${colors[i]}"><div class="feature-name">C${i + 1}</div><div class="feature-value">(${c.x.toFixed(1)}, ${c.y.toFixed(1)})</div></div>`).join('')}
-                    </div>`,
-                centroids: JSON.parse(JSON.stringify(centroids)),
-                assignments: [...assignments]
+                title: 'Initial State',
+                content: `<p>Each point starts as its own cluster</p>
+                    <div class="calc-result"><span class="calc-result-label">Clusters</span><span class="calc-result-value">${data.length}</span></div>`,
+                clusters: clusters.map(c => [...c]), mergeHeight: 0
             });
 
-            let converged = false, iter = 0, maxIter = 10;
-            while (!converged && iter < maxIter) {
-                iter++;
-                const oldAssignments = [...assignments];
+            while (clusters.length > 1) {
+                let minDist = Infinity, minI = 0, minJ = 1;
+                for (let i = 0; i < clusters.length; i++) {
+                    for (let j = i + 1; j < clusters.length; j++) {
+                        const d = clusterDistance(clusters[i], clusters[j], clusters);
+                        if (d < minDist) { minDist = d; minI = i; minJ = j; }
+                    }
+                }
 
-                // Assign step
-                data.forEach((d, i) => {
-                    let minDist = Infinity, minC = 0;
-                    centroids.forEach((c, ci) => {
-                        const dist = distance(d, c);
-                        if (dist < minDist) { minDist = dist; minC = ci; }
-                    });
-                    assignments[i] = minC;
-                });
-
-                const counts = new Array(params.k).fill(0);
-                assignments.forEach(a => counts[a]++);
+                const merged = [...clusters[minI], ...clusters[minJ]];
+                merges.push({ c1: [...clusters[minI]], c2: [...clusters[minJ]], height: minDist });
 
                 steps.push({
-                    title: `Iteration ${iter}: Assign Points`,
-                    content: `<p>Assign each point to nearest centroid:</p>
-                        <div class="calc-equation">assign(x) = argmin_k ||x - μ_k||²</div>
+                    title: `Merge at Height ${minDist.toFixed(2)}`,
+                    content: `<p>Merge closest clusters using ${linkage} linkage:</p>
                         <div class="feature-comparison">
-                            ${counts.map((c, i) => `<div class="feature-card" style="border-left:3px solid ${colors[i]}"><div class="feature-name">Cluster ${i + 1}</div><div class="feature-value">${c} points</div></div>`).join('')}
-                        </div>`,
-                    centroids: JSON.parse(JSON.stringify(centroids)),
-                    assignments: [...assignments]
-                });
-
-                // Update centroids
-                const newCentroids = centroids.map((_, ci) => {
-                    const cluster = data.filter((_, i) => assignments[i] === ci);
-                    if (cluster.length === 0) return centroids[ci];
-                    return { x: cluster.reduce((s, p) => s + p.x, 0) / cluster.length, y: cluster.reduce((s, p) => s + p.y, 0) / cluster.length };
-                });
-
-                const movement = centroids.reduce((s, c, i) => s + distance(c, newCentroids[i]), 0);
-                centroids = newCentroids;
-
-                steps.push({
-                    title: `Iteration ${iter}: Update Centroids`,
-                    content: `<p>Move centroids to cluster means:</p>
-                        <div class="calc-equation">μ_k = (1/|C_k|) Σ x_i</div>
-                        <div class="feature-comparison">
-                            ${centroids.map((c, i) => `<div class="feature-card" style="border:2px solid ${colors[i]}"><div class="feature-name">C${i + 1}</div><div class="feature-value">(${c.x.toFixed(1)}, ${c.y.toFixed(1)})</div></div>`).join('')}
+                            <div class="feature-card merged"><div class="feature-name">Cluster A</div><div class="feature-value">${clusters[minI].map(i => i + 1).join(', ')}</div></div>
+                            <div class="feature-card merged"><div class="feature-name">Cluster B</div><div class="feature-value">${clusters[minJ].map(i => i + 1).join(', ')}</div></div>
                         </div>
-                        <div class="calc-result"><span class="calc-result-label">Movement</span><span class="calc-result-value">${movement.toFixed(3)}</span></div>`,
-                    centroids: JSON.parse(JSON.stringify(centroids)),
-                    assignments: [...assignments]
+                        <div class="calc-result"><span class="calc-result-label">Distance</span><span class="calc-result-value">${minDist.toFixed(3)}</span></div>`,
+                    clusters: [...clusters.filter((_, i) => i !== minI && i !== minJ), merged].map(c => [...c]),
+                    mergeHeight: minDist
                 });
 
-                converged = assignments.every((a, i) => a === oldAssignments[i]) && movement < 0.01;
+                clusters = clusters.filter((_, i) => i !== minI && i !== minJ);
+                clusters.push(merged);
             }
-
-            steps.push({
-                title: 'Converged!',
-                content: `<p>Clustering complete after ${iter} iterations</p>
-                    <div class="calc-result"><span class="calc-result-label">Final Inertia</span><span class="calc-result-value">${inertia().toFixed(2)}</span></div>`,
-                centroids: JSON.parse(JSON.stringify(centroids)),
-                assignments: [...assignments]
-            });
 
             document.getElementById('total-steps').textContent = steps.length;
         }
@@ -532,36 +467,54 @@
         function render(step = null) {
             const w = canvas.width, h = canvas.height;
             ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, w, h);
-            const pad = 40, scale = v => pad + (v / 10) * (Math.min(w, h) - 2 * pad);
 
-            // Grid
-            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-            for (let i = 0; i <= 10; i++) {
-                ctx.beginPath(); ctx.moveTo(scale(i), pad); ctx.lineTo(scale(i), h - pad); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(pad, scale(i)); ctx.lineTo(w - pad, scale(i)); ctx.stroke();
+            const currClusters = step?.clusters || [[...Array(data.length).keys()]];
+            const pad = 40;
+
+            // Draw dendrogram-style
+            const leafX = {};
+            data.forEach((_, i) => leafX[i] = pad + (i + 0.5) * ((w - 2 * pad) / data.length));
+
+            // Leaves
+            data.forEach((_, i) => {
+                const clusterIdx = currClusters.findIndex(c => c.includes(i));
+                ctx.beginPath();
+                ctx.arc(leafX[i], h - 50, 8, 0, Math.PI * 2);
+                ctx.fillStyle = colors[clusterIdx % colors.length];
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText(i + 1, leafX[i], h - 47);
+            });
+
+            // Merge lines
+            const maxH = merges.length > 0 ? Math.max(...merges.map(m => m.height)) * 1.2 : 1;
+            const scaleH = height => h - 70 - (height / maxH) * (h - 120);
+
+            const currentMergeIdx = step ? steps.indexOf(step) - 1 : merges.length - 1;
+            const clusterPos = {};
+            data.forEach((_, i) => clusterPos[i] = leafX[i]);
+
+            for (let mi = 0; mi <= currentMergeIdx && mi < merges.length; mi++) {
+                const merge = merges[mi];
+                const x1 = merge.c1.reduce((s, i) => s + (clusterPos[i] || leafX[i]), 0) / merge.c1.length;
+                const x2 = merge.c2.reduce((s, i) => s + (clusterPos[i] || leafX[i]), 0) / merge.c2.length;
+                const yH = scaleH(merge.height);
+
+                ctx.strokeStyle = '#6366f1';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(x1, h - 58);
+                ctx.lineTo(x1, yH);
+                ctx.lineTo(x2, yH);
+                ctx.lineTo(x2, h - 58);
+                ctx.stroke();
+
+                // Update positions
+                const newX = (x1 + x2) / 2;
+                [...merge.c1, ...merge.c2].forEach(i => clusterPos[i] = newX);
             }
-
-            const currCentroids = step?.centroids || centroids;
-            const currAssignments = step?.assignments || assignments;
-
-            // Points
-            data.forEach((d, i) => {
-                ctx.beginPath();
-                ctx.arc(scale(d.x), scale(10 - d.y), 7, 0, Math.PI * 2);
-                ctx.fillStyle = colors[currAssignments[i]] || '#666';
-                ctx.fill();
-            });
-
-            // Centroids
-            currCentroids.forEach((c, i) => {
-                ctx.beginPath();
-                ctx.arc(scale(c.x), scale(10 - c.y), 12, 0, Math.PI * 2);
-                ctx.fillStyle = colors[i];
-                ctx.fill();
-                ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke();
-                ctx.fillStyle = '#fff'; ctx.font = 'bold 10px Inter'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.fillText(i + 1, scale(c.x), scale(10 - c.y));
-            });
         }
 
         function displayStep(step) {
@@ -575,30 +528,21 @@
             container.appendChild(div);
             div.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
-            centroids = step.centroids;
-            assignments = step.assignments;
-            updateTableClusters();
             render(step);
-            document.getElementById('viz-iter').textContent = Math.floor(currentStep / 2);
-            document.getElementById('viz-inertia').textContent = inertia().toFixed(2);
+            document.getElementById('viz-clusters').textContent = step.clusters.length;
+            document.getElementById('viz-height').textContent = step.mergeHeight.toFixed(2);
         }
 
-        function step() {
-            if (currentStep >= steps.length) { stopAuto(); return; }
-            displayStep(steps[currentStep]);
-            currentStep++;
-            document.getElementById('current-step').textContent = currentStep;
-        }
-
-        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 800); }
+        function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 1200); }
         function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
-        function reset() { stopAuto(); data = generateData(); currentStep = 0; assignments = []; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to start clustering</p></div>'; renderTable(); generateSteps(); render(); }
+        function reset() { stopAuto(); data = generateData(); currentStep = 0; merges = []; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to cluster</p></div>'; renderTable(); generateSteps(); render(); }
 
         document.getElementById('step-btn').addEventListener('click', step);
         document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
         document.getElementById('reset-btn').addEventListener('click', reset);
         document.getElementById('apply-btn').addEventListener('click', reset);
-        document.getElementById('k-slider').addEventListener('input', e => { params.k = parseInt(e.target.value); document.getElementById('k-value').textContent = params.k; });
+        document.getElementById('linkage-select').addEventListener('change', e => { linkage = e.target.value; reset(); });
 
         window.addEventListener('resize', resizeCanvas);
         renderTable();

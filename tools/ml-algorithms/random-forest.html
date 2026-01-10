@@ -9,125 +9,624 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="../../styles/shared.css">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        .app-container {
+            display: grid;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 260px 1fr 1.2fr 280px;
+            gap: 12px;
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header h2 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .panel-body {
+            flex: 1;
+            overflow: auto;
+            padding: 12px;
+        }
+
+        .panel-footer {
+            padding: 10px 14px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+
+        .data-table th {
+            background: var(--bg-secondary);
+            padding: 8px;
+            text-align: left;
+            border-bottom: 2px solid var(--accent-primary);
+        }
+
+        .data-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table tr.bootstrap td {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .calc-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .calc-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .calc-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            animation: fadeIn 0.3s;
+        }
+
+        .calc-step.active {
+            border-color: var(--accent-primary);
+        }
+
+        .calc-step.completed {
+            opacity: 0.7;
+        }
+
+        .calc-step-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .calc-step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: white;
+        }
+
+        .calc-step-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .calc-step-content {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .calc-equation {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            margin: 8px 0;
+            font-family: var(--font-mono);
+            text-align: center;
+        }
+
+        .calc-result {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .calc-result-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .calc-result-value {
+            font-family: var(--font-mono);
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .feature-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .feature-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .feature-card.best {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .feature-name {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .feature-value {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .tree-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .mini-tree {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .mini-tree.voting {
+            border: 2px solid var(--accent-primary);
+        }
+
+        .mini-tree-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .mini-tree-pred {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .viz-panel .panel-body {
+            padding: 0;
+            position: relative;
+        }
+
+        .viz-panel canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .viz-stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .param-section {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .param-section:last-child {
+            border-bottom: none;
+        }
+
+        .param-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .param-item {
+            margin-bottom: 14px;
+        }
+
+        .param-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .param-name code {
+            font-family: var(--font-mono);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .param-value {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+        }
+
+        .taming-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .taming-list li {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 4px 0 4px 16px;
+            position: relative;
+        }
+
+        .taming-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <div class="app-container">
-        <aside class="left-panel">
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>🌲 Random Forest</h2>
-                </div>
-                <div class="panel-body">
-                    <p class="description">Ensemble of decision trees with bagging and feature importance visualization.
-                    </p>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Data</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Dataset</label>
-                        <select id="dataset-select" class="select">
-                            <option value="two-clusters">Two Clusters</option>
-                            <option value="xor">XOR Pattern</option>
-                            <option value="three-clusters">Three Classes</option>
-                            <option value="moons">Moons</option>
-                        </select>
-                    </div>
-                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Forest Parameters</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Number of Trees</label>
-                        <input type="range" id="n-trees" min="1" max="20" value="5" class="slider">
-                        <span id="n-trees-value" class="value-display">5</span>
-                    </div>
-                    <div class="param-group">
-                        <label>Max Depth</label>
-                        <input type="range" id="max-depth" min="1" max="8" value="4" class="slider">
-                        <span id="max-depth-value" class="value-display">4</span>
-                    </div>
-                    <div class="param-group">
-                        <label>Bootstrap Sample %</label>
-                        <input type="range" id="bootstrap-ratio" min="50" max="100" value="80" class="slider">
-                        <span id="bootstrap-ratio-value" class="value-display">80%</span>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Training</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="button-row">
-                        <button id="train-btn" class="btn btn-primary">▶ Train Forest</button>
-                        <button id="reset-btn" class="btn btn-ghost">Reset</button>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel stats-panel">
-                <div class="panel-header compact">
-                    <h2>Forest Info</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="stat-row">
-                        <span class="stat-label">Trees Trained</span>
-                        <span id="trees-trained" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Total Nodes</span>
-                        <span id="total-nodes" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Accuracy</span>
-                        <span id="accuracy" class="stat-value">-</span>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Inspect Tree</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Select Tree</label>
-                        <select id="tree-select" class="select">
-                            <option value="all">All Trees (Ensemble)</option>
-                        </select>
-                    </div>
-                </div>
-            </section>
-        </aside>
-
-        <main class="main-panel">
-            <div class="visualization-area">
-                <div class="viz-container">
-                    <h3>Decision Boundary</h3>
-                    <canvas id="boundary-canvas"></canvas>
-                </div>
-                <div class="viz-container">
-                    <h3>Tree Votes</h3>
-                    <canvas id="votes-canvas"></canvas>
-                </div>
+        <header class="app-header">
+            <h1 class="app-title">🌲 Random Forest</h1>
+            <div class="header-right">
+                <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
+                <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
+                <button id="reset-btn" class="btn btn-ghost">↻ Reset</button>
             </div>
+        </header>
+        <main class="main-content">
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📊 Dataset</h2>
+                </div>
+                <div class="panel-body">
+                    <table id="data-table" class="data-table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📐 Ensemble Steps</h2>
+                    <span style="font-size:0.75rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
+                            id="total-steps">0</span></span>
+                </div>
+                <div class="panel-body">
+                    <div id="calc-steps" class="calc-steps">
+                        <div class="calc-placeholder">
+                            <p>Click <strong>Step</strong> to build forest</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="panel viz-panel">
+                <div class="panel-header">
+                    <h2>🎨 Forest Visualization</h2>
+                </div>
+                <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
+                <div class="panel-footer">
+                    <div class="viz-stats">
+                        <span>Trees: <strong id="viz-trees">0</strong></span>
+                        <span>OOB Accuracy: <strong id="viz-oob">-</strong></span>
+                    </div>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>⚙️ Hyperparameters</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-section">
+                        <div class="param-section-title">Ensemble</div>
+                        <div class="param-item">
+                            <div class="param-header">
+                                <span class="param-name"><code>n_estimators</code></span>
+                                <span class="param-value" id="trees-value">5</span>
+                            </div>
+                            <input type="range" id="trees-slider" class="slider" min="3" max="9" step="2" value="5"
+                                style="width:100%">
+                            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px">Number of trees</div>
+                        </div>
+                        <div class="param-item">
+                            <div class="param-header">
+                                <span class="param-name"><code>max_features</code></span>
+                                <span class="param-value">sqrt</span>
+                            </div>
+                            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px">Features per split = √n
+                            </div>
+                        </div>
+                    </div>
+                    <div class="param-section">
+                        <div class="param-section-title">💡 Key Concepts</div>
+                        <ul class="taming-list">
+                            <li>Bootstrap = sample with replacement</li>
+                            <li>Each tree sees different data</li>
+                            <li>Voting reduces variance (bagging)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button id="apply-btn" class="btn btn-primary btn-block">Rebuild Forest</button>
+                </div>
+            </section>
         </main>
     </div>
+    <script>
+        // Simple dataset
+        const fullData = [
+            { age: 25, income: 30, label: 0 }, { age: 30, income: 35, label: 0 }, { age: 28, income: 40, label: 0 },
+            { age: 35, income: 50, label: 0 }, { age: 32, income: 45, label: 0 }, { age: 40, income: 55, label: 0 },
+            { age: 45, income: 70, label: 1 }, { age: 50, income: 80, label: 1 }, { age: 48, income: 75, label: 1 },
+            { age: 55, income: 90, label: 1 }, { age: 52, income: 85, label: 1 }, { age: 60, income: 95, label: 1 }
+        ];
 
-    <script src="js/random-forest.js"></script>
+        let params = { nTrees: 5 };
+        let trees = [], bootstrapSamples = [];
+        let steps = [], currentStep = 0;
+        let isAutoRunning = false, autoInterval = null;
+
+        function renderTable() {
+            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>Age</th><th>Income</th><th>Class</th></tr>';
+            document.querySelector('#data-table tbody').innerHTML = fullData.map((d, i) =>
+                `<tr id="row-${i}"><td style="color:var(--text-muted)">${i + 1}</td><td>${d.age}</td><td>${d.income}</td><td style="color:${d.label ? '#10b981' : '#ef4444'}">${d.label}</td></tr>`
+            ).join('');
+        }
+
+        function highlightBootstrap(indices) {
+            document.querySelectorAll('#data-table tbody tr').forEach(tr => tr.classList.remove('bootstrap'));
+            [...new Set(indices)].forEach(i => document.getElementById(`row-${i}`)?.classList.add('bootstrap'));
+        }
+
+        // Simple decision stump
+        function buildTree(data) {
+            const feature = Math.random() > 0.5 ? 'age' : 'income';
+            const values = data.map(d => d[feature]).sort((a, b) => a - b);
+            const threshold = values[Math.floor(values.length / 2)];
+            const left = data.filter(d => d[feature] <= threshold);
+            const right = data.filter(d => d[feature] > threshold);
+            return {
+                feature, threshold,
+                leftPred: left.filter(d => d.label === 1).length > left.length / 2 ? 1 : 0,
+                rightPred: right.filter(d => d.label === 1).length > right.length / 2 ? 1 : 0
+            };
+        }
+
+        function predict(tree, point) {
+            return point[tree.feature] <= tree.threshold ? tree.leftPred : tree.rightPred;
+        }
+
+        function generateSteps() {
+            steps = []; trees = []; bootstrapSamples = [];
+
+            steps.push({
+                title: 'Random Forest Overview',
+                content: `<p>Build ${params.nTrees} decision trees, each on a bootstrap sample</p>
+                    <div class="calc-equation">Final = Majority Vote of Trees</div>
+                    <p style="margin-top:8px">Each tree is trained on ~63% of data (bootstrap)</p>`,
+                phase: 'overview', treeIndex: -1
+            });
+
+            for (let t = 0; t < params.nTrees; t++) {
+                // Bootstrap sample
+                const bootstrap = [];
+                for (let i = 0; i < fullData.length; i++) {
+                    bootstrap.push(Math.floor(Math.random() * fullData.length));
+                }
+                bootstrapSamples.push(bootstrap);
+                const bootstrapData = bootstrap.map(i => fullData[i]);
+
+                steps.push({
+                    title: `Tree ${t + 1}: Bootstrap Sample`,
+                    content: `<p>Sample ${fullData.length} points with replacement:</p>
+                        <div class="feature-comparison">
+                            <div class="feature-card"><div class="feature-name">Unique Points</div><div class="feature-value">${[...new Set(bootstrap)].length}</div></div>
+                            <div class="feature-card"><div class="feature-name">Duplicates</div><div class="feature-value">${fullData.length - [...new Set(bootstrap)].length}</div></div>
+                        </div>`,
+                    phase: 'bootstrap', treeIndex: t, bootstrap
+                });
+
+                const tree = buildTree(bootstrapData);
+                trees.push(tree);
+
+                steps.push({
+                    title: `Tree ${t + 1}: Build Stump`,
+                    content: `<p>Split on feature: <strong>${tree.feature}</strong></p>
+                        <div class="calc-equation">${tree.feature} ≤ ${tree.threshold}</div>
+                        <div class="feature-comparison">
+                            <div class="feature-card"><div class="feature-name">Left Pred</div><div class="feature-value">${tree.leftPred}</div></div>
+                            <div class="feature-card"><div class="feature-name">Right Pred</div><div class="feature-value">${tree.rightPred}</div></div>
+                        </div>`,
+                    phase: 'tree', treeIndex: t
+                });
+            }
+
+            // Voting example
+            const testPoint = { age: 40, income: 60 };
+            const votes = trees.map(t => predict(t, testPoint));
+            const finalPred = votes.filter(v => v === 1).length > votes.length / 2 ? 1 : 0;
+
+            steps.push({
+                title: 'Majority Voting',
+                content: `<p>Classify point: Age=${testPoint.age}, Income=${testPoint.income}</p>
+                    <div class="tree-grid">
+                        ${trees.map((t, i) => `<div class="mini-tree voting"><div class="mini-tree-label">Tree ${i + 1}</div><div class="mini-tree-pred" style="color:${votes[i] ? '#10b981' : '#ef4444'}">${votes[i]}</div></div>`).join('')}
+                    </div>
+                    <div class="calc-result"><span class="calc-result-label">Final Vote</span><span class="calc-result-value" style="color:${finalPred ? '#10b981' : '#ef4444'}">${finalPred}</span></div>`,
+                phase: 'vote', treeIndex: -1
+            });
+
+            document.getElementById('total-steps').textContent = steps.length;
+        }
+
+        const canvas = document.getElementById('viz-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
+
+        function render(treeIndex = -1) {
+            const w = canvas.width, h = canvas.height;
+            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, w, h);
+
+            const treeW = w / Math.min(params.nTrees, 5);
+            const displayTrees = treeIndex >= 0 ? trees.slice(0, treeIndex + 1) : trees;
+
+            displayTrees.forEach((tree, i) => {
+                const cx = treeW * i + treeW / 2;
+                const cy = 60;
+
+                // Root node
+                ctx.beginPath();
+                ctx.arc(cx, cy, 25, 0, Math.PI * 2);
+                ctx.fillStyle = '#6366f1';
+                ctx.fill();
+                ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(tree.feature[0].toUpperCase(), cx, cy - 5);
+                ctx.fillText(`≤${tree.threshold}`, cx, cy + 8);
+
+                // Lines
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.beginPath(); ctx.moveTo(cx, cy + 25); ctx.lineTo(cx - 30, cy + 70); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(cx, cy + 25); ctx.lineTo(cx + 30, cy + 70); ctx.stroke();
+
+                // Leaf nodes
+                [[cx - 30, tree.leftPred], [cx + 30, tree.rightPred]].forEach(([x, pred]) => {
+                    ctx.beginPath();
+                    ctx.arc(x, cy + 90, 18, 0, Math.PI * 2);
+                    ctx.fillStyle = pred ? '#10b981' : '#ef4444';
+                    ctx.fill();
+                    ctx.fillStyle = '#fff';
+                    ctx.fillText(pred, x, cy + 90);
+                });
+
+                // Tree label
+                ctx.fillStyle = '#606070';
+                ctx.font = '11px Inter';
+                ctx.fillText(`Tree ${i + 1}`, cx, h - 20);
+            });
+        }
+
+        function displayStep(step) {
+            const container = document.getElementById('calc-steps');
+            container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
+            container.querySelector('.calc-placeholder')?.remove();
+
+            const div = document.createElement('div');
+            div.className = 'calc-step active';
+            div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
+            container.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+            if (step.bootstrap) highlightBootstrap(step.bootstrap);
+            else highlightBootstrap([]);
+
+            render(step.treeIndex);
+            document.getElementById('viz-trees').textContent = step.treeIndex >= 0 ? step.treeIndex + 1 : trees.length;
+        }
+
+        function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 1000); }
+        function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
+        function reset() { stopAuto(); currentStep = 0; trees = []; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to build forest</p></div>'; renderTable(); generateSteps(); render(-1); highlightBootstrap([]); }
+
+        document.getElementById('step-btn').addEventListener('click', step);
+        document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
+        document.getElementById('reset-btn').addEventListener('click', reset);
+        document.getElementById('apply-btn').addEventListener('click', reset);
+        document.getElementById('trees-slider').addEventListener('input', e => { params.nTrees = parseInt(e.target.value); document.getElementById('trees-value').textContent = params.nTrees; });
+
+        window.addEventListener('resize', resizeCanvas);
+        renderTable();
+        resizeCanvas();
+        generateSteps();
+    </script>
 </body>
 
 </html>

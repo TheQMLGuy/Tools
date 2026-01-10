@@ -9,92 +9,561 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="../../styles/shared.css">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        .app-container {
+            display: grid;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 260px 1fr 1.2fr 280px;
+            gap: 12px;
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header h2 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .panel-body {
+            flex: 1;
+            overflow: auto;
+            padding: 12px;
+        }
+
+        .panel-footer {
+            padding: 10px 14px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+
+        .data-table th {
+            background: var(--bg-secondary);
+            padding: 8px;
+            text-align: left;
+            border-bottom: 2px solid var(--accent-primary);
+        }
+
+        .data-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .calc-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .calc-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .calc-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            animation: fadeIn 0.3s;
+        }
+
+        .calc-step.active {
+            border-color: var(--accent-primary);
+        }
+
+        .calc-step.completed {
+            opacity: 0.7;
+        }
+
+        .calc-step-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .calc-step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .calc-step-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .calc-step-content {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .calc-equation {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            margin: 8px 0;
+            font-family: var(--font-mono);
+            text-align: center;
+        }
+
+        .calc-result {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .calc-result-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .calc-result-value {
+            font-family: var(--font-mono);
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .feature-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .feature-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .feature-name {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .feature-value {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .viz-panel .panel-body {
+            padding: 0;
+        }
+
+        .viz-panel canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .viz-stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .param-section {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .param-section:last-child {
+            border-bottom: none;
+        }
+
+        .param-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .param-item {
+            margin-bottom: 14px;
+        }
+
+        .param-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .param-name code {
+            font-family: var(--font-mono);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .param-value {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+        }
+
+        .param-description {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .taming-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .taming-list li {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 4px 0 4px 16px;
+            position: relative;
+        }
+
+        .taming-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <div class="app-container">
-        <aside class="left-panel">
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>🎯 Logistic Regression</h2>
-                </div>
-                <div class="panel-body">
-                    <p class="description">Binary classification with sigmoid decision boundary.</p>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Data</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Dataset</label>
-                        <select id="dataset-select" class="select">
-                            <option value="separable">Linearly Separable</option>
-                            <option value="overlap">Overlapping</option>
-                            <option value="diagonal">Diagonal Split</option>
-                        </select>
-                    </div>
-                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Training</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Learning Rate</label>
-                        <input type="range" id="learning-rate" min="1" max="100" value="50" class="slider">
-                        <span id="learning-rate-value" class="value-display">0.5</span>
-                    </div>
-                    <div class="button-row">
-                        <button id="train-btn" class="btn btn-primary">▶ Train</button>
-                        <button id="step-btn" class="btn btn-secondary">Step</button>
-                        <button id="reset-btn" class="btn btn-ghost">Reset</button>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel stats-panel">
-                <div class="panel-header compact">
-                    <h2>Model</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="stat-row">
-                        <span class="stat-label">Epoch</span>
-                        <span id="epoch" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Loss</span>
-                        <span id="loss" class="stat-value">-</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Accuracy</span>
-                        <span id="accuracy" class="stat-value">-</span>
-                    </div>
-                </div>
-            </section>
-        </aside>
-
-        <main class="main-panel">
-            <div class="visualization-area">
-                <div class="viz-container">
-                    <h3>Decision Boundary</h3>
-                    <canvas id="scatter-canvas"></canvas>
-                </div>
-                <div class="viz-container">
-                    <h3>Sigmoid Function</h3>
-                    <canvas id="sigmoid-canvas"></canvas>
-                </div>
+        <header class="app-header">
+            <h1 class="app-title">🎯 Logistic Regression</h1>
+            <div class="header-right">
+                <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
+                <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
+                <button id="reset-btn" class="btn btn-ghost">↻ Reset</button>
             </div>
+        </header>
+        <main class="main-content">
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📊 Training Data</h2>
+                </div>
+                <div class="panel-body">
+                    <table id="data-table" class="data-table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📐 Gradient Descent</h2>
+                    <span style="font-size:0.75rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
+                            id="total-steps">0</span></span>
+                </div>
+                <div class="panel-body">
+                    <div id="calc-steps" class="calc-steps">
+                        <div class="calc-placeholder">
+                            <p>Click <strong>Step</strong> to train classifier</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="panel viz-panel">
+                <div class="panel-header">
+                    <h2>🎨 Decision Boundary</h2>
+                </div>
+                <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
+                <div class="panel-footer">
+                    <div class="viz-stats">
+                        <span>Epoch: <strong id="viz-epoch">0</strong></span>
+                        <span>Log-Loss: <strong id="viz-loss">-</strong></span>
+                        <span>Accuracy: <strong id="viz-acc">-</strong></span>
+                    </div>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>⚙️ Hyperparameters</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-section">
+                        <div class="param-section-title">Learning</div>
+                        <div class="param-item">
+                            <div class="param-header">
+                                <span class="param-name"><code>learning_rate</code></span>
+                                <span class="param-value" id="lr-value">0.5</span>
+                            </div>
+                            <input type="range" id="lr-slider" class="slider" min="0.1" max="2" step="0.1" value="0.5"
+                                style="width:100%">
+                        </div>
+                        <div class="param-item">
+                            <div class="param-header">
+                                <span class="param-name"><code>max_iter</code></span>
+                                <span class="param-value" id="iter-value">30</span>
+                            </div>
+                            <input type="range" id="iter-slider" class="slider" min="10" max="100" step="10" value="30"
+                                style="width:100%">
+                        </div>
+                    </div>
+                    <div class="param-section">
+                        <div class="param-section-title">💡 Key Insight</div>
+                        <ul class="taming-list">
+                            <li>σ(z) = 1/(1+e⁻ᶻ) squashes to [0,1]</li>
+                            <li>Log-loss penalizes confident wrong predictions</li>
+                            <li>Decision boundary: where P(y=1) = 0.5</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button id="apply-btn" class="btn btn-primary btn-block">Apply & Restart</button>
+                </div>
+            </section>
         </main>
     </div>
+    <script>
+        // Generate linearly separable data
+        const data = [];
+        for (let i = 0; i < 15; i++) {
+            data.push({ x: Math.random() * 4, y: Math.random() * 4 + 3, label: 0 });
+            data.push({ x: Math.random() * 4 + 4, y: Math.random() * 4, label: 1 });
+        }
 
-    <script src="js/logistic-regression.js"></script>
+        let params = { lr: 0.5, maxIter: 30 };
+        let w1 = 0, w2 = 0, b = 0;
+        let steps = [], currentStep = 0;
+        let isAutoRunning = false, autoInterval = null;
+
+        // Normalize
+        const xVals = data.map(d => d.x), yVals = data.map(d => d.y);
+        const xMean = xVals.reduce((a, b) => a + b) / xVals.length;
+        const yMean = yVals.reduce((a, b) => a + b) / yVals.length;
+        const xStd = Math.sqrt(xVals.reduce((s, v) => s + (v - xMean) ** 2, 0) / xVals.length) || 1;
+        const yStd = Math.sqrt(yVals.reduce((s, v) => s + (v - yMean) ** 2, 0) / yVals.length) || 1;
+        const norm = data.map(d => ({ x: (d.x - xMean) / xStd, y: (d.y - yMean) / yStd, label: d.label }));
+
+        function sigmoid(z) { return 1 / (1 + Math.exp(-z)); }
+        function predict(d) { return sigmoid(w1 * d.x + w2 * d.y + b); }
+        function logLoss() { return -norm.reduce((s, d) => s + (d.label * Math.log(predict(d) + 1e-10) + (1 - d.label) * Math.log(1 - predict(d) + 1e-10)), 0) / norm.length; }
+        function accuracy() { return norm.filter(d => (predict(d) >= 0.5) === (d.label === 1)).length / norm.length; }
+
+        function renderTable() {
+            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>Class</th></tr>';
+            document.querySelector('#data-table tbody').innerHTML = data.map((d, i) =>
+                `<tr><td style="color:var(--text-muted)">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td><td style="color:${d.label ? '#10b981' : '#ef4444'}">${d.label}</td></tr>`
+            ).join('');
+        }
+
+        function generateSteps() {
+            steps = []; w1 = 0; w2 = 0; b = 0;
+
+            steps.push({
+                title: 'Dataset Overview',
+                content: `<p>${data.length} samples, 2 classes (0 and 1)</p>
+                    <div class="calc-equation">P(y=1|x) = σ(w₁x₁ + w₂x₂ + b)</div>
+                    <p style="margin-top:8px">Goal: Learn weights to separate classes</p>`,
+                w1: 0, w2: 0, b: 0, epoch: 0
+            });
+
+            steps.push({
+                title: 'Sigmoid Function',
+                content: `<div class="calc-equation">σ(z) = 1 / (1 + e⁻ᶻ)</div>
+                    <p>Maps any input to probability [0, 1]</p>
+                    <div class="feature-comparison">
+                        <div class="feature-card"><div class="feature-name">σ(-∞)</div><div class="feature-value">→ 0</div></div>
+                        <div class="feature-card"><div class="feature-name">σ(0)</div><div class="feature-value">= 0.5</div></div>
+                        <div class="feature-card"><div class="feature-name">σ(+∞)</div><div class="feature-value">→ 1</div></div>
+                    </div>`,
+                w1: 0, w2: 0, b: 0, epoch: 0
+            });
+
+            const showEvery = Math.max(1, Math.floor(params.maxIter / 10));
+            for (let ep = 1; ep <= params.maxIter; ep++) {
+                let dw1 = 0, dw2 = 0, db = 0;
+                norm.forEach(d => {
+                    const error = predict(d) - d.label;
+                    dw1 += error * d.x; dw2 += error * d.y; db += error;
+                });
+                dw1 /= norm.length; dw2 /= norm.length; db /= norm.length;
+                w1 -= params.lr * dw1; w2 -= params.lr * dw2; b -= params.lr * db;
+
+                if (ep <= 3 || ep % showEvery === 0 || ep === params.maxIter) {
+                    steps.push({
+                        title: `Epoch ${ep}`,
+                        content: `<div class="feature-comparison">
+                                <div class="feature-card"><div class="feature-name">w₁</div><div class="feature-value">${w1.toFixed(3)}</div></div>
+                                <div class="feature-card"><div class="feature-name">w₂</div><div class="feature-value">${w2.toFixed(3)}</div></div>
+                                <div class="feature-card"><div class="feature-name">b</div><div class="feature-value">${b.toFixed(3)}</div></div>
+                            </div>
+                            <div class="calc-result"><span class="calc-result-label">Log-Loss</span><span class="calc-result-value">${logLoss().toFixed(4)}</span></div>`,
+                        w1, w2, b, epoch: ep
+                    });
+                }
+            }
+
+            steps.push({
+                title: 'Training Complete!',
+                content: `<div class="calc-equation">P(y=1) = σ(${w1.toFixed(2)}x₁ + ${w2.toFixed(2)}x₂ + ${b.toFixed(2)})</div>
+                    <div class="calc-result"><span class="calc-result-label">Final Accuracy</span><span class="calc-result-value">${(accuracy() * 100).toFixed(1)}%</span></div>`,
+                w1, w2, b, epoch: params.maxIter
+            });
+
+            document.getElementById('total-steps').textContent = steps.length;
+        }
+
+        const canvas = document.getElementById('viz-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
+
+        function render(step = null) {
+            const ww = canvas.width, hh = canvas.height;
+            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, ww, hh);
+            const pad = 40, scaleX = v => pad + (v / 8) * (ww - 2 * pad), scaleY = v => hh - pad - (v / 8) * (hh - 2 * pad);
+
+            const cw1 = step?.w1 ?? w1, cw2 = step?.w2 ?? w2, cb = step?.b ?? b;
+
+            // Decision boundary region
+            if (cw1 !== 0 || cw2 !== 0 || cb !== 0) {
+                for (let px = 0; px < ww; px += 4) {
+                    for (let py = 0; py < hh; py += 4) {
+                        const rx = ((px - pad) / (ww - 2 * pad)) * 8;
+                        const ry = ((hh - pad - py) / (hh - 2 * pad)) * 8;
+                        const nx = (rx - xMean) / xStd, ny = (ry - yMean) / yStd;
+                        const p = sigmoid(cw1 * nx + cw2 * ny + cb);
+                        ctx.fillStyle = p > 0.5 ? `rgba(16,185,129,${(p - 0.5) * 0.3})` : `rgba(239,68,68,${(0.5 - p) * 0.3})`;
+                        ctx.fillRect(px, py, 4, 4);
+                    }
+                }
+            }
+
+            // Points
+            data.forEach(d => {
+                ctx.beginPath();
+                ctx.arc(scaleX(d.x), scaleY(d.y), 7, 0, Math.PI * 2);
+                ctx.fillStyle = d.label ? '#10b981' : '#ef4444';
+                ctx.fill();
+                ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.stroke();
+            });
+        }
+
+        function displayStep(step) {
+            const container = document.getElementById('calc-steps');
+            container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
+            container.querySelector('.calc-placeholder')?.remove();
+
+            const div = document.createElement('div');
+            div.className = 'calc-step active';
+            div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
+            container.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+            w1 = step.w1; w2 = step.w2; b = step.b;
+            render(step);
+            document.getElementById('viz-epoch').textContent = step.epoch;
+            document.getElementById('viz-loss').textContent = logLoss().toFixed(3);
+            document.getElementById('viz-acc').textContent = (accuracy() * 100).toFixed(0) + '%';
+        }
+
+        function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 600); }
+        function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
+        function reset() { stopAuto(); currentStep = 0; w1 = w2 = b = 0; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to train classifier</p></div>'; generateSteps(); render(); }
+
+        document.getElementById('step-btn').addEventListener('click', step);
+        document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
+        document.getElementById('reset-btn').addEventListener('click', reset);
+        document.getElementById('apply-btn').addEventListener('click', reset);
+        document.getElementById('lr-slider').addEventListener('input', e => { params.lr = parseFloat(e.target.value); document.getElementById('lr-value').textContent = params.lr; });
+        document.getElementById('iter-slider').addEventListener('input', e => { params.maxIter = parseInt(e.target.value); document.getElementById('iter-value').textContent = params.maxIter; });
+
+        window.addEventListener('resize', resizeCanvas);
+        renderTable();
+        resizeCanvas();
+        generateSteps();
+    </script>
 </body>
 
 </html>

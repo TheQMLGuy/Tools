@@ -335,6 +335,76 @@ const CATEGORIES = {
                 path: 'tools/quantum-circuits/index.html'
             }
         ]
+    },
+    pennylane: {
+        name: 'PennyLane',
+        icon: '🔷',
+        description: 'Quantum machine learning with PennyLane framework and hybrid circuits.',
+        tools: [
+            {
+                id: 'coming-soon',
+                name: 'Coming Soon',
+                icon: '🔜',
+                description: 'PennyLane tools are under development. Stay tuned!',
+                path: '#'
+            }
+        ]
+    },
+    'prompt-engineering': {
+        name: 'Prompt Engineering',
+        icon: '✍️',
+        description: 'Master the art of crafting effective prompts for AI models.',
+        tools: [
+            {
+                id: 'prompt-improver',
+                name: 'Prompt Improver',
+                icon: '✨',
+                description: 'Improve your prompts with guided questions based on best practices.',
+                path: 'tools/prompt-engineering/index.html'
+            }
+        ]
+    },
+    'project-management': {
+        name: 'Project Management',
+        icon: '📋',
+        description: 'Tools for planning, tracking, and managing software projects.',
+        tools: [
+            {
+                id: 'coming-soon',
+                name: 'Coming Soon',
+                icon: '🔜',
+                description: 'Project management tools are under development. Stay tuned!',
+                path: '#'
+            }
+        ]
+    },
+    'system-design': {
+        name: 'System Design',
+        icon: '🏗️',
+        description: 'Architect scalable systems with interactive design tools.',
+        tools: [
+            {
+                id: 'coming-soon',
+                name: 'Coming Soon',
+                icon: '🔜',
+                description: 'System design tools are under development. Stay tuned!',
+                path: '#'
+            }
+        ]
+    },
+    'problem-solving': {
+        name: 'Problem Solving',
+        icon: '🧩',
+        description: 'Sharpen your algorithmic thinking with practice problems.',
+        tools: [
+            {
+                id: 'coming-soon',
+                name: 'Coming Soon',
+                icon: '🔜',
+                description: 'Problem solving tools are under development. Stay tuned!',
+                path: '#'
+            }
+        ]
     }
 };
 

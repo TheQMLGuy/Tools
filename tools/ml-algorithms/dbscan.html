@@ -9,87 +9,584 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="../../styles/shared.css">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        .app-container {
+            display: grid;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 260px 1fr 1.2fr 280px;
+            gap: 12px;
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header h2 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .panel-body {
+            flex: 1;
+            overflow: auto;
+            padding: 12px;
+        }
+
+        .panel-footer {
+            padding: 10px 14px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+
+        .data-table th {
+            background: var(--bg-secondary);
+            padding: 8px;
+            text-align: left;
+            border-bottom: 2px solid var(--accent-primary);
+        }
+
+        .data-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .calc-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .calc-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .calc-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            animation: fadeIn 0.3s;
+        }
+
+        .calc-step.active {
+            border-color: var(--accent-primary);
+        }
+
+        .calc-step.completed {
+            opacity: 0.7;
+        }
+
+        .calc-step-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .calc-step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: white;
+        }
+
+        .calc-step-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .calc-step-content {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .calc-equation {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            margin: 8px 0;
+            font-family: var(--font-mono);
+            text-align: center;
+        }
+
+        .calc-result {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .calc-result-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .calc-result-value {
+            font-family: var(--font-mono);
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .feature-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .feature-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .feature-card.core {
+            background: rgba(16, 185, 129, 0.15);
+            border: 2px solid rgba(16, 185, 129, 0.5);
+        }
+
+        .feature-card.border {
+            background: rgba(245, 158, 11, 0.15);
+            border: 2px solid rgba(245, 158, 11, 0.5);
+        }
+
+        .feature-card.noise {
+            background: rgba(239, 68, 68, 0.15);
+            border: 2px solid rgba(239, 68, 68, 0.5);
+        }
+
+        .feature-name {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .feature-value {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .viz-panel .panel-body {
+            padding: 0;
+        }
+
+        .viz-panel canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .viz-stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .param-section {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .param-section:last-child {
+            border-bottom: none;
+        }
+
+        .param-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .param-item {
+            margin-bottom: 14px;
+        }
+
+        .param-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .param-name code {
+            font-family: var(--font-mono);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .param-value {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+        }
+
+        .taming-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .taming-list li {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 4px 0 4px 16px;
+            position: relative;
+        }
+
+        .taming-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <div class="app-container">
-        <aside class="left-panel">
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>🔴 DBSCAN</h2>
-                </div>
-                <div class="panel-body">
-                    <p class="description">Density-based clustering that finds arbitrarily shaped clusters.</p>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Data</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Dataset</label>
-                        <select id="dataset-select" class="select">
-                            <option value="blobs">Dense Blobs</option>
-                            <option value="moons">Two Moons</option>
-                            <option value="circles">Concentric Circles</option>
-                            <option value="noise">With Noise</option>
-                        </select>
-                    </div>
-                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Parameters</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Epsilon (ε)</label>
-                        <input type="range" id="epsilon" min="5" max="50" value="15" class="slider">
-                        <span id="epsilon-value" class="value-display">0.15</span>
-                    </div>
-                    <div class="param-group">
-                        <label>Min Points</label>
-                        <input type="range" id="min-pts" min="2" max="10" value="4" class="slider">
-                        <span id="min-pts-value" class="value-display">4</span>
-                    </div>
-                    <button id="run-btn" class="btn btn-primary btn-block">Run DBSCAN</button>
-                </div>
-            </section>
-
-            <section class="panel stats-panel">
-                <div class="panel-header compact">
-                    <h2>Results</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="stat-row">
-                        <span class="stat-label">Clusters Found</span>
-                        <span id="num-clusters" class="stat-value">-</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Noise Points</span>
-                        <span id="noise-points" class="stat-value">-</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Core Points</span>
-                        <span id="core-points" class="stat-value">-</span>
-                    </div>
-                </div>
-            </section>
-        </aside>
-
-        <main class="main-panel">
-            <div class="single-viz">
-                <canvas id="dbscan-canvas"></canvas>
+        <header class="app-header">
+            <h1 class="app-title">🔍 DBSCAN Clustering</h1>
+            <div class="header-right">
+                <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
+                <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
+                <button id="reset-btn" class="btn btn-ghost">↻ Reset</button>
             </div>
+        </header>
+        <main class="main-content">
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📊 Data Points</h2>
+                </div>
+                <div class="panel-body">
+                    <table id="data-table" class="data-table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📐 DBSCAN Steps</h2>
+                    <span style="font-size:0.75rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
+                            id="total-steps">0</span></span>
+                </div>
+                <div class="panel-body">
+                    <div id="calc-steps" class="calc-steps">
+                        <div class="calc-placeholder">
+                            <p>Click <strong>Step</strong> to cluster</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="panel viz-panel">
+                <div class="panel-header">
+                    <h2>🎨 Density Clustering</h2>
+                </div>
+                <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
+                <div class="panel-footer">
+                    <div class="viz-stats">
+                        <span>Clusters: <strong id="viz-clusters">0</strong></span>
+                        <span>Noise: <strong id="viz-noise">0</strong></span>
+                    </div>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>⚙️ Hyperparameters</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-section">
+                        <div class="param-section-title">Algorithm</div>
+                        <div class="param-item">
+                            <div class="param-header">
+                                <span class="param-name"><code>eps (ε)</code></span>
+                                <span class="param-value" id="eps-value">1.0</span>
+                            </div>
+                            <input type="range" id="eps-slider" class="slider" min="0.5" max="2" step="0.1" value="1"
+                                style="width:100%">
+                            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px">Neighborhood radius
+                            </div>
+                        </div>
+                        <div class="param-item">
+                            <div class="param-header">
+                                <span class="param-name"><code>min_samples</code></span>
+                                <span class="param-value" id="min-value">3</span>
+                            </div>
+                            <input type="range" id="min-slider" class="slider" min="2" max="6" value="3"
+                                style="width:100%">
+                            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px">Points to form core
+                            </div>
+                        </div>
+                    </div>
+                    <div class="param-section">
+                        <div class="param-section-title">💡 Point Types</div>
+                        <ul class="taming-list">
+                            <li><span style="color:#10b981">Core:</span> ≥min_samples in ε</li>
+                            <li><span style="color:#f59e0b">Border:</span> Near core, &lt;min</li>
+                            <li><span style="color:#ef4444">Noise:</span> Neither</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button id="apply-btn" class="btn btn-primary btn-block">Regenerate Data</button>
+                </div>
+            </section>
         </main>
     </div>
+    <script>
+        function generateData() {
+            const data = [];
+            [[2, 2], [6, 6], [2, 6]].forEach(c => {
+                for (let i = 0; i < 8; i++) data.push({ x: c[0] + (Math.random() - 0.5) * 2, y: c[1] + (Math.random() - 0.5) * 2 });
+            });
+            // Add noise
+            for (let i = 0; i < 4; i++) data.push({ x: Math.random() * 8, y: Math.random() * 8 });
+            return data;
+        }
 
-    <script src="js/dbscan.js"></script>
+        const colors = ['#ef4444', '#10b981', '#6366f1', '#f59e0b', '#ec4899'];
+        let data = generateData();
+        let params = { eps: 1.0, minSamples: 3 };
+        let labels = [], pointTypes = [];
+        let steps = [], currentStep = 0;
+        let isAutoRunning = false, autoInterval = null;
+
+        function distance(a, b) { return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2); }
+
+        function renderTable() {
+            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>Type</th></tr>';
+            document.querySelector('#data-table tbody').innerHTML = data.map((d, i) =>
+                `<tr><td style="color:var(--text-muted)">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td><td id="type-${i}">-</td></tr>`
+            ).join('');
+        }
+
+        function generateSteps() {
+            steps = []; labels = new Array(data.length).fill(-1); pointTypes = new Array(data.length).fill('unvisited');
+
+            steps.push({
+                title: 'DBSCAN Overview',
+                content: `<p>Density-based clustering that finds arbitrarily shaped clusters</p>
+                    <div class="feature-comparison">
+                        <div class="feature-card"><div class="feature-name">ε (eps)</div><div class="feature-value">${params.eps}</div></div>
+                        <div class="feature-card"><div class="feature-name">min_samples</div><div class="feature-value">${params.minSamples}</div></div>
+                    </div>`,
+                labels: [...labels], pointTypes: [...pointTypes]
+            });
+
+            // Find core points
+            const neighbors = data.map((d, i) => data.map((d2, j) => j).filter(j => j !== i && distance(d, data[j]) <= params.eps));
+            const corePoints = data.map((_, i) => neighbors[i].length >= params.minSamples);
+
+            corePoints.forEach((isCore, i) => pointTypes[i] = isCore ? 'core' : 'unvisited');
+
+            steps.push({
+                title: 'Identify Core Points',
+                content: `<p>Points with ≥${params.minSamples} neighbors within ε=${params.eps}:</p>
+                    <div class="feature-comparison">
+                        <div class="feature-card core"><div class="feature-name">Core Points</div><div class="feature-value">${corePoints.filter(c => c).length}</div></div>
+                    </div>`,
+                labels: [...labels], pointTypes: [...pointTypes]
+            });
+
+            // Expand clusters
+            let clusterLabel = 0;
+            for (let i = 0; i < data.length; i++) {
+                if (labels[i] !== -1 || !corePoints[i]) continue;
+
+                const queue = [i];
+                labels[i] = clusterLabel;
+
+                while (queue.length > 0) {
+                    const current = queue.shift();
+                    neighbors[current].forEach(n => {
+                        if (labels[n] === -1) {
+                            labels[n] = clusterLabel;
+                            if (corePoints[n]) queue.push(n);
+                            else pointTypes[n] = 'border';
+                        }
+                    });
+                }
+
+                steps.push({
+                    title: `Expand Cluster ${clusterLabel + 1}`,
+                    content: `<p>Starting from core point ${i + 1}, expand to reachable points:</p>
+                        <div class="calc-result"><span class="calc-result-label">Cluster Size</span><span class="calc-result-value">${labels.filter(l => l === clusterLabel).length}</span></div>`,
+                    labels: [...labels], pointTypes: [...pointTypes]
+                });
+
+                clusterLabel++;
+            }
+
+            // Mark noise
+            labels.forEach((l, i) => { if (l === -1) pointTypes[i] = 'noise'; });
+
+            steps.push({
+                title: 'Final Clustering',
+                content: `<div class="feature-comparison">
+                        <div class="feature-card core"><div class="feature-name">Core</div><div class="feature-value">${pointTypes.filter(t => t === 'core').length}</div></div>
+                        <div class="feature-card border"><div class="feature-name">Border</div><div class="feature-value">${pointTypes.filter(t => t === 'border').length}</div></div>
+                        <div class="feature-card noise"><div class="feature-name">Noise</div><div class="feature-value">${pointTypes.filter(t => t === 'noise').length}</div></div>
+                    </div>
+                    <div class="calc-result"><span class="calc-result-label">Clusters Found</span><span class="calc-result-value">${clusterLabel}</span></div>`,
+                labels: [...labels], pointTypes: [...pointTypes]
+            });
+
+            document.getElementById('total-steps').textContent = steps.length;
+        }
+
+        const canvas = document.getElementById('viz-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
+
+        function render(step = null) {
+            const w = canvas.width, h = canvas.height;
+            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, w, h);
+            const pad = 40, scale = v => pad + (v / 8) * (Math.min(w, h) - 2 * pad);
+
+            const currLabels = step?.labels || labels;
+            const currTypes = step?.pointTypes || pointTypes;
+
+            data.forEach((d, i) => {
+                const px = scale(d.x), py = h - scale(d.y);
+
+                // Epsilon circle for core
+                if (currTypes[i] === 'core') {
+                    ctx.beginPath();
+                    ctx.arc(px, py, params.eps * (Math.min(w, h) - 2 * pad) / 8, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                    ctx.stroke();
+                }
+
+                // Point
+                ctx.beginPath();
+                const radius = currTypes[i] === 'core' ? 10 : currTypes[i] === 'border' ? 7 : 5;
+                ctx.arc(px, py, radius, 0, Math.PI * 2);
+
+                if (currLabels[i] >= 0) ctx.fillStyle = colors[currLabels[i] % colors.length];
+                else if (currTypes[i] === 'noise') ctx.fillStyle = '#666';
+                else ctx.fillStyle = '#888';
+
+                ctx.fill();
+                if (currTypes[i] === 'core') { ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke(); }
+            });
+        }
+
+        function displayStep(step) {
+            const container = document.getElementById('calc-steps');
+            container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
+            container.querySelector('.calc-placeholder')?.remove();
+
+            const div = document.createElement('div');
+            div.className = 'calc-step active';
+            div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
+            container.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+            render(step);
+            const numClusters = [...new Set(step.labels.filter(l => l >= 0))].length;
+            document.getElementById('viz-clusters').textContent = numClusters;
+            document.getElementById('viz-noise').textContent = step.pointTypes.filter(t => t === 'noise').length;
+        }
+
+        function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 1000); }
+        function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
+        function reset() { stopAuto(); data = generateData(); currentStep = 0; labels = []; pointTypes = []; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to cluster</p></div>'; renderTable(); generateSteps(); render(); }
+
+        document.getElementById('step-btn').addEventListener('click', step);
+        document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
+        document.getElementById('reset-btn').addEventListener('click', reset);
+        document.getElementById('apply-btn').addEventListener('click', reset);
+        document.getElementById('eps-slider').addEventListener('input', e => { params.eps = parseFloat(e.target.value); document.getElementById('eps-value').textContent = params.eps.toFixed(1); });
+        document.getElementById('min-slider').addEventListener('input', e => { params.minSamples = parseInt(e.target.value); document.getElementById('min-value').textContent = params.minSamples; });
+
+        window.addEventListener('resize', resizeCanvas);
+        renderTable();
+        resizeCanvas();
+        generateSteps();
+    </script>
 </body>
 
 </html>

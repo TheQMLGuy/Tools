@@ -4,114 +4,589 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Q-Learning Grid World - ML Visualizer</title>
+    <title>Q-Learning - ML Visualizer</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="../../styles/shared.css">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        .app-container {
+            display: grid;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr 1fr 260px;
+            gap: 12px;
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header h2 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .panel-body {
+            flex: 1;
+            overflow: auto;
+            padding: 12px;
+        }
+
+        .panel-footer {
+            padding: 10px 14px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .q-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+        }
+
+        .q-table th,
+        .q-table td {
+            padding: 6px 4px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .q-table th {
+            background: var(--bg-secondary);
+        }
+
+        .q-table td.updated {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
+        .calc-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .calc-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .calc-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            animation: fadeIn 0.3s;
+        }
+
+        .calc-step.active {
+            border-color: var(--accent-primary);
+        }
+
+        .calc-step.completed {
+            opacity: 0.7;
+        }
+
+        .calc-step-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .calc-step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: white;
+        }
+
+        .calc-step-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .calc-step-content {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .calc-equation {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            margin: 8px 0;
+            font-family: var(--font-mono);
+            text-align: center;
+            font-size: 0.75rem;
+        }
+
+        .calc-result {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .calc-result-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .calc-result-value {
+            font-family: var(--font-mono);
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .feature-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .feature-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .feature-name {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        .feature-value {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .grid-world {
+            display: grid;
+            gap: 2px;
+            margin: 10px auto;
+        }
+
+        .grid-cell {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 1.2rem;
+        }
+
+        .grid-cell.empty {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .grid-cell.agent {
+            background: rgba(99, 102, 241, 0.4);
+            border: 2px solid #6366f1;
+        }
+
+        .grid-cell.goal {
+            background: rgba(16, 185, 129, 0.4);
+            border: 2px solid #10b981;
+        }
+
+        .grid-cell.pit {
+            background: rgba(239, 68, 68, 0.4);
+            border: 2px solid #ef4444;
+        }
+
+        .param-section {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .param-section:last-child {
+            border-bottom: none;
+        }
+
+        .param-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .param-item {
+            margin-bottom: 12px;
+        }
+
+        .param-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-size: 0.75rem;
+        }
+
+        .param-name code {
+            font-family: var(--font-mono);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+        }
+
+        .param-value {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent-primary);
+        }
+
+        .taming-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .taming-list li {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 3px 0 3px 14px;
+            position: relative;
+        }
+
+        .taming-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-size: 0.65rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <div class="app-container">
-        <aside class="left-panel">
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>🎮 Q-Learning Grid World</h2>
-                </div>
-                <div class="panel-body">
-                    <p class="description">Watch an agent learn to navigate a grid world using Q-learning.</p>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Parameters</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Learning Rate (α)</label>
-                        <input type="range" id="learning-rate" min="1" max="100" value="10" class="slider">
-                        <span id="learning-rate-value" class="value-display">0.10</span>
-                    </div>
-                    <div class="param-group">
-                        <label>Discount Factor (γ)</label>
-                        <input type="range" id="discount" min="1" max="100" value="90" class="slider">
-                        <span id="discount-value" class="value-display">0.90</span>
-                    </div>
-                    <div class="param-group">
-                        <label>Exploration (ε)</label>
-                        <input type="range" id="epsilon" min="1" max="100" value="20" class="slider">
-                        <span id="epsilon-value" class="value-display">0.20</span>
-                    </div>
-                    <div class="param-group">
-                        <label>Speed</label>
-                        <input type="range" id="speed" min="1" max="10" value="5" class="slider">
-                        <span id="speed-value" class="value-display">5</span>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Controls</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="button-row">
-                        <button id="train-btn" class="btn btn-primary">▶ Train</button>
-                        <button id="step-btn" class="btn btn-secondary">Step</button>
-                    </div>
-                    <button id="reset-btn" class="btn btn-ghost btn-block" style="margin-top: 8px;">Reset</button>
-                </div>
-            </section>
-
-            <section class="panel stats-panel">
-                <div class="panel-header compact">
-                    <h2>Statistics</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="stat-row">
-                        <span class="stat-label">Episode</span>
-                        <span id="episode" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Steps This Episode</span>
-                        <span id="steps" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Total Reward</span>
-                        <span id="reward" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Success Rate</span>
-                        <span id="success-rate" class="stat-value">-</span>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Legend</h2>
-                </div>
-                <div class="panel-body legend">
-                    <div class="legend-item"><span class="legend-color" style="background: #10b981;"></span> Goal (+100)
-                    </div>
-                    <div class="legend-item"><span class="legend-color" style="background: #ef4444;"></span> Trap (-100)
-                    </div>
-                    <div class="legend-item"><span class="legend-color" style="background: #6366f1;"></span> Agent</div>
-                    <div class="legend-item"><span class="legend-color" style="background: #1e1e2e;"></span> Wall</div>
-                </div>
-            </section>
-        </aside>
-
-        <main class="main-panel">
-            <div class="single-viz">
-                <canvas id="grid-canvas"></canvas>
+        <header class="app-header">
+            <h1 class="app-title">🎮 Q-Learning</h1>
+            <div class="header-right">
+                <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
+                <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
+                <button id="reset-btn" class="btn btn-ghost">↻ Reset</button>
             </div>
+        </header>
+        <main class="main-content">
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📊 Q-Table</h2>
+                </div>
+                <div class="panel-body">
+                    <table id="q-table" class="q-table">
+                        <thead>
+                            <tr>
+                                <th>State</th>
+                                <th>↑</th>
+                                <th>↓</th>
+                                <th>←</th>
+                                <th>→</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📐 Q-Update</h2>
+                    <span style="font-size:0.75rem;color:var(--text-muted)">Ep <span id="current-step">0</span></span>
+                </div>
+                <div class="panel-body">
+                    <div id="calc-steps" class="calc-steps">
+                        <div class="calc-placeholder">
+                            <p>Click <strong>Step</strong> to run episodes</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>🎨 Grid World</h2>
+                </div>
+                <div class="panel-body" style="display:flex;align-items:center;justify-content:center">
+                    <div id="grid-world" class="grid-world"></div>
+                </div>
+                <div class="panel-footer" style="font-size:0.75rem;text-align:center">
+                    🤖 Agent | ⭐ Goal (+10) | 🔥 Pit (-10)
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>⚙️ Hyperparameters</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-section">
+                        <div class="param-item">
+                            <div class="param-header"><span class="param-name"><code>α (lr)</code></span><span
+                                    class="param-value" id="lr-value">0.1</span></div>
+                            <input type="range" id="lr-slider" class="slider" min="0.05" max="0.5" step="0.05"
+                                value="0.1" style="width:100%">
+                        </div>
+                        <div class="param-item">
+                            <div class="param-header"><span class="param-name"><code>γ (discount)</code></span><span
+                                    class="param-value" id="gamma-value">0.9</span></div>
+                            <input type="range" id="gamma-slider" class="slider" min="0.5" max="0.99" step="0.01"
+                                value="0.9" style="width:100%">
+                        </div>
+                        <div class="param-item">
+                            <div class="param-header"><span class="param-name"><code>ε (explore)</code></span><span
+                                    class="param-value" id="eps-value">0.3</span></div>
+                            <input type="range" id="eps-slider" class="slider" min="0.1" max="0.5" step="0.05"
+                                value="0.3" style="width:100%">
+                        </div>
+                    </div>
+                    <div class="param-section">
+                        <div class="param-section-title">💡 Bellman Equation</div>
+                        <div class="calc-equation">Q(s,a) ← Q(s,a) + α[r + γ·max Q(s',a') - Q(s,a)]</div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button id="apply-btn" class="btn btn-primary btn-block">Reset Q-Table</button>
+                </div>
+            </section>
         </main>
     </div>
+    <script>
+        const GRID_SIZE = 4;
+        const GOAL = { x: 3, y: 3 };
+        const PIT = { x: 1, y: 1 };
+        const ACTIONS = ['up', 'down', 'left', 'right'];
+        const MOVES = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
 
-    <script src="js/q-learning.js"></script>
+        let params = { lr: 0.1, gamma: 0.9, epsilon: 0.3 };
+        let Q = {};
+        let agentPos = { x: 0, y: 0 };
+        let steps = [], currentStep = 0;
+        let isAutoRunning = false, autoInterval = null;
+
+        function stateKey(pos) { return `${pos.x},${pos.y}`; }
+
+        function initQ() {
+            Q = {};
+            for (let x = 0; x < GRID_SIZE; x++) {
+                for (let y = 0; y < GRID_SIZE; y++) {
+                    Q[stateKey({ x, y })] = { up: 0, down: 0, left: 0, right: 0 };
+                }
+            }
+        }
+
+        function getReward(pos) {
+            if (pos.x === GOAL.x && pos.y === GOAL.y) return 10;
+            if (pos.x === PIT.x && pos.y === PIT.y) return -10;
+            return -0.1;
+        }
+
+        function isTerminal(pos) {
+            return (pos.x === GOAL.x && pos.y === GOAL.y) || (pos.x === PIT.x && pos.y === PIT.y);
+        }
+
+        function move(pos, action) {
+            const [dx, dy] = MOVES[action];
+            return { x: Math.max(0, Math.min(GRID_SIZE - 1, pos.x + dx)), y: Math.max(0, Math.min(GRID_SIZE - 1, pos.y + dy)) };
+        }
+
+        function chooseAction(pos) {
+            if (Math.random() < params.epsilon) return ACTIONS[Math.floor(Math.random() * 4)];
+            const q = Q[stateKey(pos)];
+            const maxQ = Math.max(...Object.values(q));
+            const best = ACTIONS.filter(a => q[a] === maxQ);
+            return best[Math.floor(Math.random() * best.length)];
+        }
+
+        function renderQTable(updatedState = null, updatedAction = null) {
+            const tbody = document.querySelector('#q-table tbody');
+            tbody.innerHTML = '';
+            for (let y = 0; y < GRID_SIZE; y++) {
+                for (let x = 0; x < GRID_SIZE; x++) {
+                    const key = stateKey({ x, y });
+                    const q = Q[key];
+                    const isUpdated = updatedState === key;
+                    tbody.innerHTML += `<tr>
+                        <td>(${x},${y})</td>
+                        ${ACTIONS.map(a => `<td class="${isUpdated && updatedAction === a ? 'updated' : ''}">${q[a].toFixed(2)}</td>`).join('')}
+                    </tr>`;
+                }
+            }
+        }
+
+        function renderGrid(pos) {
+            const grid = document.getElementById('grid-world');
+            grid.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 50px)`;
+            grid.innerHTML = '';
+            for (let y = 0; y < GRID_SIZE; y++) {
+                for (let x = 0; x < GRID_SIZE; x++) {
+                    let cls = 'grid-cell empty';
+                    let content = '';
+                    if (pos.x === x && pos.y === y) { cls = 'grid-cell agent'; content = '🤖'; }
+                    else if (x === GOAL.x && y === GOAL.y) { cls = 'grid-cell goal'; content = '⭐'; }
+                    else if (x === PIT.x && y === PIT.y) { cls = 'grid-cell pit'; content = '🔥'; }
+                    grid.innerHTML += `<div class="${cls}">${content}</div>`;
+                }
+            }
+        }
+
+        function runEpisode() {
+            let pos = { x: Math.floor(Math.random() * GRID_SIZE), y: Math.floor(Math.random() * GRID_SIZE) };
+            while (isTerminal(pos)) pos = { x: Math.floor(Math.random() * GRID_SIZE), y: Math.floor(Math.random() * GRID_SIZE) };
+
+            const trajectory = [];
+            let stepCount = 0;
+
+            while (!isTerminal(pos) && stepCount < 20) {
+                const action = chooseAction(pos);
+                const newPos = move(pos, action);
+                const reward = getReward(newPos);
+                const oldQ = Q[stateKey(pos)][action];
+                const maxNextQ = Math.max(...Object.values(Q[stateKey(newPos)]));
+                const newQ = oldQ + params.lr * (reward + params.gamma * maxNextQ - oldQ);
+                Q[stateKey(pos)][action] = newQ;
+
+                trajectory.push({ pos: { ...pos }, action, newPos: { ...newPos }, reward, oldQ, newQ, state: stateKey(pos) });
+                pos = newPos;
+                stepCount++;
+            }
+            return trajectory;
+        }
+
+        function generateSteps() {
+            steps = [];
+            initQ();
+
+            steps.push({
+                title: 'Initialize Q-Table',
+                content: `<p>All Q-values start at 0</p>
+                    <div class="feature-comparison">
+                        <div class="feature-card"><div class="feature-name">States</div><div class="feature-value">${GRID_SIZE * GRID_SIZE}</div></div>
+                        <div class="feature-card"><div class="feature-name">Actions</div><div class="feature-value">4</div></div>
+                    </div>`,
+                pos: { x: 0, y: 0 }, updatedState: null, updatedAction: null
+            });
+
+            for (let ep = 0; ep < 10; ep++) {
+                const traj = runEpisode();
+                if (traj.length > 0) {
+                    const last = traj[traj.length - 1];
+                    steps.push({
+                        title: `Episode ${ep + 1}`,
+                        content: `<p>Agent took ${traj.length} steps</p>
+                            <div class="calc-equation">Q(${last.state}, ${last.action}): ${last.oldQ.toFixed(2)} → ${last.newQ.toFixed(2)}</div>
+                            <div class="calc-result"><span class="calc-result-label">Final Reward</span><span class="calc-result-value">${last.reward}</span></div>`,
+                        pos: last.newPos, updatedState: last.state, updatedAction: last.action
+                    });
+                }
+            }
+
+            document.getElementById('current-step').textContent = 0;
+        }
+
+        function displayStep(step) {
+            const container = document.getElementById('calc-steps');
+            container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
+            container.querySelector('.calc-placeholder')?.remove();
+
+            const div = document.createElement('div');
+            div.className = 'calc-step active';
+            div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
+            container.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+            renderQTable(step.updatedState, step.updatedAction);
+            renderGrid(step.pos);
+        }
+
+        function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 800); }
+        function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
+        function reset() { stopAuto(); currentStep = 0; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to run episodes</p></div>'; generateSteps(); renderQTable(); renderGrid({ x: 0, y: 0 }); }
+
+        document.getElementById('step-btn').addEventListener('click', step);
+        document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
+        document.getElementById('reset-btn').addEventListener('click', reset);
+        document.getElementById('apply-btn').addEventListener('click', reset);
+        document.getElementById('lr-slider').addEventListener('input', e => { params.lr = parseFloat(e.target.value); document.getElementById('lr-value').textContent = params.lr; });
+        document.getElementById('gamma-slider').addEventListener('input', e => { params.gamma = parseFloat(e.target.value); document.getElementById('gamma-value').textContent = params.gamma; });
+        document.getElementById('eps-slider').addEventListener('input', e => { params.epsilon = parseFloat(e.target.value); document.getElementById('eps-value').textContent = params.epsilon; });
+
+        initQ();
+        renderQTable();
+        renderGrid({ x: 0, y: 0 });
+        generateSteps();
+    </script>
 </body>
 
 </html>

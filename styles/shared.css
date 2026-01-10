@@ -720,3 +720,121 @@ body {
 .fade-in {
     animation: fadeIn 0.3s ease;
 }
+
+/* ============================================
+   Shared Top Toolbar (for all tools)
+   ============================================ */
+
+.tool-toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 1000;
+}
+
+.tool-toolbar .toolbar-left,
+.tool-toolbar .toolbar-center,
+.tool-toolbar .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tool-toolbar .toolbar-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.tool-toolbar .toolbar-btn {
+    padding: 6px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.tool-toolbar .toolbar-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-primary);
+}
+
+.tool-toolbar .toolbar-btn.btn-primary {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
+}
+
+.tool-toolbar .toolbar-btn.btn-primary:hover {
+    background: #5558e0;
+}
+
+.tool-toolbar .toolbar-btn.btn-danger {
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+.tool-toolbar .toolbar-btn.btn-danger:hover {
+    background: var(--danger);
+    color: white;
+}
+
+.tool-toolbar .toolbar-btn.btn-close {
+    font-size: 1rem;
+    padding: 6px 10px;
+}
+
+.tool-toolbar .toolbar-btn.btn-close:hover {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: white;
+}
+
+/* Content area below toolbar */
+.tool-content {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    background: var(--bg-primary);
+}
+
+/* Grid layouts for tools with multiple panels */
+.tool-grid {
+    display: grid;
+    gap: 10px;
+    padding: 10px;
+    height: 100%;
+}
+
+.tool-grid.grid-2 {
+    grid-template-columns: 1fr 1fr;
+}
+
+.tool-grid.grid-3 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.tool-grid.grid-3> :first-child {
+    grid-column: span 2;
+}
+
+.tool-grid.grid-4 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}

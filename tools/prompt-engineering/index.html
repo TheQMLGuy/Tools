@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Engineering Tool | QML Hub</title>
+    <meta name="description" content="Improve your AI prompts with guided questions based on prompt engineering best practices">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <span class="app-icon">✍️</span>
+                <h1>Prompt Engineering Tool</h1>
+            </div>
+            <div class="header-right">
+                <button id="reset-btn" class="btn btn-ghost">🔄 Reset</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="input-section" id="input-section">
+                <div class="section-header">
+                    <h2>Enter Your Prompt</h2>
+                    <p>Paste or type your initial prompt, and we'll help you improve it</p>
+                </div>
+                <div class="prompt-input-container">
+                    <textarea id="prompt-input" 
+                        placeholder="e.g., Write a Python function to sort a list..."
+                        rows="5"></textarea>
+                    <button id="analyze-btn" class="btn btn-primary">
+                        Analyze & Improve →
+                    </button>
+                </div>
+            </section>
+
+            <!-- Analysis Section (hidden initially) -->
+            <section class="analysis-section hidden" id="analysis-section">
+                <!-- Score Overview -->
+                <div class="score-card">
+                    <div class="score-header">
+                        <h3>Prompt Analysis</h3>
+                        <div class="score-badge" id="score-badge">0%</div>
+                    </div>
+                    <div class="score-bar">
+                        <div class="score-fill" id="score-fill"></div>
+                    </div>
+                    <p class="score-text" id="score-text">Answer questions below to improve your prompt</p>
+                </div>
+
+                <!-- Split View -->
+                <div class="split-view">
+                    <!-- Questions Panel -->
+                    <div class="questions-panel">
+                        <div class="panel-header">
+                            <h3>💡 Improvement Questions</h3>
+                        </div>
+                        <div class="principles-nav" id="principles-nav">
+                            <!-- Principle tabs populated by JS -->
+                        </div>
+                        <div class="questions-container" id="questions-container">
+                            <!-- Questions populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Preview Panel -->
+                    <div class="preview-panel">
+                        <div class="panel-header">
+                            <h3>📝 Improved Prompt</h3>
+                            <button id="copy-btn" class="btn btn-sm btn-ghost">📋 Copy</button>
+                        </div>
+                        <div class="preview-content" id="preview-content">
+                            <pre id="improved-prompt"></pre>
+                        </div>
+                        <div class="preview-actions">
+                            <button id="edit-original-btn" class="btn btn-ghost">← Edit Original</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="prompt-engine.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

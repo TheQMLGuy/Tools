@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PCA - ML Visualizer</title>
+    <title>Multi-Armed Bandit - ML Visualizer</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
@@ -41,7 +41,7 @@
 
         .main-content {
             display: grid;
-            grid-template-columns: 260px 1fr 1.2fr 280px;
+            grid-template-columns: 300px 1fr 1fr 260px;
             gap: 12px;
             padding: 12px;
             overflow: hidden;
@@ -83,22 +83,55 @@
             border-top: 1px solid var(--border-color);
         }
 
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.75rem;
+        .bandit-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .data-table th {
-            background: var(--bg-secondary);
+        .bandit-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             padding: 8px;
-            text-align: left;
-            border-bottom: 2px solid var(--accent-primary);
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
         }
 
-        .data-table td {
-            padding: 6px 8px;
-            border-bottom: 1px solid var(--border-color);
+        .bandit-emoji {
+            font-size: 1.5rem;
+        }
+
+        .bandit-info {
+            flex: 1;
+        }
+
+        .bandit-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .bandit-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-top: 4px;
+        }
+
+        .bandit-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+
+        .bandit-count {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .bandit-row.selected {
+            border: 2px solid var(--accent-primary);
         }
 
         .calc-steps {
@@ -169,6 +202,7 @@
             margin: 8px 0;
             font-family: var(--font-mono);
             text-align: center;
+            font-size: 0.8rem;
         }
 
         .calc-result {
@@ -233,13 +267,6 @@
             display: block;
         }
 
-        .viz-stats {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            font-size: 0.75rem;
-        }
-
         .param-section {
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 12px;
@@ -258,6 +285,29 @@
             margin-bottom: 10px;
         }
 
+        .param-item {
+            margin-bottom: 12px;
+        }
+
+        .param-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-size: 0.75rem;
+        }
+
+        .param-name code {
+            font-family: var(--font-mono);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .param-value {
+            font-family: var(--font-mono);
+            color: var(--accent-primary);
+        }
+
         .taming-list {
             list-style: none;
             padding: 0;
@@ -266,7 +316,7 @@
         .taming-list li {
             font-size: 0.7rem;
             color: var(--text-muted);
-            padding: 4px 0 4px 16px;
+            padding: 3px 0 3px 14px;
             position: relative;
         }
 
@@ -292,7 +342,7 @@
 <body>
     <div class="app-container">
         <header class="app-header">
-            <h1 class="app-title">📉 Principal Component Analysis</h1>
+            <h1 class="app-title">🎰 Multi-Armed Bandit</h1>
             <div class="header-right">
                 <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
                 <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
@@ -302,164 +352,165 @@
         <main class="main-content">
             <section class="panel">
                 <div class="panel-header">
-                    <h2>📊 Original Data (2D)</h2>
+                    <h2>🎰 Bandit Arms</h2>
                 </div>
                 <div class="panel-body">
-                    <table id="data-table" class="data-table">
-                        <thead></thead>
-                        <tbody></tbody>
-                    </table>
+                    <div id="bandit-stats" class="bandit-stats"></div>
+                </div>
+                <div class="panel-footer" style="font-size:0.7rem;color:var(--text-muted)">
+                    True probs hidden - agent must explore!
                 </div>
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>📐 PCA Steps</h2>
-                    <span style="font-size:0.75rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
-                            id="total-steps">0</span></span>
+                    <h2>📐 Selection Strategy</h2>
+                    <span style="font-size:0.75rem;color:var(--text-muted)">Round <span
+                            id="current-step">0</span></span>
                 </div>
                 <div class="panel-body">
                     <div id="calc-steps" class="calc-steps">
                         <div class="calc-placeholder">
-                            <p>Click <strong>Step</strong> to perform PCA</p>
+                            <p>Click <strong>Step</strong> to pull arms</p>
                         </div>
                     </div>
                 </div>
             </section>
             <section class="panel viz-panel">
                 <div class="panel-header">
-                    <h2>🎨 Visualization</h2>
+                    <h2>🎨 Regret Over Time</h2>
                 </div>
                 <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
-                <div class="panel-footer">
-                    <div class="viz-stats">
-                        <span>Variance Explained: <strong id="viz-var">-</strong></span>
-                    </div>
+                <div class="panel-footer" style="font-size:0.75rem;text-align:center">
+                    Total Reward: <strong id="viz-reward">0</strong> | Regret: <strong id="viz-regret">0</strong>
                 </div>
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>⚙️ Parameters</h2>
+                    <h2>⚙️ Strategy</h2>
                 </div>
                 <div class="panel-body">
                     <div class="param-section">
-                        <div class="param-section-title">Components</div>
-                        <div style="padding:8px;background:rgba(0,0,0,0.2);border-radius:6px">
-                            <p style="font-size:0.8rem;color:var(--text-primary)">n_components = 1</p>
-                            <p style="font-size:0.7rem;color:var(--text-muted);margin-top:4px">Reduce 2D → 1D</p>
+                        <div class="param-section-title">Algorithm</div>
+                        <select id="strategy-select" class="select" style="width:100%;margin-bottom:10px">
+                            <option value="epsilon">ε-Greedy</option>
+                            <option value="ucb">UCB</option>
+                        </select>
+                        <div class="param-item">
+                            <div class="param-header"><span class="param-name"><code>ε / c</code></span><span
+                                    class="param-value" id="param-value">0.1</span></div>
+                            <input type="range" id="param-slider" class="slider" min="0.05" max="0.5" step="0.05"
+                                value="0.1" style="width:100%">
                         </div>
                     </div>
                     <div class="param-section">
-                        <div class="param-section-title">💡 Key Concepts</div>
+                        <div class="param-section-title">💡 Explore vs Exploit</div>
                         <ul class="taming-list">
-                            <li>Center data (subtract mean)</li>
-                            <li>Find direction of max variance</li>
-                            <li>Eigenvalue = variance along PC</li>
-                            <li>Projection loses least info</li>
+                            <li><b>ε-Greedy:</b> Random with prob ε</li>
+                            <li><b>UCB:</b> Bonus for uncertainty</li>
+                            <li>Regret = optimal - actual reward</li>
                         </ul>
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button id="apply-btn" class="btn btn-primary btn-block">Regenerate Data</button>
+                    <button id="apply-btn" class="btn btn-primary btn-block">Reset</button>
                 </div>
             </section>
         </main>
     </div>
     <script>
-        // Generate correlated data
-        function generateData() {
-            const data = [];
-            for (let i = 0; i < 20; i++) {
-                const x = Math.random() * 6 + 2;
-                const y = 0.8 * x + (Math.random() - 0.5) * 2 + 1;
-                data.push({ x, y });
-            }
-            return data;
-        }
+        const ARMS = [
+            { name: 'Arm 1', emoji: '🍒', trueProb: 0.3, color: '#ef4444' },
+            { name: 'Arm 2', emoji: '🍋', trueProb: 0.5, color: '#f59e0b' },
+            { name: 'Arm 3', emoji: '🍇', trueProb: 0.7, color: '#8b5cf6' },
+            { name: 'Arm 4', emoji: '🍀', trueProb: 0.4, color: '#10b981' }
+        ];
 
-        let data = generateData();
+        let params = { epsilon: 0.1, strategy: 'epsilon' };
+        let counts = [], rewards = [], estimates = [];
+        let totalReward = 0, regretHistory = [];
         let steps = [], currentStep = 0;
-        let centered = [], pc1 = null, eigenvalue = 0, projected = [];
         let isAutoRunning = false, autoInterval = null;
 
-        function renderTable() {
-            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th></tr>';
-            document.querySelector('#data-table tbody').innerHTML = data.map((d, i) =>
-                `<tr><td style="color:var(--text-muted)">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td></tr>`
-            ).join('');
+        function initBandits() {
+            counts = ARMS.map(() => 0);
+            rewards = ARMS.map(() => 0);
+            estimates = ARMS.map(() => 0);
+            totalReward = 0;
+            regretHistory = [];
         }
 
-        function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
+        function ucbValue(i, t) {
+            if (counts[i] === 0) return Infinity;
+            return estimates[i] + params.epsilon * Math.sqrt(Math.log(t + 1) / counts[i]);
+        }
+
+        function selectArm(t) {
+            if (params.strategy === 'epsilon') {
+                if (Math.random() < params.epsilon) return Math.floor(Math.random() * ARMS.length);
+                return estimates.indexOf(Math.max(...estimates));
+            } else {
+                const ucbs = estimates.map((_, i) => ucbValue(i, t));
+                return ucbs.indexOf(Math.max(...ucbs));
+            }
+        }
+
+        function pullArm(idx) {
+            const reward = Math.random() < ARMS[idx].trueProb ? 1 : 0;
+            counts[idx]++;
+            rewards[idx] += reward;
+            estimates[idx] = rewards[idx] / counts[idx];
+            totalReward += reward;
+
+            const optimalReward = Math.max(...ARMS.map(a => a.trueProb));
+            const regret = (regretHistory.length > 0 ? regretHistory[regretHistory.length - 1] : 0) + (optimalReward - ARMS[idx].trueProb);
+            regretHistory.push(regret);
+
+            return reward;
+        }
+
+        function renderBanditStats(selectedIdx = -1) {
+            const container = document.getElementById('bandit-stats');
+            container.innerHTML = ARMS.map((arm, i) => `
+                <div class="bandit-row ${selectedIdx === i ? 'selected' : ''}">
+                    <span class="bandit-emoji">${arm.emoji}</span>
+                    <div class="bandit-info">
+                        <div class="bandit-name">${arm.name}</div>
+                        <div class="bandit-bar">
+                            <div class="bandit-bar-fill" style="width:${estimates[i] * 100}%;background:${arm.color}"></div>
+                        </div>
+                    </div>
+                    <div class="bandit-count">${counts[i]}×<br>${estimates[i].toFixed(2)}</div>
+                </div>
+            `).join('');
+        }
 
         function generateSteps() {
             steps = [];
-            const xMean = mean(data.map(d => d.x));
-            const yMean = mean(data.map(d => d.y));
-            centered = data.map(d => ({ x: d.x - xMean, y: d.y - yMean }));
+            initBandits();
 
             steps.push({
-                title: 'Original Data',
-                content: `<p>${data.length} points in 2D space</p>
-                    <div class="feature-comparison">
-                        <div class="feature-card"><div class="feature-name">Mean X</div><div class="feature-value">${xMean.toFixed(2)}</div></div>
-                        <div class="feature-card"><div class="feature-name">Mean Y</div><div class="feature-value">${yMean.toFixed(2)}</div></div>
-                    </div>`,
-                phase: 'original'
+                title: 'Problem Setup',
+                content: `<p>${ARMS.length} slot machines with unknown probabilities</p>
+                    <p style="margin-top:8px">Goal: Maximize total reward over time</p>
+                    <div class="calc-equation">${params.strategy === 'epsilon' ? 'ε-Greedy: Explore with prob ε' : 'UCB: Q(a) + c√(ln(t)/N(a))'}</div>`,
+                selectedArm: -1
             });
 
-            steps.push({
-                title: 'Center the Data',
-                content: `<p>Subtract mean from each point:</p>
-                    <div class="calc-equation">x' = x - μₓ, y' = y - μᵧ</div>
-                    <p style="margin-top:8px">Data is now centered at origin</p>`,
-                phase: 'center'
-            });
+            for (let t = 0; t < 30; t++) {
+                const arm = selectArm(t);
+                const reward = pullArm(arm);
 
-            // Covariance matrix
-            const covXX = mean(centered.map(d => d.x * d.x));
-            const covYY = mean(centered.map(d => d.y * d.y));
-            const covXY = mean(centered.map(d => d.x * d.y));
-
-            steps.push({
-                title: 'Covariance Matrix',
-                content: `<div class="calc-equation" style="font-size:0.75rem">Σ = [${covXX.toFixed(2)}, ${covXY.toFixed(2)}]<br>[${covXY.toFixed(2)}, ${covYY.toFixed(2)}]</div>
-                    <p>Off-diagonal shows correlation between X and Y</p>`,
-                phase: 'cov'
-            });
-
-            // Eigendecomposition (simplified - power iteration)
-            let v = [1, 1];
-            for (let i = 0; i < 20; i++) {
-                const newV = [covXX * v[0] + covXY * v[1], covXY * v[0] + covYY * v[1]];
-                const norm = Math.sqrt(newV[0] ** 2 + newV[1] ** 2);
-                v = [newV[0] / norm, newV[1] / norm];
+                if (t < 5 || t % 5 === 0 || t === 29) {
+                    steps.push({
+                        title: `Round ${t + 1}: Pull ${ARMS[arm].emoji}`,
+                        content: `<div class="feature-comparison">
+                                ${ARMS.map((a, i) => `<div class="feature-card ${arm === i ? 'best' : ''}"><div class="feature-name">${a.emoji}</div><div class="feature-value">${estimates[i].toFixed(2)}</div></div>`).join('')}
+                            </div>
+                            <div class="calc-result"><span class="calc-result-label">Reward</span><span class="calc-result-value">${reward}</span></div>`,
+                        selectedArm: arm
+                    });
+                }
             }
-            pc1 = v;
-            eigenvalue = covXX * v[0] ** 2 + 2 * covXY * v[0] * v[1] + covYY * v[1] ** 2;
-            const totalVar = covXX + covYY;
-
-            steps.push({
-                title: 'Find Principal Component',
-                content: `<p>Direction of maximum variance:</p>
-                    <div class="feature-comparison">
-                        <div class="feature-card best"><div class="feature-name">PC1</div><div class="feature-value">(${pc1[0].toFixed(3)}, ${pc1[1].toFixed(3)})</div></div>
-                    </div>
-                    <div class="calc-result"><span class="calc-result-label">Eigenvalue (λ₁)</span><span class="calc-result-value">${eigenvalue.toFixed(3)}</span></div>`,
-                phase: 'eigen'
-            });
-
-            // Project
-            projected = centered.map(d => d.x * pc1[0] + d.y * pc1[1]);
-            const explainedVar = (eigenvalue / totalVar * 100);
-
-            steps.push({
-                title: 'Project onto PC1',
-                content: `<div class="calc-equation">z = x' · PC1</div>
-                    <p>Each point is now a single number!</p>
-                    <div class="calc-result"><span class="calc-result-label">Variance Explained</span><span class="calc-result-value">${explainedVar.toFixed(1)}%</span></div>`,
-                phase: 'project'
-            });
-
-            document.getElementById('total-steps').textContent = steps.length;
         }
 
         const canvas = document.getElementById('viz-canvas');
@@ -467,74 +518,43 @@
 
         function resizeCanvas() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
 
-        function render(phase = 'original') {
+        function render() {
             const w = canvas.width, h = canvas.height;
             ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, w, h);
-            const cx = w / 2, cy = h / 2;
+            if (regretHistory.length < 2) return;
 
-            const useData = (phase === 'center' || phase === 'cov' || phase === 'eigen' || phase === 'project') ? centered : data;
-            const maxVal = Math.max(...useData.map(d => Math.max(Math.abs(d.x), Math.abs(d.y)))) * 1.2;
-            const scale = Math.min(w, h) / 2 / maxVal * 0.8;
+            const pad = 40;
+            const maxR = Math.max(...regretHistory) * 1.2 || 1;
+            const scaleX = i => pad + (i / (regretHistory.length - 1)) * (w - 2 * pad);
+            const scaleY = r => h - pad - (r / maxR) * (h - 2 * pad);
 
             // Grid
             ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-            ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
-
-            // PC1 direction
-            if (pc1 && (phase === 'eigen' || phase === 'project')) {
-                ctx.strokeStyle = '#10b981';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.moveTo(cx - pc1[0] * maxVal * scale, cy + pc1[1] * maxVal * scale);
-                ctx.lineTo(cx + pc1[0] * maxVal * scale, cy - pc1[1] * maxVal * scale);
-                ctx.stroke();
-
-                // Arrow
-                const ax = cx + pc1[0] * maxVal * scale * 0.8;
-                const ay = cy - pc1[1] * maxVal * scale * 0.8;
-                ctx.beginPath();
-                ctx.arc(ax, ay, 8, 0, Math.PI * 2);
-                ctx.fillStyle = '#10b981';
-                ctx.fill();
+            for (let i = 0; i <= 5; i++) {
+                const y = pad + (i / 5) * (h - 2 * pad);
+                ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(w - pad, y); ctx.stroke();
             }
 
-            // Points
-            useData.forEach((d, i) => {
-                const px = cx + d.x * scale;
-                const py = cy - d.y * scale;
-
-                // Projection line
-                if (phase === 'project' && pc1) {
-                    const projX = projected[i] * pc1[0];
-                    const projY = projected[i] * pc1[1];
-                    ctx.strokeStyle = 'rgba(99,102,241,0.3)';
-                    ctx.lineWidth = 1;
-                    ctx.setLineDash([3, 3]);
-                    ctx.beginPath();
-                    ctx.moveTo(px, py);
-                    ctx.lineTo(cx + projX * scale, cy - projY * scale);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-                }
-
-                ctx.beginPath();
-                ctx.arc(px, py, 6, 0, Math.PI * 2);
-                ctx.fillStyle = '#6366f1';
-                ctx.fill();
+            // Line
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            regretHistory.forEach((r, i) => {
+                if (i === 0) ctx.moveTo(scaleX(i), scaleY(r));
+                else ctx.lineTo(scaleX(i), scaleY(r));
             });
+            ctx.stroke();
 
-            // Projected points on line
-            if (phase === 'project' && pc1) {
-                projected.forEach(p => {
-                    const px = cx + p * pc1[0] * scale;
-                    const py = cy - p * pc1[1] * scale;
-                    ctx.beginPath();
-                    ctx.arc(px, py, 5, 0, Math.PI * 2);
-                    ctx.fillStyle = '#f59e0b';
-                    ctx.fill();
-                });
-            }
+            // Labels
+            ctx.fillStyle = '#606070';
+            ctx.font = '10px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('Rounds', w / 2, h - 10);
+            ctx.save();
+            ctx.translate(12, h / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Cumulative Regret', 0, 0);
+            ctx.restore();
         }
 
         function displayStep(step) {
@@ -548,25 +568,27 @@
             container.appendChild(div);
             div.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
-            render(step.phase);
-            if (step.phase === 'project') {
-                const totalVar = mean(centered.map(d => d.x ** 2)) + mean(centered.map(d => d.y ** 2));
-                document.getElementById('viz-var').textContent = (eigenvalue / totalVar * 100).toFixed(1) + '%';
-            }
+            renderBanditStats(step.selectedArm);
+            render();
+            document.getElementById('viz-reward').textContent = totalReward;
+            document.getElementById('viz-regret').textContent = (regretHistory[regretHistory.length - 1] || 0).toFixed(2);
         }
 
         function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
-        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 1200); }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 500); }
         function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
-        function reset() { stopAuto(); data = generateData(); currentStep = 0; pc1 = null; projected = []; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to perform PCA</p></div>'; renderTable(); generateSteps(); render('original'); document.getElementById('viz-var').textContent = '-'; }
+        function reset() { stopAuto(); currentStep = 0; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to pull arms</p></div>'; initBandits(); generateSteps(); renderBanditStats(); render(); }
 
         document.getElementById('step-btn').addEventListener('click', step);
         document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
         document.getElementById('reset-btn').addEventListener('click', reset);
         document.getElementById('apply-btn').addEventListener('click', reset);
+        document.getElementById('strategy-select').addEventListener('change', e => { params.strategy = e.target.value; reset(); });
+        document.getElementById('param-slider').addEventListener('input', e => { params.epsilon = parseFloat(e.target.value); document.getElementById('param-value').textContent = params.epsilon; });
 
         window.addEventListener('resize', resizeCanvas);
-        renderTable();
+        initBandits();
+        renderBanditStats();
         resizeCanvas();
         generateSteps();
     </script>

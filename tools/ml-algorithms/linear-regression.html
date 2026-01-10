@@ -9,125 +9,748 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="../../styles/shared.css">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        .app-container {
+            display: grid;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            gap: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 260px 1fr 1.2fr 280px;
+            gap: 12px;
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header h2 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .panel-body {
+            flex: 1;
+            overflow: auto;
+            padding: 12px;
+        }
+
+        .panel-footer {
+            padding: 10px 14px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .select-sm {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            width: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+
+        .data-table th {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 2px solid var(--accent-primary);
+        }
+
+        .data-table td {
+            padding: 6px 10px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .data-table tr.highlighted td {
+            background: rgba(99, 102, 241, 0.25);
+            color: #fff;
+        }
+
+        .data-stats {
+            display: flex;
+            gap: 16px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .stat-item strong {
+            color: var(--accent-primary);
+            font-family: var(--font-mono);
+        }
+
+        .step-indicator {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .step-indicator span {
+            color: var(--accent-primary);
+        }
+
+        .calc-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .calc-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .calc-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .calc-step.active {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .calc-step.completed {
+            opacity: 0.7;
+        }
+
+        .calc-step-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .calc-step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .calc-step-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .calc-step-content {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .calc-equation {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin: 8px 0;
+            font-family: var(--font-mono);
+            overflow-x: auto;
+            text-align: center;
+        }
+
+        .calc-result {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .calc-result-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .calc-result-value {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .feature-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .feature-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .feature-card.best {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .feature-name {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .feature-value {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .viz-panel .panel-body {
+            position: relative;
+            padding: 0;
+        }
+
+        .viz-panel canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .viz-stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .params-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .param-section {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .param-section:last-child {
+            border-bottom: none;
+        }
+
+        .param-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .param-item {
+            margin-bottom: 14px;
+        }
+
+        .param-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .param-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .param-name code {
+            font-family: var(--font-mono);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .param-value {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+        }
+
+        .param-control {
+            width: 100%;
+        }
+
+        .param-control .slider {
+            width: 100%;
+        }
+
+        .param-description {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .taming-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .taming-list li {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 4px 0 4px 16px;
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .taming-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 
 <body>
     <div class="app-container">
-        <aside class="left-panel">
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>📈 Linear Regression</h2>
-                </div>
-                <div class="panel-body">
-                    <p class="description">Watch gradient descent fit a line to data points in real-time.</p>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Data</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Dataset</label>
-                        <select id="dataset-select" class="select">
-                            <option value="linear">Linear + Noise</option>
-                            <option value="quadratic">Quadratic (Poor Fit)</option>
-                            <option value="random">Random Points</option>
-                        </select>
-                    </div>
-                    <div class="param-group">
-                        <label>Number of Points</label>
-                        <input type="range" id="num-points" min="10" max="100" value="30" class="slider">
-                        <span id="num-points-value" class="value-display">30</span>
-                    </div>
-                    <div class="param-group">
-                        <label>Noise Level</label>
-                        <input type="range" id="noise-level" min="0" max="50" value="15" class="slider">
-                        <span id="noise-level-value" class="value-display">15</span>
-                    </div>
-                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Training</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Learning Rate</label>
-                        <input type="range" id="learning-rate" min="1" max="100" value="10" class="slider">
-                        <span id="learning-rate-value" class="value-display">0.01</span>
-                    </div>
-                    <div class="button-row">
-                        <button id="train-btn" class="btn btn-primary">▶ Train</button>
-                        <button id="step-btn" class="btn btn-secondary">Step</button>
-                        <button id="reset-btn" class="btn btn-ghost">Reset</button>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel stats-panel">
-                <div class="panel-header compact">
-                    <h2>Model</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="stat-row">
-                        <span class="stat-label">Equation</span>
-                        <span id="equation" class="stat-value equation">y = 0.00x + 0.00</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Epoch</span>
-                        <span id="epoch" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">MSE Loss</span>
-                        <span id="loss" class="stat-value">-</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">R² Score</span>
-                        <span id="r2" class="stat-value">-</span>
-                    </div>
-                </div>
-            </section>
-        </aside>
-
-        <main class="main-panel">
-            <div class="visualization-area">
-                <div class="viz-container">
-                    <h3>Data & Regression Line</h3>
-                    <canvas id="scatter-canvas"></canvas>
-                </div>
-                <div class="viz-container">
-                    <h3>Loss Over Time</h3>
-                    <canvas id="loss-canvas"></canvas>
-                </div>
+        <header class="app-header">
+            <div class="header-left">
+                <h1 class="app-title">📈 Linear Regression</h1>
             </div>
-            <div class="gradient-viz">
-                <h3>Gradient Descent</h3>
-                <div class="weights-display">
-                    <div class="weight-item">
-                        <span class="weight-label">Weight (m)</span>
-                        <div class="weight-bar-container">
-                            <div id="weight-bar" class="weight-bar"></div>
-                        </div>
-                        <span id="weight-value" class="weight-value">0.00</span>
-                    </div>
-                    <div class="weight-item">
-                        <span class="weight-label">Bias (b)</span>
-                        <div class="weight-bar-container">
-                            <div id="bias-bar" class="weight-bar"></div>
-                        </div>
-                        <span id="bias-value" class="weight-value">0.00</span>
+            <div class="header-right">
+                <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
+                <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
+                <button id="reset-btn" class="btn btn-ghost">↻ Reset</button>
+            </div>
+        </header>
+        <main class="main-content">
+            <section class="panel data-panel">
+                <div class="panel-header">
+                    <h2>📊 Dataset</h2>
+                </div>
+                <div class="panel-body">
+                    <table id="data-table" class="data-table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                    <div class="data-stats">
+                        <span class="stat-item">Samples: <strong id="sample-count">0</strong></span>
                     </div>
                 </div>
-            </div>
+            </section>
+            <section class="panel calc-panel">
+                <div class="panel-header">
+                    <h2>📐 Gradient Descent</h2>
+                    <span class="step-indicator">Step <span id="current-step">0</span>/<span
+                            id="total-steps">0</span></span>
+                </div>
+                <div class="panel-body">
+                    <div id="calc-steps" class="calc-steps">
+                        <div class="calc-placeholder">
+                            <p>Click <strong>Step</strong> to see gradient descent</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="panel viz-panel">
+                <div class="panel-header">
+                    <h2>🎨 Regression Line</h2>
+                </div>
+                <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
+                <div class="panel-footer">
+                    <div class="viz-stats">
+                        <span class="stat-item" id="viz-stat-1">Epoch: <strong>0</strong></span>
+                        <span class="stat-item" id="viz-stat-2">MSE: <strong>-</strong></span>
+                        <span class="stat-item" id="viz-stat-3">R²: <strong>-</strong></span>
+                    </div>
+                </div>
+            </section>
+            <section class="panel params-panel">
+                <div class="panel-header">
+                    <h2>⚙️ Hyperparameters</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="params-container">
+                        <div class="param-section">
+                            <div class="param-section-title">Learning</div>
+                            <div class="param-item">
+                                <div class="param-header">
+                                    <span class="param-name"><code>learning_rate</code></span>
+                                    <span class="param-value" id="lr-value">0.01</span>
+                                </div>
+                                <div class="param-control">
+                                    <input type="range" id="lr-slider" class="slider" min="0.001" max="0.1" step="0.001"
+                                        value="0.01">
+                                </div>
+                                <div class="param-description">Step size for gradient descent (↓ for stability)</div>
+                            </div>
+                            <div class="param-item">
+                                <div class="param-header">
+                                    <span class="param-name"><code>n_iterations</code></span>
+                                    <span class="param-value" id="iter-value">50</span>
+                                </div>
+                                <div class="param-control">
+                                    <input type="range" id="iter-slider" class="slider" min="10" max="200" step="10"
+                                        value="50">
+                                </div>
+                                <div class="param-description">Number of gradient descent steps</div>
+                            </div>
+                        </div>
+                        <div class="param-section">
+                            <div class="param-section-title">💡 Tips</div>
+                            <ul class="taming-list">
+                                <li>If loss explodes, decrease learning rate</li>
+                                <li>Watch gradients approach zero at convergence</li>
+                                <li>R² = 1.0 means perfect fit</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button id="apply-btn" class="btn btn-primary btn-block">Apply & Restart</button>
+                </div>
+            </section>
         </main>
     </div>
+    <script>
+        // Housing Dataset
+        const dataset = {
+            name: 'House Prices',
+            data: [
+                { sqft: 1400, price: 245 }, { sqft: 1600, price: 312 }, { sqft: 1700, price: 279 },
+                { sqft: 1875, price: 308 }, { sqft: 1100, price: 199 }, { sqft: 1550, price: 219 },
+                { sqft: 2350, price: 405 }, { sqft: 2450, price: 324 }, { sqft: 1425, price: 319 },
+                { sqft: 1700, price: 255 }, { sqft: 2200, price: 489 }, { sqft: 1150, price: 167 },
+                { sqft: 1670, price: 369 }, { sqft: 1300, price: 189 }, { sqft: 2100, price: 419 }
+            ]
+        };
 
-    <script src="js/linear-regression.js"></script>
+        // State
+        let params = { lr: 0.01, iterations: 50 };
+        let weight = 0, bias = 0;
+        let steps = [], currentStep = 0;
+        let isAutoRunning = false, autoInterval = null;
+        const x = dataset.data.map(d => d.sqft);
+        const y = dataset.data.map(d => d.price);
+        const xMean = x.reduce((a, b) => a + b, 0) / x.length;
+        const yMean = y.reduce((a, b) => a + b, 0) / y.length;
+        const xStd = Math.sqrt(x.reduce((s, v) => s + (v - xMean) ** 2, 0) / x.length);
+        const yStd = Math.sqrt(y.reduce((s, v) => s + (v - yMean) ** 2, 0) / y.length);
+        const xNorm = x.map(v => (v - xMean) / xStd);
+        const yNorm = y.map(v => (v - yMean) / yStd);
+
+        // Render table
+        function renderTable() {
+            const thead = document.querySelector('#data-table thead');
+            const tbody = document.querySelector('#data-table tbody');
+            thead.innerHTML = '<tr><th>#</th><th>Sq.Ft</th><th>Price ($K)</th></tr>';
+            tbody.innerHTML = dataset.data.map((d, i) =>
+                `<tr data-index="${i}"><td style="color:var(--text-muted)">${i + 1}</td><td>${d.sqft}</td><td>${d.price}</td></tr>`
+            ).join('');
+            document.getElementById('sample-count').textContent = dataset.data.length;
+        }
+
+        // Calculations
+        function predict(xi) { return weight * xi + bias; }
+        function mse() { return yNorm.reduce((s, yi, i) => s + (yi - predict(xNorm[i])) ** 2, 0) / yNorm.length; }
+        function r2() {
+            const ssRes = yNorm.reduce((s, yi, i) => s + (yi - predict(xNorm[i])) ** 2, 0);
+            const ssTot = yNorm.reduce((s, yi) => s + (yi - 0) ** 2, 0);  // mean of normalized is 0
+            return 1 - ssRes / ssTot;
+        }
+        function gradients() {
+            let dw = 0, db = 0;
+            for (let i = 0; i < xNorm.length; i++) {
+                const err = predict(xNorm[i]) - yNorm[i];
+                dw += err * xNorm[i];
+                db += err;
+            }
+            return { dw: (2 / xNorm.length) * dw, db: (2 / xNorm.length) * db };
+        }
+
+        // Step generation
+        function generateSteps() {
+            steps = []; weight = 0; bias = 0;
+
+            steps.push({
+                title: 'Dataset Overview',
+                content: `<p><strong>${dataset.name}</strong> - ${dataset.data.length} samples</p>
+                    <p>Goal: Learn <code>price = w × sqft + b</code></p>
+                    <div class="feature-comparison">
+                        <div class="feature-card"><div class="feature-name">Sq.Ft Range</div><div class="feature-value">${Math.min(...x)}-${Math.max(...x)}</div></div>
+                        <div class="feature-card"><div class="feature-name">Price Range</div><div class="feature-value">$${Math.min(...y)}K-$${Math.max(...y)}K</div></div>
+                    </div>`,
+                w: 0, b: 0, epoch: 0
+            });
+
+            steps.push({
+                title: 'Initialize Weights',
+                content: `<p>Start with zero weights:</p>
+                    <div class="calc-equation">w = 0, b = 0</div>
+                    <p class="calc-step-content">Learning rate: α = ${params.lr}</p>
+                    <div class="calc-result"><span class="calc-result-label">Initial MSE</span><span class="calc-result-value">${mse().toFixed(4)}</span></div>`,
+                w: 0, b: 0, epoch: 0
+            });
+
+            const showEvery = Math.max(1, Math.floor(params.iterations / 15));
+            for (let i = 1; i <= params.iterations; i++) {
+                const { dw, db } = gradients();
+                const oldW = weight, oldB = bias;
+                weight -= params.lr * dw;
+                bias -= params.lr * db;
+                const loss = mse();
+
+                if (i <= 3 || i % showEvery === 0 || i === params.iterations) {
+                    steps.push({
+                        title: `Epoch ${i}`,
+                        content: `<div class="calc-equation">w = w - α × ∂L/∂w</div>
+                            <div class="feature-comparison">
+                                <div class="feature-card"><div class="feature-name">∂L/∂w</div><div class="feature-value">${dw.toFixed(4)}</div></div>
+                                <div class="feature-card"><div class="feature-name">∂L/∂b</div><div class="feature-value">${db.toFixed(4)}</div></div>
+                            </div>
+                            <div class="feature-comparison">
+                                <div class="feature-card"><div class="feature-name">w</div><div class="feature-value">${oldW.toFixed(3)} → ${weight.toFixed(3)}</div></div>
+                                <div class="feature-card"><div class="feature-name">b</div><div class="feature-value">${oldB.toFixed(3)} → ${bias.toFixed(3)}</div></div>
+                            </div>
+                            <div class="calc-result"><span class="calc-result-label">MSE</span><span class="calc-result-value">${loss.toFixed(4)}</span></div>`,
+                        w: weight, b: bias, epoch: i
+                    });
+                }
+            }
+
+            const finalR2 = r2();
+            steps.push({
+                title: 'Training Complete!',
+                content: `<p>Final model (normalized):</p>
+                    <div class="calc-equation">ŷ = ${weight.toFixed(4)}x + ${bias.toFixed(4)}</div>
+                    <div class="feature-comparison">
+                        <div class="feature-card best"><div class="feature-name">R² Score</div><div class="feature-value">${(finalR2 * 100).toFixed(1)}%</div></div>
+                        <div class="feature-card"><div class="feature-name">Final MSE</div><div class="feature-value">${mse().toFixed(4)}</div></div>
+                    </div>`,
+                w: weight, b: bias, epoch: params.iterations
+            });
+
+            document.getElementById('total-steps').textContent = steps.length;
+        }
+
+        // Visualization
+        const canvas = document.getElementById('viz-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            render();
+        }
+
+        function render(w = weight, b = bias) {
+            const width = canvas.width, height = canvas.height;
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(0, 0, width, height);
+
+            const pad = { top: 40, right: 40, bottom: 50, left: 60 };
+            const pw = width - pad.left - pad.right;
+            const ph = height - pad.top - pad.bottom;
+
+            const xMin = Math.min(...x) * 0.9, xMax = Math.max(...x) * 1.1;
+            const yMin = Math.min(...y) * 0.8, yMax = Math.max(...y) * 1.2;
+            const scaleX = v => pad.left + ((v - xMin) / (xMax - xMin)) * pw;
+            const scaleY = v => height - pad.bottom - ((v - yMin) / (yMax - yMin)) * ph;
+
+            // Grid
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const xv = xMin + (i / 5) * (xMax - xMin);
+                const yv = yMin + (i / 5) * (yMax - yMin);
+                ctx.beginPath(); ctx.moveTo(scaleX(xv), pad.top); ctx.lineTo(scaleX(xv), height - pad.bottom); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(pad.left, scaleY(yv)); ctx.lineTo(width - pad.right, scaleY(yv)); ctx.stroke();
+            }
+
+            // Points
+            x.forEach((xi, i) => {
+                ctx.beginPath();
+                ctx.arc(scaleX(xi), scaleY(y[i]), 6, 0, Math.PI * 2);
+                ctx.fillStyle = '#6366f1';
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            });
+
+            // Regression line (denormalize)
+            if (w !== 0 || b !== 0) {
+                const y1 = w * ((xMin - xMean) / xStd) + b;
+                const y2 = w * ((xMax - xMean) / xStd) + b;
+                const y1Real = y1 * yStd + yMean;
+                const y2Real = y2 * yStd + yMean;
+
+                ctx.beginPath();
+                ctx.moveTo(scaleX(xMin), scaleY(y1Real));
+                ctx.lineTo(scaleX(xMax), scaleY(y2Real));
+                ctx.strokeStyle = '#10b981';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+
+            // Labels
+            ctx.fillStyle = '#606070';
+            ctx.font = '10px JetBrains Mono';
+            ctx.textAlign = 'center';
+            ctx.fillText('Square Feet', width / 2, height - 10);
+            ctx.save();
+            ctx.translate(15, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Price ($K)', 0, 0);
+            ctx.restore();
+        }
+
+        // Step display
+        function displayStep(step) {
+            const container = document.getElementById('calc-steps');
+            container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
+            const placeholder = container.querySelector('.calc-placeholder');
+            if (placeholder) placeholder.remove();
+
+            const div = document.createElement('div');
+            div.className = 'calc-step active';
+            div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
+            container.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+            render(step.w, step.b);
+            document.getElementById('viz-stat-1').innerHTML = `Epoch: <strong>${step.epoch}</strong>`;
+            document.getElementById('viz-stat-2').innerHTML = `MSE: <strong>${mse().toFixed(2)}</strong>`;
+            document.getElementById('viz-stat-3').innerHTML = `R²: <strong>${(r2() * 100).toFixed(1)}%</strong>`;
+        }
+
+        function step() {
+            if (currentStep >= steps.length) { stopAuto(); return; }
+            weight = steps[currentStep].w;
+            bias = steps[currentStep].b;
+            displayStep(steps[currentStep]);
+            currentStep++;
+            document.getElementById('current-step').textContent = currentStep;
+        }
+
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 600); }
+        function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) { clearInterval(autoInterval); autoInterval = null; } }
+        function reset() { stopAuto(); currentStep = 0; weight = 0; bias = 0; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to see gradient descent</p></div>'; generateSteps(); render(0, 0); }
+
+        // Events
+        document.getElementById('step-btn').addEventListener('click', step);
+        document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
+        document.getElementById('reset-btn').addEventListener('click', reset);
+        document.getElementById('apply-btn').addEventListener('click', reset);
+        document.getElementById('lr-slider').addEventListener('input', e => { params.lr = parseFloat(e.target.value); document.getElementById('lr-value').textContent = params.lr.toFixed(3); });
+        document.getElementById('iter-slider').addEventListener('input', e => { params.iterations = parseInt(e.target.value); document.getElementById('iter-value').textContent = params.iterations; });
+
+        // Init
+        window.addEventListener('resize', resizeCanvas);
+        renderTable();
+        resizeCanvas();
+        generateSteps();
+    </script>
 </body>
 
 </html>

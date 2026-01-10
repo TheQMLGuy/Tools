@@ -9,75 +9,542 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="../../styles/shared.css">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        .app-container {
+            display: grid;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr 1fr 280px;
+            gap: 12px;
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header h2 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .panel-body {
+            flex: 1;
+            overflow: auto;
+            padding: 12px;
+        }
+
+        .panel-footer {
+            padding: 10px 14px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+        }
+
+        .data-table th {
+            background: var(--bg-secondary);
+            padding: 6px;
+            text-align: left;
+            border-bottom: 2px solid var(--accent-primary);
+            font-size: 0.7rem;
+        }
+
+        .data-table td {
+            padding: 5px 6px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table tr.query {
+            background: rgba(245, 158, 11, 0.2);
+        }
+
+        .calc-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .calc-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .calc-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            animation: fadeIn 0.3s;
+        }
+
+        .calc-step.active {
+            border-color: var(--accent-primary);
+        }
+
+        .calc-step.completed {
+            opacity: 0.7;
+        }
+
+        .calc-step-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .calc-step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .calc-step-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .calc-step-content {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .calc-equation {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            margin: 8px 0;
+            font-family: var(--font-mono);
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .calc-result {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .calc-result-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .calc-result-value {
+            font-family: var(--font-mono);
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .feature-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .feature-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .feature-card.best {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .feature-name {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .feature-value {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .viz-stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .prob-bar {
+            display: flex;
+            height: 30px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .prob-bar-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .param-section {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .param-section:last-child {
+            border-bottom: none;
+        }
+
+        .param-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .taming-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .taming-list li {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 4px 0 4px 16px;
+            position: relative;
+        }
+
+        .taming-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <div class="app-container">
-        <aside class="left-panel">
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>📊 Naive Bayes</h2>
-                </div>
-                <div class="panel-body">
-                    <p class="description">Probabilistic classification using Bayes' theorem with independence
-                        assumption.</p>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Data</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Dataset</label>
-                        <select id="dataset-select" class="select">
-                            <option value="gaussian">Gaussian Classes</option>
-                            <option value="overlap">Overlapping</option>
-                            <option value="three-class">Three Classes</option>
-                        </select>
-                    </div>
-                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
-                    <button id="train-btn" class="btn btn-primary btn-block" style="margin-top: 8px;">Train
-                        Model</button>
-                </div>
-            </section>
-
-            <section class="panel stats-panel">
-                <div class="panel-header compact">
-                    <h2>Model</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="stat-row">
-                        <span class="stat-label">Status</span>
-                        <span id="status" class="stat-value">Untrained</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Accuracy</span>
-                        <span id="accuracy" class="stat-value">-</span>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Class Priors</h2>
-                </div>
-                <div class="panel-body">
-                    <div id="priors-list"></div>
-                </div>
-            </section>
-        </aside>
-
-        <main class="main-panel">
-            <div class="single-viz">
-                <canvas id="bayes-canvas"></canvas>
+        <header class="app-header">
+            <h1 class="app-title">📊 Naive Bayes Classifier</h1>
+            <div class="header-right">
+                <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
+                <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
+                <button id="reset-btn" class="btn btn-ghost">↻ Reset</button>
             </div>
+        </header>
+        <main class="main-content">
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📊 Training Data</h2>
+                </div>
+                <div class="panel-body">
+                    <table id="data-table" class="data-table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📐 Bayes Calculations</h2>
+                    <span style="font-size:0.75rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
+                            id="total-steps">0</span></span>
+                </div>
+                <div class="panel-body">
+                    <div id="calc-steps" class="calc-steps">
+                        <div class="calc-placeholder">
+                            <p>Click <strong>Step</strong> to classify</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>🎨 Probability Breakdown</h2>
+                </div>
+                <div class="panel-body" id="prob-viz">
+                    <p style="color:var(--text-muted);text-align:center;margin-top:40px">Probabilities will appear as
+                        you step through</p>
+                </div>
+                <div class="panel-footer">
+                    <div class="viz-stats">
+                        <span>Query: <strong id="viz-query">-</strong></span>
+                        <span>Prediction: <strong id="viz-pred">-</strong></span>
+                    </div>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>⚙️ Parameters</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-section">
+                        <div class="param-section-title">💡 Bayes Theorem</div>
+                        <div class="calc-equation" style="font-size:0.8rem">P(C|X) = P(X|C) × P(C) / P(X)</div>
+                        <ul class="taming-list">
+                            <li>P(C) = Prior probability of class</li>
+                            <li>P(X|C) = Likelihood of features given class</li>
+                            <li>"Naive" = features are independent</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button id="apply-btn" class="btn btn-primary btn-block">New Random Query</button>
+                </div>
+            </section>
         </main>
     </div>
+    <script>
+        // Weather dataset for golf
+        const data = [
+            { outlook: 'Sunny', temp: 'Hot', humidity: 'High', play: 'No' },
+            { outlook: 'Sunny', temp: 'Hot', humidity: 'High', play: 'No' },
+            { outlook: 'Overcast', temp: 'Hot', humidity: 'High', play: 'Yes' },
+            { outlook: 'Rain', temp: 'Mild', humidity: 'High', play: 'Yes' },
+            { outlook: 'Rain', temp: 'Cool', humidity: 'Normal', play: 'Yes' },
+            { outlook: 'Rain', temp: 'Cool', humidity: 'Normal', play: 'No' },
+            { outlook: 'Overcast', temp: 'Cool', humidity: 'Normal', play: 'Yes' },
+            { outlook: 'Sunny', temp: 'Mild', humidity: 'High', play: 'No' },
+            { outlook: 'Sunny', temp: 'Cool', humidity: 'Normal', play: 'Yes' },
+            { outlook: 'Rain', temp: 'Mild', humidity: 'Normal', play: 'Yes' },
+            { outlook: 'Sunny', temp: 'Mild', humidity: 'Normal', play: 'Yes' },
+            { outlook: 'Overcast', temp: 'Mild', humidity: 'High', play: 'Yes' },
+            { outlook: 'Overcast', temp: 'Hot', humidity: 'Normal', play: 'Yes' },
+            { outlook: 'Rain', temp: 'Mild', humidity: 'High', play: 'No' }
+        ];
 
-    <script src="js/naive-bayes.js"></script>
+        const features = ['outlook', 'temp', 'humidity'];
+        const classes = ['Yes', 'No'];
+        const colors = { Yes: '#10b981', No: '#ef4444' };
+        let query = { outlook: 'Sunny', temp: 'Cool', humidity: 'High' };
+        let steps = [], currentStep = 0;
+        let isAutoRunning = false, autoInterval = null;
+
+        function renderTable() {
+            document.querySelector('#data-table thead').innerHTML = '<tr><th>Outlook</th><th>Temp</th><th>Humid</th><th>Play?</th></tr>';
+            document.querySelector('#data-table tbody').innerHTML = data.map(d =>
+                `<tr><td>${d.outlook}</td><td>${d.temp}</td><td>${d.humidity}</td><td style="color:${colors[d.play]}">${d.play}</td></tr>`
+            ).join('');
+        }
+
+        // Calculate counts
+        function countClass(c) { return data.filter(d => d.play === c).length; }
+        function countFeatureGivenClass(feature, value, c) { return data.filter(d => d.play === c && d[feature] === value).length; }
+
+        function generateSteps() {
+            steps = [];
+            const outlooks = ['Sunny', 'Overcast', 'Rain'];
+            const temps = ['Hot', 'Mild', 'Cool'];
+            const humids = ['High', 'Normal'];
+            query = { outlook: outlooks[Math.floor(Math.random() * 3)], temp: temps[Math.floor(Math.random() * 3)], humidity: humids[Math.floor(Math.random() * 2)] };
+
+            steps.push({
+                title: 'Query to Classify',
+                content: `<p>Classify this weather condition:</p>
+                    <div class="feature-comparison">
+                        ${features.map(f => `<div class="feature-card"><div class="feature-name">${f}</div><div class="feature-value">${query[f]}</div></div>`).join('')}
+                    </div>
+                    <p style="margin-top:10px">Will we play golf?</p>`,
+                probs: null
+            });
+
+            // Prior probabilities
+            const n = data.length;
+            const priors = {};
+            classes.forEach(c => priors[c] = countClass(c) / n);
+
+            steps.push({
+                title: 'Calculate Priors P(C)',
+                content: `<p>Count occurrences of each class:</p>
+                    <div class="feature-comparison">
+                        ${classes.map(c => `<div class="feature-card" style="border-left:3px solid ${colors[c]}"><div class="feature-name">P(${c})</div><div class="feature-value">${countClass(c)}/${n} = ${priors[c].toFixed(3)}</div></div>`).join('')}
+                    </div>`,
+                probs: { priors }
+            });
+
+            // Likelihoods
+            const likelihoods = {};
+            classes.forEach(c => {
+                likelihoods[c] = {};
+                const classCount = countClass(c);
+                features.forEach(f => {
+                    likelihoods[c][f] = (countFeatureGivenClass(f, query[f], c) + 1) / (classCount + 2); // Laplace smoothing
+                });
+            });
+
+            features.forEach(f => {
+                steps.push({
+                    title: `Likelihood: ${f} = ${query[f]}`,
+                    content: `<p>P(${f}=${query[f]} | Class):</p>
+                        <div class="feature-comparison">
+                            ${classes.map(c => `<div class="feature-card" style="border-left:3px solid ${colors[c]}"><div class="feature-name">P(${query[f]}|${c})</div><div class="feature-value">${likelihoods[c][f].toFixed(3)}</div></div>`).join('')}
+                        </div>`,
+                    probs: { priors, likelihoods }
+                });
+            });
+
+            // Posterior
+            const posteriors = {};
+            classes.forEach(c => {
+                posteriors[c] = priors[c];
+                features.forEach(f => posteriors[c] *= likelihoods[c][f]);
+            });
+
+            // Normalize
+            const total = Object.values(posteriors).reduce((s, v) => s + v, 0);
+            classes.forEach(c => posteriors[c] /= total);
+
+            steps.push({
+                title: 'Combine: P(C|X)',
+                content: `<div class="calc-equation">P(C|X) ∝ P(C) × Π P(xᵢ|C)</div>
+                    <div class="feature-comparison">
+                        ${classes.map(c => `<div class="feature-card ${posteriors[c] > 0.5 ? 'best' : ''}" style="border-left:3px solid ${colors[c]}"><div class="feature-name">P(${c}|X)</div><div class="feature-value">${(posteriors[c] * 100).toFixed(1)}%</div></div>`).join('')}
+                    </div>`,
+                probs: { posteriors }
+            });
+
+            const prediction = posteriors.Yes > posteriors.No ? 'Yes' : 'No';
+            steps.push({
+                title: 'Prediction',
+                content: `<div class="calc-result"><span class="calc-result-label">Play Golf?</span><span class="calc-result-value" style="color:${colors[prediction]}">${prediction}</span></div>
+                    <p style="margin-top:10px;font-size:0.8rem">Confidence: ${(Math.max(posteriors.Yes, posteriors.No) * 100).toFixed(1)}%</p>`,
+                probs: { posteriors, prediction }
+            });
+
+            document.getElementById('total-steps').textContent = steps.length;
+        }
+
+        function renderProbViz(probs) {
+            const container = document.getElementById('prob-viz');
+            if (!probs) { container.innerHTML = '<p style="color:var(--text-muted);text-align:center;margin-top:40px">Probabilities will appear as you step through</p>'; return; }
+
+            let html = '';
+            if (probs.priors) {
+                html += `<h4 style="font-size:0.8rem;margin-bottom:8px">Prior Probabilities</h4>
+                    <div class="prob-bar">
+                        ${classes.map(c => `<div class="prob-bar-segment" style="width:${probs.priors[c] * 100}%;background:${colors[c]}">${(probs.priors[c] * 100).toFixed(0)}%</div>`).join('')}
+                    </div>`;
+            }
+            if (probs.posteriors) {
+                html += `<h4 style="font-size:0.8rem;margin:16px 0 8px">Posterior Probabilities</h4>
+                    <div class="prob-bar">
+                        ${classes.map(c => `<div class="prob-bar-segment" style="width:${probs.posteriors[c] * 100}%;background:${colors[c]}">${c}: ${(probs.posteriors[c] * 100).toFixed(0)}%</div>`).join('')}
+                    </div>`;
+            }
+            container.innerHTML = html || '<p style="color:var(--text-muted);text-align:center">...</p>';
+        }
+
+        function displayStep(step) {
+            const container = document.getElementById('calc-steps');
+            container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
+            container.querySelector('.calc-placeholder')?.remove();
+
+            const div = document.createElement('div');
+            div.className = 'calc-step active';
+            div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
+            container.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+            renderProbViz(step.probs);
+            document.getElementById('viz-query').textContent = `${query.outlook}, ${query.temp}, ${query.humidity}`;
+            document.getElementById('viz-pred').textContent = step.probs?.prediction || '-';
+            document.getElementById('viz-pred').style.color = step.probs?.prediction ? colors[step.probs.prediction] : 'inherit';
+        }
+
+        function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 1000); }
+        function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
+        function reset() { stopAuto(); currentStep = 0; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to classify</p></div>'; generateSteps(); renderProbViz(null); document.getElementById('viz-pred').textContent = '-'; }
+
+        document.getElementById('step-btn').addEventListener('click', step);
+        document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
+        document.getElementById('reset-btn').addEventListener('click', reset);
+        document.getElementById('apply-btn').addEventListener('click', reset);
+
+        renderTable();
+        generateSteps();
+    </script>
 </body>
 
 </html>

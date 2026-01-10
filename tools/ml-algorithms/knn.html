@@ -9,99 +9,679 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="../../styles/shared.css">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        .app-container {
+            display: grid;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            gap: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 260px 1fr 1.2fr 280px;
+            gap: 12px;
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header h2 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .panel-body {
+            flex: 1;
+            overflow: auto;
+            padding: 12px;
+        }
+
+        .panel-footer {
+            padding: 10px 14px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+
+        .data-table th {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-weight: 600;
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 2px solid var(--accent-primary);
+        }
+
+        .data-table td {
+            padding: 6px 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table tr.highlighted td {
+            background: rgba(99, 102, 241, 0.25);
+        }
+
+        .data-table tr.neighbor td {
+            background: rgba(16, 185, 129, 0.25);
+        }
+
+        .data-table tr.query td {
+            background: rgba(245, 158, 11, 0.4);
+        }
+
+        .stat-item {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .stat-item strong {
+            color: var(--accent-primary);
+            font-family: var(--font-mono);
+        }
+
+        .step-indicator {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .calc-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .calc-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .calc-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .calc-step.active {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .calc-step.completed {
+            opacity: 0.7;
+        }
+
+        .calc-step-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .calc-step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .calc-step-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .calc-step-content {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .calc-equation {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin: 8px 0;
+            font-family: var(--font-mono);
+            text-align: center;
+        }
+
+        .calc-result {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .calc-result-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .calc-result-value {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .feature-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .feature-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .feature-card.best {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .feature-card.query {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+        }
+
+        .feature-name {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .feature-value {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .viz-panel .panel-body {
+            position: relative;
+            padding: 0;
+        }
+
+        .viz-panel canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .viz-stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .param-section {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .param-section:last-child {
+            border-bottom: none;
+        }
+
+        .param-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .param-item {
+            margin-bottom: 14px;
+        }
+
+        .param-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .param-name code {
+            font-family: var(--font-mono);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .param-value {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+        }
+
+        .param-description {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .taming-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .taming-list li {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 4px 0 4px 16px;
+            position: relative;
+        }
+
+        .taming-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 
 <body>
     <div class="app-container">
-        <aside class="left-panel">
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>🎯 K-Nearest Neighbors</h2>
-                </div>
-                <div class="panel-body">
-                    <p class="description">Click anywhere to classify a point by majority vote of its K nearest
-                        neighbors.</p>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Parameters</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>K (Neighbors)</label>
-                        <input type="range" id="k-value" min="1" max="15" value="5" class="slider">
-                        <span id="k-value-display" class="value-display">5</span>
-                    </div>
-                    <div class="param-group">
-                        <label>Distance Metric</label>
-                        <select id="distance-metric" class="select">
-                            <option value="euclidean">Euclidean</option>
-                            <option value="manhattan">Manhattan</option>
-                        </select>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Training Data</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Dataset</label>
-                        <select id="dataset-select" class="select">
-                            <option value="two-clusters">Two Clusters</option>
-                            <option value="three-clusters">Three Classes</option>
-                            <option value="spiral">Spiral</option>
-                        </select>
-                    </div>
-                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
-                    <button id="show-boundary-btn" class="btn btn-primary btn-block" style="margin-top: 8px;">Show
-                        Decision Boundary</button>
-                </div>
-            </section>
-
-            <section class="panel stats-panel">
-                <div class="panel-header compact">
-                    <h2>Classification</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="stat-row">
-                        <span class="stat-label">Query Point</span>
-                        <span id="query-point" class="stat-value">-</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Predicted Class</span>
-                        <span id="predicted-class" class="stat-value">-</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Confidence</span>
-                        <span id="confidence" class="stat-value">-</span>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Nearest Neighbors</h2>
-                </div>
-                <div class="panel-body">
-                    <div id="neighbor-list" class="neighbor-list"></div>
-                </div>
-            </section>
-        </aside>
-
-        <main class="main-panel">
-            <div class="single-viz">
-                <canvas id="knn-canvas"></canvas>
+        <header class="app-header">
+            <div class="header-left">
+                <h1 class="app-title">🎯 K-Nearest Neighbors</h1>
             </div>
+            <div class="header-right">
+                <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
+                <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
+                <button id="reset-btn" class="btn btn-ghost">↻ Reset</button>
+            </div>
+        </header>
+        <main class="main-content">
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📊 Training Data</h2>
+                </div>
+                <div class="panel-body">
+                    <table id="data-table" class="data-table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border-color)">
+                        <span class="stat-item">Samples: <strong id="sample-count">0</strong></span>
+                    </div>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📐 Distance Calculations</h2>
+                    <span class="step-indicator">Step <span id="current-step">0</span>/<span
+                            id="total-steps">0</span></span>
+                </div>
+                <div class="panel-body">
+                    <div id="calc-steps" class="calc-steps">
+                        <div class="calc-placeholder">
+                            <p>Click <strong>Step</strong> to classify a point</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="panel viz-panel">
+                <div class="panel-header">
+                    <h2>🎨 Classification</h2>
+                </div>
+                <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
+                <div class="panel-footer">
+                    <div class="viz-stats">
+                        <span class="stat-item" id="viz-stat-1">Query: <strong>-</strong></span>
+                        <span class="stat-item" id="viz-stat-2">Neighbors: <strong>0</strong></span>
+                        <span class="stat-item" id="viz-stat-3">Prediction: <strong>-</strong></span>
+                    </div>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>⚙️ Hyperparameters</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-section">
+                        <div class="param-section-title">Algorithm</div>
+                        <div class="param-item">
+                            <div class="param-header">
+                                <span class="param-name"><code>n_neighbors</code></span>
+                                <span class="param-value" id="k-value">3</span>
+                            </div>
+                            <input type="range" id="k-slider" class="slider" min="1" max="9" step="2" value="3"
+                                style="width:100%">
+                            <div class="param-description">Number of neighbors (use odd to avoid ties)</div>
+                        </div>
+                        <div class="param-item">
+                            <div class="param-header">
+                                <span class="param-name"><code>metric</code></span>
+                                <span class="param-value" id="metric-value">euclidean</span>
+                            </div>
+                            <select id="metric-select" class="select" style="width:100%">
+                                <option value="euclidean">Euclidean</option>
+                                <option value="manhattan">Manhattan</option>
+                            </select>
+                            <div class="param-description">Distance measure</div>
+                        </div>
+                    </div>
+                    <div class="param-section">
+                        <div class="param-section-title">💡 Tips</div>
+                        <ul class="taming-list">
+                            <li>Small k = complex boundary, may overfit</li>
+                            <li>Large k = smooth boundary, may underfit</li>
+                            <li>Try k = √n as starting point</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button id="apply-btn" class="btn btn-primary btn-block">New Query Point</button>
+                </div>
+            </section>
         </main>
     </div>
+    <script>
+        // Dataset
+        const data = [
+            { x: 2, y: 3, label: 'A' }, { x: 3, y: 4, label: 'A' }, { x: 3, y: 2, label: 'A' }, { x: 4, y: 3, label: 'A' },
+            { x: 7, y: 8, label: 'B' }, { x: 8, y: 7, label: 'B' }, { x: 8, y: 9, label: 'B' }, { x: 9, y: 8, label: 'B' },
+            { x: 2, y: 8, label: 'C' }, { x: 3, y: 7, label: 'C' }, { x: 3, y: 9, label: 'C' }, { x: 4, y: 8, label: 'C' }
+        ];
+        const colors = { A: '#ef4444', B: '#10b981', C: '#6366f1' };
 
-    <script src="js/knn.js"></script>
+        let params = { k: 3, metric: 'euclidean' };
+        let query = { x: 5, y: 5 };
+        let steps = [], currentStep = 0, neighborIndices = [];
+        let isAutoRunning = false, autoInterval = null;
+
+        function distance(p1, p2) {
+            if (params.metric === 'manhattan') return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y);
+            return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+        }
+
+        function renderTable() {
+            const thead = document.querySelector('#data-table thead');
+            const tbody = document.querySelector('#data-table tbody');
+            thead.innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>Class</th></tr>';
+            tbody.innerHTML = data.map((d, i) =>
+                `<tr data-index="${i}"><td style="color:var(--text-muted)">${i + 1}</td><td>${d.x}</td><td>${d.y}</td><td style="color:${colors[d.label]}">${d.label}</td></tr>`
+            ).join('');
+            document.getElementById('sample-count').textContent = data.length;
+        }
+
+        function highlightRows(query, neighbors) {
+            document.querySelectorAll('#data-table tbody tr').forEach(tr => tr.className = '');
+            neighbors.forEach(i => {
+                const row = document.querySelector(`#data-table tbody tr[data-index="${i}"]`);
+                if (row) row.classList.add('neighbor');
+            });
+        }
+
+        function generateSteps() {
+            steps = []; neighborIndices = [];
+            query = { x: Math.random() * 8 + 1, y: Math.random() * 8 + 1 };
+
+            steps.push({
+                title: 'New Query Point',
+                content: `<p>Classify point at:</p>
+                    <div class="feature-comparison">
+                        <div class="feature-card query"><div class="feature-name">X</div><div class="feature-value">${query.x.toFixed(2)}</div></div>
+                        <div class="feature-card query"><div class="feature-name">Y</div><div class="feature-value">${query.y.toFixed(2)}</div></div>
+                    </div>
+                    <p style="margin-top:10px">Using k=${params.k} and ${params.metric} distance</p>`,
+                neighbors: []
+            });
+
+            // Calculate all distances
+            const distances = data.map((d, i) => ({ index: i, dist: distance(query, d), label: d.label }));
+
+            steps.push({
+                title: 'Calculate Distances',
+                content: `<div class="calc-equation">d = √((x₂-x₁)² + (y₂-y₁)²)</div>
+                    <div class="feature-comparison">
+                        ${distances.slice(0, 6).map(d => `<div class="feature-card"><div class="feature-name">#${d.index + 1} (${d.label})</div><div class="feature-value">${d.dist.toFixed(2)}</div></div>`).join('')}
+                    </div>
+                    <p style="margin-top:8px;font-size:0.75rem;color:var(--text-muted)">...and ${data.length - 6} more</p>`,
+                neighbors: []
+            });
+
+            // Sort and find k nearest
+            distances.sort((a, b) => a.dist - b.dist);
+            const kNearest = distances.slice(0, params.k);
+            neighborIndices = kNearest.map(d => d.index);
+
+            steps.push({
+                title: `Find ${params.k} Nearest`,
+                content: `<p>Sort by distance and take top ${params.k}:</p>
+                    <div class="feature-comparison">
+                        ${kNearest.map((d, i) => `<div class="feature-card best"><div class="feature-name">#${i + 1}: Point ${d.index + 1}</div><div class="feature-value">${d.dist.toFixed(2)} (${d.label})</div></div>`).join('')}
+                    </div>`,
+                neighbors: neighborIndices
+            });
+
+            // Vote
+            const votes = {};
+            kNearest.forEach(d => votes[d.label] = (votes[d.label] || 0) + 1);
+            const prediction = Object.entries(votes).sort((a, b) => b[1] - a[1])[0][0];
+
+            steps.push({
+                title: 'Majority Vote',
+                content: `<p>Count labels among neighbors:</p>
+                    <div class="feature-comparison">
+                        ${Object.entries(votes).map(([label, count]) => `<div class="feature-card ${label === prediction ? 'best' : ''}"><div class="feature-name">Class ${label}</div><div class="feature-value">${count} vote${count > 1 ? 's' : ''}</div></div>`).join('')}
+                    </div>
+                    <div class="calc-result"><span class="calc-result-label">Prediction</span><span class="calc-result-value" style="color:${colors[prediction]}">${prediction}</span></div>`,
+                neighbors: neighborIndices,
+                prediction
+            });
+
+            document.getElementById('total-steps').textContent = steps.length;
+        }
+
+        // Visualization
+        const canvas = document.getElementById('viz-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            const c = canvas.parentElement;
+            canvas.width = c.clientWidth;
+            canvas.height = c.clientHeight;
+            render();
+        }
+
+        function render(step = null) {
+            const w = canvas.width, h = canvas.height;
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(0, 0, w, h);
+
+            const pad = 40, scale = v => pad + (v / 10) * (Math.min(w, h) - 2 * pad);
+
+            // Grid
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            for (let i = 0; i <= 10; i++) {
+                ctx.beginPath(); ctx.moveTo(scale(i), pad); ctx.lineTo(scale(i), h - pad); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(pad, scale(i)); ctx.lineTo(w - pad, scale(i)); ctx.stroke();
+            }
+
+            // Draw neighbor connections
+            const neighbors = step?.neighbors || neighborIndices;
+            if (neighbors.length > 0 && currentStep > 0) {
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([5, 5]);
+                neighbors.forEach(i => {
+                    ctx.beginPath();
+                    ctx.moveTo(scale(query.x), scale(10 - query.y));
+                    ctx.lineTo(scale(data[i].x), scale(10 - data[i].y));
+                    ctx.stroke();
+                });
+                ctx.setLineDash([]);
+            }
+
+            // Data points
+            data.forEach((d, i) => {
+                ctx.beginPath();
+                ctx.arc(scale(d.x), scale(10 - d.y), neighbors.includes(i) ? 10 : 8, 0, Math.PI * 2);
+                ctx.fillStyle = colors[d.label];
+                ctx.fill();
+                if (neighbors.includes(i)) {
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
+            });
+
+            // Query point
+            if (currentStep > 0) {
+                ctx.beginPath();
+                ctx.arc(scale(query.x), scale(10 - query.y), 12, 0, Math.PI * 2);
+                ctx.fillStyle = step?.prediction ? colors[step.prediction] : '#f59e0b';
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 10px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('?', scale(query.x), scale(10 - query.y));
+            }
+        }
+
+        function displayStep(step) {
+            const container = document.getElementById('calc-steps');
+            container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
+            const placeholder = container.querySelector('.calc-placeholder');
+            if (placeholder) placeholder.remove();
+
+            const div = document.createElement('div');
+            div.className = 'calc-step active';
+            div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
+            container.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+            highlightRows(query, step.neighbors || []);
+            render(step);
+
+            document.getElementById('viz-stat-1').innerHTML = `Query: <strong>(${query.x.toFixed(1)}, ${query.y.toFixed(1)})</strong>`;
+            document.getElementById('viz-stat-2').innerHTML = `Neighbors: <strong>${step.neighbors?.length || 0}</strong>`;
+            document.getElementById('viz-stat-3').innerHTML = `Prediction: <strong style="color:${step.prediction ? colors[step.prediction] : 'var(--text-muted)'}">${step.prediction || '-'}</strong>`;
+        }
+
+        function step() {
+            if (currentStep >= steps.length) { stopAuto(); return; }
+            displayStep(steps[currentStep]);
+            currentStep++;
+            document.getElementById('current-step').textContent = currentStep;
+        }
+
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 1000); }
+        function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); autoInterval = null; }
+        function reset() { stopAuto(); currentStep = 0; neighborIndices = []; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to classify a point</p></div>'; generateSteps(); highlightRows(null, []); render(); }
+
+        document.getElementById('step-btn').addEventListener('click', step);
+        document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
+        document.getElementById('reset-btn').addEventListener('click', reset);
+        document.getElementById('apply-btn').addEventListener('click', reset);
+        document.getElementById('k-slider').addEventListener('input', e => { params.k = parseInt(e.target.value); document.getElementById('k-value').textContent = params.k; });
+        document.getElementById('metric-select').addEventListener('change', e => { params.metric = e.target.value; document.getElementById('metric-value').textContent = e.target.value; });
+
+        window.addEventListener('resize', resizeCanvas);
+        renderTable();
+        resizeCanvas();
+        generateSteps();
+    </script>
 </body>
 
 </html>

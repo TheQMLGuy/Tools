@@ -8,114 +8,1149 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <link rel="stylesheet" href="../../styles/shared.css">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 4-Column Layout */
+        .app-container {
+            display: grid;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            gap: 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 260px 1fr 1.2fr 280px;
+            gap: 12px;
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        .main-content .panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .main-content .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .main-content .panel-header h2 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .main-content .panel-body {
+            flex: 1;
+            overflow: auto;
+            padding: 12px;
+        }
+
+        .main-content .panel-footer {
+            padding: 10px 14px;
+            border-top: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Data Table */
+        .data-panel .select-sm {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            width: auto;
+        }
+
+        .data-table-container {
+            overflow: auto;
+            max-height: calc(100% - 40px);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+
+        .data-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .data-table th {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 2px solid var(--accent-primary);
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            padding: 6px 10px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+
+        .data-table tr:hover td {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .data-table tr.highlighted td {
+            background: rgba(99, 102, 241, 0.25);
+            color: #fff;
+        }
+
+        .data-stats {
+            display: flex;
+            gap: 16px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .stat-item strong {
+            color: var(--accent-primary);
+            font-family: var(--font-mono);
+        }
+
+        /* Calculation Steps */
+        .step-indicator {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .step-indicator span {
+            color: var(--accent-primary);
+        }
+
+        .calc-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .calc-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .calc-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .calc-step.active {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .calc-step.completed {
+            opacity: 0.7;
+        }
+
+        .calc-step-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .calc-step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .calc-step-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .calc-step-content {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .calc-equation {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 10px 14px;
+            margin: 8px 0;
+            font-family: var(--font-mono);
+            overflow-x: auto;
+        }
+
+        .calc-result {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .calc-result-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .calc-result-value {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .feature-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .feature-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .feature-card.best {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .feature-name {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .feature-value {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Viz Panel */
+        .viz-controls {
+            display: flex;
+            gap: 4px;
+        }
+
+        .btn-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .viz-panel .panel-body {
+            position: relative;
+            padding: 0;
+        }
+
+        .viz-panel canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .viz-stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        /* Params Panel */
+        .params-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .param-section {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .param-section:last-child {
+            border-bottom: none;
+        }
+
+        .param-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .param-item {
+            margin-bottom: 14px;
+        }
+
+        .param-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .param-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .param-name code {
+            font-family: var(--font-mono);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .param-value {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+        }
+
+        .param-control {
+            width: 100%;
+        }
+
+        .param-control .slider {
+            width: 100%;
+        }
+
+        .param-control .select {
+            width: 100%;
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+
+        .param-description {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        .taming-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .taming-list li {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 4px 0 4px 16px;
+            position: relative;
+            line-height: 1.4;
+        }
+
+        .taming-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: 1fr 1fr;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <div class="app-container">
-        <aside class="left-panel">
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>🌳 Decision Tree</h2>
-                </div>
-                <div class="panel-body">
-                    <p class="description">Watch a decision tree grow node-by-node as it learns to split data.</p>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Data</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Dataset</label>
-                        <select id="dataset-select" class="select">
-                            <option value="two-clusters">Two Clusters</option>
-                            <option value="xor">XOR Pattern</option>
-                            <option value="three-clusters">Three Classes</option>
-                            <option value="spiral">Spiral</option>
-                        </select>
-                    </div>
-                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Parameters</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Max Depth</label>
-                        <input type="range" id="max-depth" min="1" max="10" value="5" class="slider">
-                        <span id="max-depth-value" class="value-display">5</span>
-                    </div>
-                    <div class="param-group">
-                        <label>Min Samples Split</label>
-                        <input type="range" id="min-samples" min="2" max="20" value="2" class="slider">
-                        <span id="min-samples-value" class="value-display">2</span>
-                    </div>
-                    <div class="param-group">
-                        <label>Criterion</label>
-                        <select id="criterion-select" class="select">
-                            <option value="gini">Gini Impurity</option>
-                            <option value="entropy">Information Gain</option>
-                        </select>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Training</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="button-row">
-                        <button id="train-btn" class="btn btn-primary">▶ Train</button>
-                        <button id="step-btn" class="btn btn-secondary">Step</button>
-                        <button id="reset-btn" class="btn btn-ghost">Reset</button>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel stats-panel">
-                <div class="panel-header compact">
-                    <h2>Tree Info</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="stat-row">
-                        <span class="stat-label">Nodes</span>
-                        <span id="node-count" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Depth</span>
-                        <span id="current-depth" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Accuracy</span>
-                        <span id="accuracy" class="stat-value">-</span>
-                    </div>
-                </div>
-            </section>
-        </aside>
-
-        <main class="main-panel">
-            <div class="visualization-area">
-                <div class="viz-container">
-                    <h3>Decision Boundary</h3>
-                    <canvas id="boundary-canvas"></canvas>
-                </div>
-                <div class="viz-container">
-                    <h3>Tree Structure</h3>
-                    <canvas id="tree-canvas"></canvas>
-                </div>
+        <header class="app-header">
+            <div class="header-left">
+                <h1 class="app-title">🌳 Decision Tree Visualizer</h1>
             </div>
+            <div class="header-right">
+                <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
+                <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
+                <button id="reset-btn" class="btn btn-ghost">↻ Reset</button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Data Table -->
+            <section class="panel data-panel">
+                <div class="panel-header compact">
+                    <h2>📊 Dataset</h2>
+                    <select id="dataset-select" class="select select-sm">
+                        <option value="tennis">Tennis (Play?)</option>
+                        <option value="iris">Iris Flowers</option>
+                    </select>
+                </div>
+                <div class="panel-body">
+                    <div class="data-table-container">
+                        <table id="data-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="data-stats">
+                        <span class="stat-item">Samples: <strong id="sample-count">0</strong></span>
+                        <span class="stat-item">Features: <strong id="feature-count">0</strong></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Calculations -->
+            <section class="panel calc-panel">
+                <div class="panel-header compact">
+                    <h2>📐 Calculations</h2>
+                    <span class="step-indicator">Step <span id="current-step">0</span>/<span
+                            id="total-steps">0</span></span>
+                </div>
+                <div class="panel-body">
+                    <div id="calc-steps" class="calc-steps">
+                        <div class="calc-placeholder">
+                            <p>Click <strong>Step</strong> to see Gini/Entropy calculations</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Visualization -->
+            <section class="panel viz-panel">
+                <div class="panel-header compact">
+                    <h2>🎨 Tree Visualization</h2>
+                </div>
+                <div class="panel-body">
+                    <canvas id="viz-canvas"></canvas>
+                </div>
+                <div class="panel-footer">
+                    <div class="viz-stats">
+                        <span class="stat-item" id="viz-stat-1">Nodes: <strong>0</strong></span>
+                        <span class="stat-item" id="viz-stat-2">Leaves: <strong>0</strong></span>
+                        <span class="stat-item" id="viz-stat-3">Depth: <strong>0</strong></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hyperparameters -->
+            <section class="panel params-panel">
+                <div class="panel-header compact">
+                    <h2>⚙️ Hyperparameters</h2>
+                </div>
+                <div class="panel-body">
+                    <div id="params-container" class="params-container">
+                        <div class="param-section">
+                            <div class="param-section-title">Split Criterion</div>
+                            <div class="param-item">
+                                <div class="param-header">
+                                    <span class="param-name"><code>criterion</code></span>
+                                    <span class="param-value" id="criterion-value">gini</span>
+                                </div>
+                                <div class="param-control">
+                                    <select id="criterion-select" class="select">
+                                        <option value="gini">Gini Impurity</option>
+                                        <option value="entropy">Entropy</option>
+                                    </select>
+                                </div>
+                                <div class="param-description">Function to measure quality of split</div>
+                            </div>
+                        </div>
+
+                        <div class="param-section">
+                            <div class="param-section-title">Tree Constraints</div>
+                            <div class="param-item">
+                                <div class="param-header">
+                                    <span class="param-name"><code>max_depth</code></span>
+                                    <span class="param-value" id="depth-value">5</span>
+                                </div>
+                                <div class="param-control">
+                                    <input type="range" id="depth-slider" class="slider" min="1" max="10" value="5">
+                                </div>
+                                <div class="param-description">Maximum depth of tree (↓ to prevent overfitting)</div>
+                            </div>
+
+                            <div class="param-item">
+                                <div class="param-header">
+                                    <span class="param-name"><code>min_samples_split</code></span>
+                                    <span class="param-value" id="split-value">2</span>
+                                </div>
+                                <div class="param-control">
+                                    <input type="range" id="split-slider" class="slider" min="2" max="20" value="2">
+                                </div>
+                                <div class="param-description">Minimum samples to split a node</div>
+                            </div>
+                        </div>
+
+                        <div class="param-section">
+                            <div class="param-section-title">💡 Tips</div>
+                            <ul class="taming-list">
+                                <li>Start with max_depth=3-5 to prevent overfitting</li>
+                                <li>Gini and Entropy give similar results</li>
+                                <li>Increase min_samples_split for robustness</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button id="apply-btn" class="btn btn-primary btn-block">Apply & Rebuild</button>
+                </div>
+            </section>
         </main>
     </div>
 
-    <script src="js/decision-tree.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <script>
+        // ============================================
+        // Tennis Dataset
+        // ============================================
+        const TennisDataset = {
+            name: 'Tennis (Play?)',
+            type: 'classification',
+            features: ['Outlook', 'Temperature', 'Humidity', 'Wind'],
+            target: 'Play',
+            featureTypes: { 'Outlook': 'categorical', 'Temperature': 'categorical', 'Humidity': 'categorical', 'Wind': 'categorical' },
+            data: [
+                { Outlook: 'Sunny', Temperature: 'Hot', Humidity: 'High', Wind: 'Weak', Play: 'No' },
+                { Outlook: 'Sunny', Temperature: 'Hot', Humidity: 'High', Wind: 'Strong', Play: 'No' },
+                { Outlook: 'Overcast', Temperature: 'Hot', Humidity: 'High', Wind: 'Weak', Play: 'Yes' },
+                { Outlook: 'Rain', Temperature: 'Mild', Humidity: 'High', Wind: 'Weak', Play: 'Yes' },
+                { Outlook: 'Rain', Temperature: 'Cool', Humidity: 'Normal', Wind: 'Weak', Play: 'Yes' },
+                { Outlook: 'Rain', Temperature: 'Cool', Humidity: 'Normal', Wind: 'Strong', Play: 'No' },
+                { Outlook: 'Overcast', Temperature: 'Cool', Humidity: 'Normal', Wind: 'Strong', Play: 'Yes' },
+                { Outlook: 'Sunny', Temperature: 'Mild', Humidity: 'High', Wind: 'Weak', Play: 'No' },
+                { Outlook: 'Sunny', Temperature: 'Cool', Humidity: 'Normal', Wind: 'Weak', Play: 'Yes' },
+                { Outlook: 'Rain', Temperature: 'Mild', Humidity: 'Normal', Wind: 'Weak', Play: 'Yes' },
+                { Outlook: 'Sunny', Temperature: 'Mild', Humidity: 'Normal', Wind: 'Strong', Play: 'Yes' },
+                { Outlook: 'Overcast', Temperature: 'Mild', Humidity: 'High', Wind: 'Strong', Play: 'Yes' },
+                { Outlook: 'Overcast', Temperature: 'Hot', Humidity: 'Normal', Wind: 'Weak', Play: 'Yes' },
+                { Outlook: 'Rain', Temperature: 'Mild', Humidity: 'High', Wind: 'Strong', Play: 'No' }
+            ]
+        };
+
+        const IrisDataset = {
+            name: 'Iris Flowers',
+            type: 'classification',
+            features: ['Sepal L', 'Sepal W', 'Petal L', 'Petal W'],
+            target: 'Species',
+            featureTypes: { 'Sepal L': 'numerical', 'Sepal W': 'numerical', 'Petal L': 'numerical', 'Petal W': 'numerical' },
+            data: [
+                { 'Sepal L': 5.1, 'Sepal W': 3.5, 'Petal L': 1.4, 'Petal W': 0.2, Species: 'Setosa' },
+                { 'Sepal L': 4.9, 'Sepal W': 3.0, 'Petal L': 1.4, 'Petal W': 0.2, Species: 'Setosa' },
+                { 'Sepal L': 4.7, 'Sepal W': 3.2, 'Petal L': 1.3, 'Petal W': 0.2, Species: 'Setosa' },
+                { 'Sepal L': 5.0, 'Sepal W': 3.6, 'Petal L': 1.4, 'Petal W': 0.2, Species: 'Setosa' },
+                { 'Sepal L': 5.4, 'Sepal W': 3.9, 'Petal L': 1.7, 'Petal W': 0.4, Species: 'Setosa' },
+                { 'Sepal L': 7.0, 'Sepal W': 3.2, 'Petal L': 4.7, 'Petal W': 1.4, Species: 'Versicolor' },
+                { 'Sepal L': 6.4, 'Sepal W': 3.2, 'Petal L': 4.5, 'Petal W': 1.5, Species: 'Versicolor' },
+                { 'Sepal L': 6.9, 'Sepal W': 3.1, 'Petal L': 4.9, 'Petal W': 1.5, Species: 'Versicolor' },
+                { 'Sepal L': 5.5, 'Sepal W': 2.3, 'Petal L': 4.0, 'Petal W': 1.3, Species: 'Versicolor' },
+                { 'Sepal L': 6.5, 'Sepal W': 2.8, 'Petal L': 4.6, 'Petal W': 1.5, Species: 'Versicolor' },
+                { 'Sepal L': 6.3, 'Sepal W': 3.3, 'Petal L': 6.0, 'Petal W': 2.5, Species: 'Virginica' },
+                { 'Sepal L': 5.8, 'Sepal W': 2.7, 'Petal L': 5.1, 'Petal W': 1.9, Species: 'Virginica' },
+                { 'Sepal L': 7.1, 'Sepal W': 3.0, 'Petal L': 5.9, 'Petal W': 2.1, Species: 'Virginica' },
+                { 'Sepal L': 6.5, 'Sepal W': 3.0, 'Petal L': 5.8, 'Petal W': 2.2, Species: 'Virginica' },
+                { 'Sepal L': 7.6, 'Sepal W': 3.0, 'Petal L': 6.6, 'Petal W': 2.1, Species: 'Virginica' }
+            ]
+        };
+
+        const datasets = { tennis: TennisDataset, iris: IrisDataset };
+
+        // ============================================
+        // App State
+        // ============================================
+        let currentDataset = TennisDataset;
+        let params = { criterion: 'gini', max_depth: 5, min_samples_split: 2 };
+        let tree = null;
+        let steps = [];
+        let currentStep = 0;
+        let isAutoRunning = false;
+        let autoInterval = null;
+
+        // ============================================
+        // Data Table
+        // ============================================
+        function renderTable() {
+            const thead = document.querySelector('#data-table thead');
+            const tbody = document.querySelector('#data-table tbody');
+
+            thead.innerHTML = '<tr><th>#</th>' +
+                currentDataset.features.map(f => `<th>${f}</th>`).join('') +
+                `<th>${currentDataset.target}</th></tr>`;
+
+            tbody.innerHTML = currentDataset.data.map((row, i) =>
+                `<tr data-index="${i}">
+                    <td style="color:var(--text-muted)">${i + 1}</td>
+                    ${currentDataset.features.map(f => `<td>${typeof row[f] === 'number' ? row[f].toFixed(1) : row[f]}</td>`).join('')}
+                    <td style="color:${row[currentDataset.target] === 'Yes' || row[currentDataset.target] === 'Setosa' ? 'var(--success)' : 'var(--accent-primary)'}">${row[currentDataset.target]}</td>
+                </tr>`
+            ).join('');
+
+            document.getElementById('sample-count').textContent = currentDataset.data.length;
+            document.getElementById('feature-count').textContent = currentDataset.features.length;
+        }
+
+        function highlightRows(indices) {
+            document.querySelectorAll('#data-table tbody tr').forEach(tr => tr.classList.remove('highlighted'));
+            indices.forEach(i => {
+                const row = document.querySelector(`#data-table tbody tr[data-index="${i}"]`);
+                if (row) row.classList.add('highlighted');
+            });
+        }
+
+        // ============================================
+        // Decision Tree Algorithm
+        // ============================================
+        function calculateImpurity(labels) {
+            if (labels.length === 0) return 0;
+            const counts = {};
+            labels.forEach(l => counts[l] = (counts[l] || 0) + 1);
+            const n = labels.length;
+
+            if (params.criterion === 'gini') {
+                let gini = 1;
+                for (const c of Object.values(counts)) gini -= (c / n) ** 2;
+                return gini;
+            } else {
+                let entropy = 0;
+                for (const c of Object.values(counts)) {
+                    const p = c / n;
+                    if (p > 0) entropy -= p * Math.log2(p);
+                }
+                return entropy;
+            }
+        }
+
+        function findBestSplit(data) {
+            const labels = data.map(d => d[currentDataset.target]);
+            const currentImpurity = calculateImpurity(labels);
+            let bestGain = 0, bestSplit = null;
+
+            for (const feature of currentDataset.features) {
+                const isNumeric = currentDataset.featureTypes[feature] === 'numerical';
+                const values = [...new Set(data.map(d => d[feature]))];
+
+                if (isNumeric) {
+                    values.sort((a, b) => a - b);
+                    for (let i = 0; i < values.length - 1; i++) {
+                        const threshold = (values[i] + values[i + 1]) / 2;
+                        const left = data.filter(d => d[feature] <= threshold);
+                        const right = data.filter(d => d[feature] > threshold);
+                        if (left.length === 0 || right.length === 0) continue;
+
+                        const leftImp = calculateImpurity(left.map(d => d[currentDataset.target]));
+                        const rightImp = calculateImpurity(right.map(d => d[currentDataset.target]));
+                        const weighted = (left.length / data.length) * leftImp + (right.length / data.length) * rightImp;
+                        const gain = currentImpurity - weighted;
+
+                        if (gain > bestGain) {
+                            bestGain = gain;
+                            bestSplit = { feature, value: threshold, type: 'numerical', gain, leftData: left, rightData: right };
+                        }
+                    }
+                } else {
+                    for (const val of values) {
+                        const left = data.filter(d => d[feature] === val);
+                        const right = data.filter(d => d[feature] !== val);
+                        if (left.length === 0 || right.length === 0) continue;
+
+                        const leftImp = calculateImpurity(left.map(d => d[currentDataset.target]));
+                        const rightImp = calculateImpurity(right.map(d => d[currentDataset.target]));
+                        const weighted = (left.length / data.length) * leftImp + (right.length / data.length) * rightImp;
+                        const gain = currentImpurity - weighted;
+
+                        if (gain > bestGain) {
+                            bestGain = gain;
+                            bestSplit = { feature, value: val, type: 'categorical', gain, leftData: left, rightData: right };
+                        }
+                    }
+                }
+            }
+            return bestSplit;
+        }
+
+        function getMajority(data) {
+            const counts = {};
+            data.forEach(d => counts[d[currentDataset.target]] = (counts[d[currentDataset.target]] || 0) + 1);
+            return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+        }
+
+        function getDataIndices(data) {
+            return data.map(d => currentDataset.data.findIndex(orig =>
+                currentDataset.features.every(f => orig[f] === d[f])
+            )).filter(i => i >= 0);
+        }
+
+        // ============================================
+        // Step Generation
+        // ============================================
+        function generateSteps() {
+            steps = [];
+            tree = null;
+
+            // Step 1: Overview
+            const counts = {};
+            currentDataset.data.forEach(d => counts[d[currentDataset.target]] = (counts[d[currentDataset.target]] || 0) + 1);
+
+            steps.push({
+                title: 'Dataset Overview',
+                content: `<p><strong>${currentDataset.name}</strong> - ${currentDataset.data.length} samples</p>
+                    <p>Target: <code>${currentDataset.target}</code></p>
+                    <div class="feature-comparison">
+                        ${Object.entries(counts).map(([k, v]) => `<div class="feature-card"><div class="feature-name">${k}</div><div class="feature-value">${v}</div></div>`).join('')}
+                    </div>`,
+                highlight: null,
+                tree: null
+            });
+
+            // Step 2: Initial impurity
+            const initImp = calculateImpurity(currentDataset.data.map(d => d[currentDataset.target]));
+            const metric = params.criterion === 'gini' ? 'Gini' : 'Entropy';
+
+            steps.push({
+                title: `Calculate Overall ${metric}`,
+                content: `<p>Using ${params.criterion === 'gini' ? 'Gini Impurity' : 'Entropy'}</p>
+                    <div class="calc-equation">${params.criterion === 'gini' ? 'Gini = 1 - Σp²ᵢ' : 'H = -Σpᵢlog₂(pᵢ)'}</div>
+                    <div class="calc-result">
+                        <span class="calc-result-label">${metric}</span>
+                        <span class="calc-result-value">${initImp.toFixed(4)}</span>
+                    </div>`,
+                highlight: null,
+                tree: null
+            });
+
+            // Build tree with steps
+            buildTreeWithSteps(currentDataset.data, 0, null, null);
+
+            // Final step
+            if (tree) {
+                const stats = getTreeStats(tree);
+                const acc = calculateAccuracy();
+                steps.push({
+                    title: 'Tree Complete!',
+                    content: `<div class="feature-comparison">
+                            <div class="feature-card"><div class="feature-name">Nodes</div><div class="feature-value">${stats.total}</div></div>
+                            <div class="feature-card"><div class="feature-name">Leaves</div><div class="feature-value">${stats.leaves}</div></div>
+                            <div class="feature-card"><div class="feature-name">Depth</div><div class="feature-value">${stats.depth}</div></div>
+                        </div>
+                        <div class="calc-result">
+                            <span class="calc-result-label">Accuracy</span>
+                            <span class="calc-result-value">${(acc * 100).toFixed(1)}%</span>
+                        </div>`,
+                    highlight: null,
+                    tree: JSON.parse(JSON.stringify(tree))
+                });
+            }
+
+            document.getElementById('total-steps').textContent = steps.length;
+        }
+
+        function buildTreeWithSteps(data, depth, parent, side) {
+            const labels = data.map(d => d[currentDataset.target]);
+            const unique = [...new Set(labels)];
+
+            if (unique.length === 1 || depth >= params.max_depth || data.length < params.min_samples_split) {
+                const pred = getMajority(data);
+                const node = { isLeaf: true, prediction: pred, samples: data.length, depth };
+
+                if (parent) parent[side] = node;
+                else tree = node;
+
+                steps.push({
+                    title: `Leaf Node (depth ${depth})`,
+                    content: `<p>Prediction: <strong>${pred}</strong></p><p>Samples: ${data.length}</p>`,
+                    highlight: getDataIndices(data),
+                    tree: JSON.parse(JSON.stringify(tree))
+                });
+                return node;
+            }
+
+            const split = findBestSplit(data);
+            if (!split || split.gain < 0.001) {
+                const pred = getMajority(data);
+                const node = { isLeaf: true, prediction: pred, samples: data.length, depth };
+                if (parent) parent[side] = node;
+                else tree = node;
+                return node;
+            }
+
+            // Add comparison step
+            steps.push({
+                title: `Compare Splits (depth ${depth})`,
+                content: `<p>Best split: <strong>${split.feature}${split.type === 'categorical' ? ` = "${split.value}"` : ` ≤ ${split.value.toFixed(2)}`}</strong></p>
+                    <div class="calc-result">
+                        <span class="calc-result-label">Info Gain</span>
+                        <span class="calc-result-value">${split.gain.toFixed(4)}</span>
+                    </div>`,
+                highlight: getDataIndices(data),
+                tree: tree ? JSON.parse(JSON.stringify(tree)) : null
+            });
+
+            const node = {
+                isLeaf: false,
+                feature: split.feature,
+                value: split.value,
+                type: split.type,
+                samples: data.length,
+                depth,
+                left: null,
+                right: null
+            };
+
+            if (parent) parent[side] = node;
+            else tree = node;
+
+            buildTreeWithSteps(split.leftData, depth + 1, node, 'left');
+            buildTreeWithSteps(split.rightData, depth + 1, node, 'right');
+
+            return node;
+        }
+
+        function getTreeStats(node, stats = { total: 0, leaves: 0, depth: 0 }) {
+            if (!node) return stats;
+            stats.total++;
+            stats.depth = Math.max(stats.depth, node.depth);
+            if (node.isLeaf) stats.leaves++;
+            else {
+                getTreeStats(node.left, stats);
+                getTreeStats(node.right, stats);
+            }
+            return stats;
+        }
+
+        function predict(sample, node = tree) {
+            if (!node) return null;
+            if (node.isLeaf) return node.prediction;
+            const val = sample[node.feature];
+            if (node.type === 'categorical') {
+                return predict(sample, val === node.value ? node.left : node.right);
+            } else {
+                return predict(sample, val <= node.value ? node.left : node.right);
+            }
+        }
+
+        function calculateAccuracy() {
+            if (!tree) return 0;
+            let correct = 0;
+            currentDataset.data.forEach(d => {
+                if (predict(d) === d[currentDataset.target]) correct++;
+            });
+            return correct / currentDataset.data.length;
+        }
+
+        // ============================================
+        // Visualization
+        // ============================================
+        const canvas = document.getElementById('viz-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            renderTree();
+        }
+
+        function renderTree(treeState = tree) {
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            if (!treeState) {
+                ctx.fillStyle = '#606070';
+                ctx.font = '14px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText('Click Step to build tree', canvas.width / 2, canvas.height / 2);
+                return;
+            }
+
+            const stats = getTreeStats(treeState);
+            const levelH = Math.min(70, (canvas.height - 80) / (stats.depth + 1));
+            const radius = Math.min(28, canvas.width / (Math.pow(2, stats.depth) * 3));
+
+            drawNode(treeState, canvas.width / 2, 40, canvas.width / 4, radius, levelH);
+        }
+
+        function drawNode(node, x, y, dx, r, levelH) {
+            if (!node) return;
+
+            // Draw connections
+            if (!node.isLeaf) {
+                ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                ctx.lineWidth = 2;
+                if (node.left) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, y + r);
+                    ctx.lineTo(x - dx, y + levelH - r);
+                    ctx.stroke();
+                }
+                if (node.right) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, y + r);
+                    ctx.lineTo(x + dx, y + levelH - r);
+                    ctx.stroke();
+                }
+            }
+
+            // Draw node
+            ctx.beginPath();
+            if (node.isLeaf) {
+                ctx.roundRect(x - r, y - r * 0.7, r * 2, r * 1.4, 6);
+                ctx.fillStyle = node.prediction === 'Yes' || node.prediction === 'Setosa' ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)';
+                ctx.strokeStyle = node.prediction === 'Yes' || node.prediction === 'Setosa' ? '#10b981' : '#ef4444';
+            } else {
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(99,102,241,0.2)';
+                ctx.strokeStyle = '#6366f1';
+            }
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw text
+            ctx.fillStyle = '#fff';
+            ctx.font = `${Math.max(10, r * 0.45)}px Inter`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(node.isLeaf ? node.prediction : node.feature, x, y);
+
+            // Draw children
+            if (!node.isLeaf) {
+                if (node.left) drawNode(node.left, x - dx, y + levelH, dx / 2, r, levelH);
+                if (node.right) drawNode(node.right, x + dx, y + levelH, dx / 2, r, levelH);
+            }
+        }
+
+        // ============================================
+        // Step Navigation
+        // ============================================
+        function displayStep(step) {
+            const container = document.getElementById('calc-steps');
+
+            // Mark previous as completed
+            container.querySelectorAll('.calc-step').forEach(s => {
+                s.classList.remove('active');
+                s.classList.add('completed');
+            });
+
+            // Remove placeholder
+            const placeholder = container.querySelector('.calc-placeholder');
+            if (placeholder) placeholder.remove();
+
+            // Add new step
+            const div = document.createElement('div');
+            div.className = 'calc-step active';
+            div.innerHTML = `
+                <div class="calc-step-header">
+                    <span class="calc-step-number">${currentStep + 1}</span>
+                    <span class="calc-step-title">${step.title}</span>
+                </div>
+                <div class="calc-step-content">${step.content}</div>
+            `;
+            container.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+            // Highlight rows
+            if (step.highlight) highlightRows(step.highlight);
+            else highlightRows([]);
+
+            // Render tree
+            if (step.tree) renderTree(step.tree);
+
+            // Update stats
+            if (step.tree) {
+                const stats = getTreeStats(step.tree);
+                document.getElementById('viz-stat-1').innerHTML = `Nodes: <strong>${stats.total}</strong>`;
+                document.getElementById('viz-stat-2').innerHTML = `Leaves: <strong>${stats.leaves}</strong>`;
+                document.getElementById('viz-stat-3').innerHTML = `Depth: <strong>${stats.depth}</strong>`;
+            }
+        }
+
+        function step() {
+            if (currentStep >= steps.length) {
+                stopAuto();
+                return;
+            }
+            displayStep(steps[currentStep]);
+            currentStep++;
+            document.getElementById('current-step').textContent = currentStep;
+        }
+
+        function startAuto() {
+            isAutoRunning = true;
+            document.getElementById('auto-btn').textContent = '⏸ Pause';
+            autoInterval = setInterval(() => {
+                if (currentStep >= steps.length) {
+                    stopAuto();
+                    return;
+                }
+                step();
+            }, 800);
+        }
+
+        function stopAuto() {
+            isAutoRunning = false;
+            document.getElementById('auto-btn').textContent = '▶ Auto Run';
+            if (autoInterval) {
+                clearInterval(autoInterval);
+                autoInterval = null;
+            }
+        }
+
+        function reset() {
+            stopAuto();
+            currentStep = 0;
+            document.getElementById('current-step').textContent = 0;
+            document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to see Gini/Entropy calculations</p></div>';
+            highlightRows([]);
+            generateSteps();
+            renderTree(null);
+        }
+
+        // ============================================
+        // Event Listeners
+        // ============================================
+        document.getElementById('step-btn').addEventListener('click', step);
+        document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
+        document.getElementById('reset-btn').addEventListener('click', reset);
+        document.getElementById('apply-btn').addEventListener('click', reset);
+
+        document.getElementById('dataset-select').addEventListener('change', (e) => {
+            currentDataset = datasets[e.target.value];
+            renderTable();
+            reset();
+        });
+
+        document.getElementById('criterion-select').addEventListener('change', (e) => {
+            params.criterion = e.target.value;
+            document.getElementById('criterion-value').textContent = e.target.value;
+        });
+
+        document.getElementById('depth-slider').addEventListener('input', (e) => {
+            params.max_depth = parseInt(e.target.value);
+            document.getElementById('depth-value').textContent = e.target.value;
+        });
+
+        document.getElementById('split-slider').addEventListener('input', (e) => {
+            params.min_samples_split = parseInt(e.target.value);
+            document.getElementById('split-value').textContent = e.target.value;
+        });
+
+        // ============================================
+        // Initialize
+        // ============================================
+        window.addEventListener('resize', resizeCanvas);
+        renderTable();
+        resizeCanvas();
+        generateSteps();
+    </script>
 </body>
 
 </html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Step-by-Step Visualizer</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <link rel="stylesheet" href="../../styles/shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container four-column">
+        <!-- Header with Algorithm Selector -->
+        <header class="app-header">
+            <div class="header-left">
+                <a href="../../index.html" class="back-btn">← Back</a>
+                <h1 class="app-title">🧠 ML Step-by-Step Visualizer</h1>
+            </div>
+            <div class="header-center">
+                <select id="algorithm-select" class="select algorithm-select">
+                    <option value="decision-tree">Decision Tree</option>
+                    <option value="linear-regression">Linear Regression</option>
+                    <option value="logistic-regression">Logistic Regression</option>
+                    <option value="knn">k-Nearest Neighbors</option>
+                    <option value="kmeans">K-Means Clustering</option>
+                    <option value="naive-bayes">Naive Bayes</option>
+                    <option value="svm">Support Vector Machine</option>
+                    <option value="pca">PCA</option>
+                    <option value="random-forest">Random Forest</option>
+                    <option value="dbscan">DBSCAN</option>
+                </select>
+            </div>
+            <div class="header-right">
+                <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
+                <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
+                <button id="reset-btn" class="btn btn-ghost">↻ Reset</button>
+            </div>
+        </header>
+
+        <!-- Main 4-Column Layout -->
+        <main class="main-content">
+            <!-- Column 1: Data Table -->
+            <section class="panel data-panel">
+                <div class="panel-header compact">
+                    <h2>📊 Dataset</h2>
+                    <select id="dataset-select" class="select select-sm">
+                        <option value="tennis">Tennis (Play?)</option>
+                        <option value="iris">Iris Flowers</option>
+                        <option value="housing">Housing Prices</option>
+                        <option value="custom">Custom Data</option>
+                    </select>
+                </div>
+                <div class="panel-body">
+                    <div class="data-table-container">
+                        <table id="data-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="data-stats">
+                        <span class="stat-item">Samples: <strong id="sample-count">0</strong></span>
+                        <span class="stat-item">Features: <strong id="feature-count">0</strong></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Column 2: Calculation Steps -->
+            <section class="panel calc-panel">
+                <div class="panel-header compact">
+                    <h2>📐 Calculations</h2>
+                    <span class="step-indicator">Step <span id="current-step">0</span>/<span
+                            id="total-steps">0</span></span>
+                </div>
+                <div class="panel-body">
+                    <div id="calc-steps" class="calc-steps">
+                        <div class="calc-placeholder">
+                            <p>Select an algorithm and click <strong>Step</strong> to begin</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Column 3: Visualization -->
+            <section class="panel viz-panel">
+                <div class="panel-header compact">
+                    <h2>🎨 Visualization</h2>
+                    <div class="viz-controls">
+                        <button id="zoom-in-btn" class="btn-icon" title="Zoom In">+</button>
+                        <button id="zoom-out-btn" class="btn-icon" title="Zoom Out">−</button>
+                        <button id="fullscreen-btn" class="btn-icon" title="Fullscreen">⛶</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <canvas id="viz-canvas"></canvas>
+                    <div id="viz-overlay" class="viz-overlay hidden"></div>
+                </div>
+                <div class="panel-footer">
+                    <div class="viz-stats">
+                        <span class="stat-item" id="viz-stat-1"></span>
+                        <span class="stat-item" id="viz-stat-2"></span>
+                        <span class="stat-item" id="viz-stat-3"></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Column 4: Hyperparameters -->
+            <section class="panel params-panel">
+                <div class="panel-header compact">
+                    <h2>⚙️ Hyperparameters</h2>
+                    <button id="params-help-btn" class="btn-icon" title="Help">?</button>
+                </div>
+                <div class="panel-body">
+                    <div id="params-container" class="params-container">
+                        <!-- Dynamic hyperparameter controls -->
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button id="apply-params-btn" class="btn btn-primary btn-block">Apply Changes</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- KaTeX for math rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <!-- Core modules -->
+    <script src="js/data-table.js"></script>
+    <script src="js/hyperparams/hyperparameter-db.js"></script>
+    <script src="js/hyperparams/hyperparam-panel.js"></script>
+
+    <!-- Datasets -->
+    <script src="js/datasets/tennis.js"></script>
+    <script src="js/datasets/iris.js"></script>
+    <script src="js/datasets/housing.js"></script>
+
+    <!-- Algorithms -->
+    <script src="js/algorithms/decision-tree.js"></script>
+    <script src="js/algorithms/linear-regression.js"></script>
+    <script src="js/algorithms/knn.js"></script>
+    <script src="js/algorithms/kmeans.js"></script>
+    <script src="js/algorithms/naive-bayes.js"></script>
+    <script src="js/algorithms/logistic-regression.js"></script>
+    <script src="js/algorithms/svm.js"></script>
+    <script src="js/algorithms/pca.js"></script>
+    <script src="js/algorithms/random-forest.js"></script>
+    <script src="js/algorithms/dbscan.js"></script>
+
+    <!-- Main app -->
+    <script src="js/app.js"></script>
+</body>
+
+</html>
