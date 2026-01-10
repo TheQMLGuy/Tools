@@ -228,7 +228,7 @@ const CATEGORIES = {
                 name: 'Hierarchical Clustering',
                 icon: '🌿',
                 description: 'Dendrogram construction with linkage methods.',
-                path: 'tools/ml-algorithms/hierarchical.html',
+                path: 'tools/ml-algorithms/hierarchical-clustering.html',
                 category: 'Unsupervised Learning'
             },
             // Reinforcement Learning
@@ -245,7 +245,7 @@ const CATEGORIES = {
                 name: 'Multi-Armed Bandit',
                 icon: '🎰',
                 description: 'Explore-exploit tradeoff with UCB and epsilon-greedy.',
-                path: 'tools/ml-algorithms/bandit.html',
+                path: 'tools/ml-algorithms/multi-armed-bandit.html',
                 category: 'Reinforcement Learning'
             },
             // Semi-Supervised Learning

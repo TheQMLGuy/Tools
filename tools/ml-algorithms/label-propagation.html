@@ -9,88 +9,565 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="../../styles/shared.css">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        .app-container {
+            display: grid;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr 1.2fr 260px;
+            gap: 12px;
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header h2 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .panel-body {
+            flex: 1;
+            overflow: auto;
+            padding: 12px;
+        }
+
+        .panel-footer {
+            padding: 10px 14px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+        }
+
+        .data-table th {
+            background: var(--bg-secondary);
+            padding: 6px;
+            text-align: left;
+            border-bottom: 2px solid var(--accent-primary);
+        }
+
+        .data-table td {
+            padding: 5px 6px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .calc-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .calc-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .calc-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            animation: fadeIn 0.3s;
+        }
+
+        .calc-step.active {
+            border-color: var(--accent-primary);
+        }
+
+        .calc-step.completed {
+            opacity: 0.7;
+        }
+
+        .calc-step-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .calc-step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: white;
+        }
+
+        .calc-step-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .calc-step-content {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .calc-equation {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            margin: 8px 0;
+            font-family: var(--font-mono);
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .calc-result {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .calc-result-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .calc-result-value {
+            font-family: var(--font-mono);
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .feature-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .feature-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .feature-name {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        .feature-value {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .viz-panel .panel-body {
+            padding: 0;
+        }
+
+        .viz-panel canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .viz-stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .param-section {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .param-section:last-child {
+            border-bottom: none;
+        }
+
+        .param-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .param-item {
+            margin-bottom: 12px;
+        }
+
+        .param-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-size: 0.75rem;
+        }
+
+        .param-name code {
+            font-family: var(--font-mono);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+        }
+
+        .param-value {
+            font-family: var(--font-mono);
+            color: var(--accent-primary);
+        }
+
+        .taming-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .taming-list li {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 3px 0 3px 14px;
+            position: relative;
+        }
+
+        .taming-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <div class="app-container">
-        <aside class="left-panel">
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>📡 Label Propagation</h2>
-                </div>
-                <div class="panel-body">
-                    <p class="description">Graph-based semi-supervised learning where labels spread through the
-                        similarity graph.</p>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Data</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Labeled Points</label>
-                        <input type="range" id="num-labeled" min="2" max="10" value="4" class="slider">
-                        <span id="num-labeled-value" class="value-display">4</span>
-                    </div>
-                    <div class="param-group">
-                        <label>Unlabeled Points</label>
-                        <input type="range" id="num-unlabeled" min="20" max="80" value="40" class="slider">
-                        <span id="num-unlabeled-value" class="value-display">40</span>
-                    </div>
-                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Propagation</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Sigma (RBF kernel)</label>
-                        <input type="range" id="sigma" min="10" max="100" value="30" class="slider">
-                        <span id="sigma-value" class="value-display">0.30</span>
-                    </div>
-                    <div class="button-row">
-                        <button id="propagate-btn" class="btn btn-primary">▶ Propagate</button>
-                        <button id="step-btn" class="btn btn-secondary">Step</button>
-                    </div>
-                    <button id="reset-btn" class="btn btn-ghost btn-block" style="margin-top: 8px;">Reset</button>
-                </div>
-            </section>
-
-            <section class="panel stats-panel">
-                <div class="panel-header compact">
-                    <h2>Progress</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="stat-row">
-                        <span class="stat-label">Iteration</span>
-                        <span id="iteration" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Converged</span>
-                        <span id="converged" class="stat-value">No</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Accuracy</span>
-                        <span id="accuracy" class="stat-value">-</span>
-                    </div>
-                </div>
-            </section>
-        </aside>
-
-        <main class="main-panel">
-            <div class="single-viz">
-                <canvas id="propagation-canvas"></canvas>
+        <header class="app-header">
+            <h1 class="app-title">🔗 Label Propagation</h1>
+            <div class="header-right">
+                <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
+                <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
+                <button id="reset-btn" class="btn btn-ghost">↻ Reset</button>
             </div>
+        </header>
+        <main class="main-content">
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📊 Label Distribution</h2>
+                </div>
+                <div class="panel-body">
+                    <table id="data-table" class="data-table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="panel-footer" style="font-size:0.7rem">
+                    Soft labels: probability for each class
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📐 Propagation Steps</h2>
+                    <span style="font-size:0.75rem;color:var(--text-muted)">Iter <span id="current-step">0</span></span>
+                </div>
+                <div class="panel-body">
+                    <div id="calc-steps" class="calc-steps">
+                        <div class="calc-placeholder">
+                            <p>Click <strong>Step</strong> to propagate</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="panel viz-panel">
+                <div class="panel-header">
+                    <h2>🎨 Graph & Labels</h2>
+                </div>
+                <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
+                <div class="panel-footer">
+                    <div class="viz-stats">
+                        <span>Labeled: <strong id="viz-labeled">0</strong></span>
+                        <span>Converged: <strong id="viz-conv">No</strong></span>
+                    </div>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>⚙️ Parameters</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-section">
+                        <div class="param-item">
+                            <div class="param-header"><span class="param-name"><code>gamma</code></span><span
+                                    class="param-value" id="gamma-value">1.0</span></div>
+                            <input type="range" id="gamma-slider" class="slider" min="0.5" max="3" step="0.1" value="1"
+                                style="width:100%">
+                            <div style="font-size:0.65rem;color:var(--text-muted);margin-top:2px">RBF kernel width</div>
+                        </div>
+                    </div>
+                    <div class="param-section">
+                        <div class="param-section-title">💡 Algorithm</div>
+                        <ul class="taming-list">
+                            <li>Build similarity graph (RBF kernel)</li>
+                            <li>Propagate labels from neighbors</li>
+                            <li>Clamp labeled points each iteration</li>
+                            <li>Converge to equilibrium</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button id="apply-btn" class="btn btn-primary btn-block">Reset</button>
+                </div>
+            </section>
         </main>
     </div>
+    <script>
+        function generateData() {
+            const data = [];
+            // Labeled (2 of each class)
+            data.push({ x: 2, y: 2, labels: [1, 0], fixed: true });
+            data.push({ x: 3, y: 3, labels: [1, 0], fixed: true });
+            data.push({ x: 7, y: 7, labels: [0, 1], fixed: true });
+            data.push({ x: 6, y: 6, labels: [0, 1], fixed: true });
+            // Unlabeled
+            for (let i = 0; i < 8; i++) {
+                const cx = Math.random() > 0.5 ? 2.5 : 6.5;
+                const cy = Math.random() > 0.5 ? 2.5 : 6.5;
+                data.push({ x: cx + (Math.random() - 0.5) * 2.5, y: cy + (Math.random() - 0.5) * 2.5, labels: [0.5, 0.5], fixed: false });
+            }
+            return data;
+        }
 
-    <script src="js/label-propagation.js"></script>
+        const colors = ['#ef4444', '#10b981'];
+        let data = generateData();
+        let params = { gamma: 1.0 };
+        let steps = [], currentStep = 0;
+        let isAutoRunning = false, autoInterval = null;
+
+        function rbf(d1, d2) {
+            const dist = Math.sqrt((d1.x - d2.x) ** 2 + (d1.y - d2.y) ** 2);
+            return Math.exp(-params.gamma * dist * dist);
+        }
+
+        function renderTable() {
+            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>P(0)</th><th>P(1)</th></tr>';
+            document.querySelector('#data-table tbody').innerHTML = data.map((d, i) =>
+                `<tr><td style="color:var(--text-muted)">${i + 1}</td><td>${d.x.toFixed(1)}</td><td>${d.y.toFixed(1)}</td><td style="color:${colors[0]}">${d.labels[0].toFixed(2)}</td><td style="color:${colors[1]}">${d.labels[1].toFixed(2)}</td></tr>`
+            ).join('');
+        }
+
+        function generateSteps() {
+            steps = [];
+            data = generateData();
+
+            steps.push({
+                title: 'Initial State',
+                content: `<p>Labeled points fixed, unlabeled start at [0.5, 0.5]</p>
+                    <div class="feature-comparison">
+                        <div class="feature-card"><div class="feature-name">Fixed</div><div class="feature-value">${data.filter(d => d.fixed).length}</div></div>
+                        <div class="feature-card"><div class="feature-name">Unlabeled</div><div class="feature-value">${data.filter(d => !d.fixed).length}</div></div>
+                    </div>`,
+                data: data.map(d => ({ ...d, labels: [...d.labels] }))
+            });
+
+            let converged = false;
+            for (let iter = 0; iter < 10 && !converged; iter++) {
+                const newLabels = data.map(d => [...d.labels]);
+                let maxChange = 0;
+
+                data.forEach((d, i) => {
+                    if (d.fixed) return;
+
+                    let sumWeights = 0;
+                    const sumLabels = [0, 0];
+
+                    data.forEach((other, j) => {
+                        if (i === j) return;
+                        const w = rbf(d, other);
+                        sumWeights += w;
+                        sumLabels[0] += w * other.labels[0];
+                        sumLabels[1] += w * other.labels[1];
+                    });
+
+                    if (sumWeights > 0) {
+                        newLabels[i] = [sumLabels[0] / sumWeights, sumLabels[1] / sumWeights];
+                        maxChange = Math.max(maxChange, Math.abs(newLabels[i][0] - d.labels[0]));
+                    }
+                });
+
+                data.forEach((d, i) => d.labels = newLabels[i]);
+                converged = maxChange < 0.01;
+
+                steps.push({
+                    title: `Iteration ${iter + 1}`,
+                    content: `<p>Propagate from neighbors using RBF similarity</p>
+                        <div class="calc-equation">Y_i ← Σ_j w_ij · Y_j / Σ_j w_ij</div>
+                        <div class="calc-result"><span class="calc-result-label">Max Change</span><span class="calc-result-value">${maxChange.toFixed(4)}</span></div>`,
+                    data: data.map(d => ({ ...d, labels: [...d.labels] })),
+                    converged
+                });
+            }
+        }
+
+        const canvas = document.getElementById('viz-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
+
+        function render(step = null) {
+            const w = canvas.width, h = canvas.height;
+            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, w, h);
+            const pad = 50, scale = v => pad + (v / 10) * (Math.min(w, h) - 2 * pad);
+
+            const currentData = step?.data || data;
+
+            // Draw edges (similarity)
+            currentData.forEach((d1, i) => {
+                currentData.forEach((d2, j) => {
+                    if (i >= j) return;
+                    const sim = rbf(d1, d2);
+                    if (sim > 0.1) {
+                        ctx.strokeStyle = `rgba(255,255,255,${sim * 0.3})`;
+                        ctx.lineWidth = sim * 2;
+                        ctx.beginPath();
+                        ctx.moveTo(scale(d1.x), h - scale(d1.y));
+                        ctx.lineTo(scale(d2.x), h - scale(d2.y));
+                        ctx.stroke();
+                    }
+                });
+            });
+
+            // Draw nodes
+            currentData.forEach((d, i) => {
+                const px = scale(d.x), py = h - scale(d.y);
+                const radius = d.fixed ? 14 : 10;
+
+                // Gradient based on label distribution
+                const r = Math.round(239 * d.labels[0] + 16 * d.labels[1]);
+                const g = Math.round(68 * d.labels[0] + 185 * d.labels[1]);
+                const b = Math.round(68 * d.labels[0] + 129 * d.labels[1]);
+
+                ctx.beginPath();
+                ctx.arc(px, py, radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgb(${r},${g},${b})`;
+                ctx.fill();
+
+                if (d.fixed) {
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
+
+                // Label
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 9px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(i + 1, px, py);
+            });
+        }
+
+        function displayStep(step) {
+            const container = document.getElementById('calc-steps');
+            container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
+            container.querySelector('.calc-placeholder')?.remove();
+
+            const div = document.createElement('div');
+            div.className = 'calc-step active';
+            div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
+            container.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+            data = step.data.map(d => ({ ...d, labels: [...d.labels] }));
+            renderTable();
+            render(step);
+            document.getElementById('viz-labeled').textContent = data.filter(d => d.fixed).length;
+            document.getElementById('viz-conv').textContent = step.converged ? 'Yes' : 'No';
+        }
+
+        function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 1000); }
+        function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
+        function reset() { stopAuto(); currentStep = 0; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to propagate</p></div>'; generateSteps(); renderTable(); render(); }
+
+        document.getElementById('step-btn').addEventListener('click', step);
+        document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
+        document.getElementById('reset-btn').addEventListener('click', reset);
+        document.getElementById('apply-btn').addEventListener('click', reset);
+        document.getElementById('gamma-slider').addEventListener('input', e => { params.gamma = parseFloat(e.target.value); document.getElementById('gamma-value').textContent = params.gamma.toFixed(1); });
+
+        window.addEventListener('resize', resizeCanvas);
+        generateSteps();
+        renderTable();
+        resizeCanvas();
+    </script>
 </body>
 
 </html>

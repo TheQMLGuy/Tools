@@ -41,7 +41,7 @@
 
         .main-content {
             display: grid;
-            grid-template-columns: 260px 1fr 1.2fr 280px;
+            grid-template-columns: 280px 1fr 1.2fr 280px;
             gap: 12px;
             padding: 12px;
             overflow: hidden;
@@ -86,19 +86,20 @@
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
 
         .data-table th {
             background: var(--bg-secondary);
-            padding: 8px;
+            padding: 6px;
             text-align: left;
             border-bottom: 2px solid var(--accent-primary);
         }
 
         .data-table td {
-            padding: 6px 8px;
+            padding: 5px 6px;
             border-bottom: 1px solid var(--border-color);
+            font-family: var(--font-mono);
         }
 
         .data-table tr.support td {
@@ -108,7 +109,7 @@
         .calc-steps {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .calc-placeholder {
@@ -124,7 +125,7 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 12px;
+            padding: 10px;
             animation: fadeIn 0.3s;
         }
 
@@ -133,98 +134,71 @@
         }
 
         .calc-step.completed {
-            opacity: 0.7;
+            opacity: 0.6;
         }
 
         .calc-step-header {
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .calc-step-number {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             background: var(--accent-gradient);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
+            font-weight: 600;
             color: white;
         }
 
         .calc-step-title {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
         }
 
         .calc-step-content {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: var(--text-secondary);
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
-        .calc-equation {
+        .calc-box {
             background: rgba(0, 0, 0, 0.3);
             border-radius: 6px;
-            padding: 10px;
-            margin: 8px 0;
+            padding: 8px;
+            margin: 6px 0;
             font-family: var(--font-mono);
-            text-align: center;
+            font-size: 0.6rem;
+            overflow-x: auto;
+            line-height: 1.6;
         }
 
         .calc-result {
             display: flex;
             justify-content: space-between;
-            padding: 8px 12px;
+            padding: 6px 10px;
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.3);
             border-radius: 6px;
-            margin-top: 8px;
+            margin-top: 6px;
         }
 
         .calc-result-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
         }
 
         .calc-result-value {
             font-family: var(--font-mono);
-            font-weight: 600;
-            color: var(--success);
-        }
-
-        .feature-comparison {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .feature-card {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
-            padding: 8px;
-            text-align: center;
-        }
-
-        .feature-card.best {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.4);
-        }
-
-        .feature-name {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .feature-value {
-            font-family: var(--font-mono);
             font-size: 0.8rem;
             font-weight: 600;
+            color: var(--success);
         }
 
         .viz-panel .panel-body {
@@ -239,15 +213,15 @@
 
         .viz-stats {
             display: flex;
-            gap: 20px;
+            gap: 16px;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
 
         .param-section {
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
-            margin-bottom: 12px;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
         }
 
         .param-section:last-child {
@@ -259,17 +233,17 @@
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .param-item {
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .param-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .param-name code {
@@ -277,12 +251,12 @@
             background: rgba(0, 0, 0, 0.3);
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
 
         .param-value {
             font-family: var(--font-mono);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--accent-primary);
         }
 
@@ -292,9 +266,9 @@
         }
 
         .taming-list li {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-muted);
-            padding: 4px 0 4px 16px;
+            padding: 3px 0 3px 14px;
             position: relative;
         }
 
@@ -303,6 +277,11 @@
             position: absolute;
             left: 0;
             color: var(--success);
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-top: 6px;
         }
 
         @keyframes fadeIn {
@@ -320,7 +299,7 @@
 <body>
     <div class="app-container">
         <header class="app-header">
-            <h1 class="app-title">⚔️ Support Vector Machine</h1>
+            <h1 class="app-title">⚔️ Support Vector Machine - Step by Step</h1>
             <div class="header-right">
                 <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
                 <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
@@ -330,7 +309,7 @@
         <main class="main-content">
             <section class="panel">
                 <div class="panel-header">
-                    <h2>📊 Data Points</h2>
+                    <h2>📊 Training Data</h2>
                 </div>
                 <div class="panel-body">
                     <table id="data-table" class="data-table">
@@ -338,24 +317,27 @@
                         <tbody></tbody>
                     </table>
                 </div>
+                <div class="panel-footer" style="font-size:0.65rem;color:var(--text-muted)">
+                    <span style="color:#f59e0b">●</span> Support vectors (closest to boundary)
+                </div>
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>📐 SVM Concepts</h2>
-                    <span style="font-size:0.75rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
+                    <h2>📐 SVM Calculations</h2>
+                    <span style="font-size:0.7rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
                             id="total-steps">0</span></span>
                 </div>
                 <div class="panel-body">
                     <div id="calc-steps" class="calc-steps">
                         <div class="calc-placeholder">
-                            <p>Click <strong>Step</strong> to learn SVM</p>
+                            <p>Click <strong>Step</strong> to find the margin</p>
                         </div>
                     </div>
                 </div>
             </section>
             <section class="panel viz-panel">
                 <div class="panel-header">
-                    <h2>🎨 Maximum Margin</h2>
+                    <h2>🎨 Decision Boundary</h2>
                 </div>
                 <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
                 <div class="panel-footer">
@@ -371,7 +353,6 @@
                 </div>
                 <div class="panel-body">
                     <div class="param-section">
-                        <div class="param-section-title">Regularization</div>
                         <div class="param-item">
                             <div class="param-header">
                                 <span class="param-name"><code>C</code></span>
@@ -379,127 +360,161 @@
                             </div>
                             <input type="range" id="c-slider" class="slider" min="0.1" max="10" step="0.1" value="1"
                                 style="width:100%">
-                            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px">High C = Less
-                                regularization</div>
-                        </div>
-                        <div class="param-item">
-                            <div class="param-header">
-                                <span class="param-name"><code>kernel</code></span>
-                            </div>
-                            <select id="kernel-select" class="select" style="width:100%">
-                                <option value="linear">Linear</option>
-                                <option value="rbf">RBF</option>
-                            </select>
+                            <div style="font-size:0.6rem;color:var(--text-muted)">Regularization (higher = stricter
+                                margin)</div>
                         </div>
                     </div>
                     <div class="param-section">
-                        <div class="param-section-title">💡 Key Insight</div>
+                        <div class="param-section-title">💡 Key Concepts</div>
                         <ul class="taming-list">
-                            <li>SVM finds max-margin hyperplane</li>
+                            <li>Find line that maximizes margin</li>
+                            <li>Margin = distance to nearest points</li>
                             <li>Support vectors define the boundary</li>
-                            <li>Kernel trick for non-linear</li>
+                            <li>f(x) = w·x + b = 0 is the boundary</li>
                         </ul>
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button id="apply-btn" class="btn btn-primary btn-block">Regenerate Data</button>
+                    <button id="random-btn" class="btn btn-primary btn-block">🎲 Random Data</button>
+                    <button id="apply-btn" class="btn btn-secondary btn-block">Apply & Restart</button>
                 </div>
             </section>
         </main>
     </div>
     <script>
-        // Generate data
         function generateData() {
             const data = [];
-            for (let i = 0; i < 10; i++) {
-                data.push({ x: Math.random() * 3 + 1, y: Math.random() * 3 + 4, label: -1 });
-                data.push({ x: Math.random() * 3 + 5, y: Math.random() * 3 + 1, label: 1 });
+            for (let i = 0; i < 8; i++) {
+                data.push({ x: 1 + Math.random() * 3, y: 5 + Math.random() * 3, label: -1 });
+            }
+            for (let i = 0; i < 8; i++) {
+                data.push({ x: 5 + Math.random() * 3, y: 2 + Math.random() * 3, label: 1 });
             }
             return data;
         }
 
         let data = generateData();
-        let params = { C: 1.0, kernel: 'linear' };
-        let w = null, b = 0, supportVectors = [];
+        let params = { C: 1.0 };
+        let w1 = 0, w2 = 0, b = 0;
+        let supportVectors = [];
         let steps = [], currentStep = 0;
         let isAutoRunning = false, autoInterval = null;
 
         function renderTable() {
-            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>Label</th></tr>';
-            document.querySelector('#data-table tbody').innerHTML = data.map((d, i) =>
-                `<tr id="row-${i}"><td style="color:var(--text-muted)">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td><td style="color:${d.label === 1 ? '#10b981' : '#ef4444'}">${d.label === 1 ? '+1' : '-1'}</td></tr>`
-            ).join('');
-        }
-
-        function highlightSupportVectors() {
-            document.querySelectorAll('#data-table tbody tr').forEach(tr => tr.classList.remove('support'));
-            supportVectors.forEach(i => document.getElementById(`row-${i}`)?.classList.add('support'));
-        }
-
-        // Simple linear SVM (gradient descent)
-        function trainSVM() {
-            let ww = [0, 0], bb = 0;
-            const lr = 0.01, epochs = 500;
-
-            for (let e = 0; e < epochs; e++) {
-                data.forEach(d => {
-                    const margin = d.label * (ww[0] * d.x + ww[1] * d.y + bb);
-                    if (margin < 1) {
-                        ww[0] += lr * (d.label * d.x - ww[0] / params.C);
-                        ww[1] += lr * (d.label * d.y - ww[1] / params.C);
-                        bb += lr * d.label;
-                    } else {
-                        ww[0] -= lr * ww[0] / params.C;
-                        ww[1] -= lr * ww[1] / params.C;
-                    }
-                });
-            }
-
-            w = ww; b = bb;
-            supportVectors = data.map((d, i) => ({ i, margin: d.label * (w[0] * d.x + w[1] * d.y + b) }))
-                .filter(d => d.margin < 1.1).map(d => d.i);
+            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>Class</th><th>Dist</th></tr>';
+            document.querySelector('#data-table tbody').innerHTML = data.map((d, i) => {
+                const isSV = supportVectors.includes(i);
+                const dist = Math.abs(w1 * d.x + w2 * d.y + b) / Math.sqrt(w1 * w1 + w2 * w2) || 0;
+                return `<tr class="${isSV ? 'support' : ''}"><td style="font-weight:600">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td><td style="color:${d.label === 1 ? '#10b981' : '#ef4444'}">${d.label === 1 ? '+1' : '-1'}</td><td>${dist.toFixed(3)}</td></tr>`;
+            }).join('');
         }
 
         function generateSteps() {
-            steps = []; supportVectors = []; w = null;
+            steps = []; supportVectors = [];
+
+            // Normalize data
+            const xMean = data.reduce((s, d) => s + d.x, 0) / data.length;
+            const yMean = data.reduce((s, d) => s + d.y, 0) / data.length;
+            const xStd = Math.sqrt(data.reduce((s, d) => s + (d.x - xMean) ** 2, 0) / data.length) || 1;
+            const yStd = Math.sqrt(data.reduce((s, d) => s + (d.y - yMean) ** 2, 0) / data.length) || 1;
+            const norm = data.map(d => ({ x: (d.x - xMean) / xStd, y: (d.y - yMean) / yStd, label: d.label }));
 
             steps.push({
-                title: 'Problem Setup',
-                content: `<p>Find hyperplane that separates classes with maximum margin</p>
-                    <div class="calc-equation">maximize margin = 2/||w||</div>
-                    <p style="margin-top:8px">Subject to: yᵢ(w·xᵢ + b) ≥ 1 for all i</p>`,
-                phase: 'setup'
-            });
-
-            steps.push({
-                title: 'Decision Boundary',
-                content: `<p>The hyperplane is defined by:</p>
-                    <div class="calc-equation">w·x + b = 0</div>
-                    <p>Points where w·x + b = ±1 define the margins</p>`,
-                phase: 'boundary'
-            });
-
-            trainSVM();
-
-            steps.push({
-                title: 'Find Support Vectors',
-                content: `<p style="margin-bottom:8px">Support vectors are points closest to the decision boundary (margin ≤ 1)</p>
-                    <div class="calc-result"><span class="calc-result-label">Support Vectors</span><span class="calc-result-value">${supportVectors.length}</span></div>
-                    <p style="margin-top:8px;font-size:0.75rem;color:var(--text-muted)">These points define the hyperplane</p>`,
-                phase: 'support'
-            });
-
-            const margin = 2 / Math.sqrt(w[0] ** 2 + w[1] ** 2);
-            steps.push({
-                title: 'Maximum Margin',
-                content: `<p>Final hyperplane parameters:</p>
-                    <div class="feature-comparison">
-                        <div class="feature-card"><div class="feature-name">w₁</div><div class="feature-value">${w[0].toFixed(3)}</div></div>
-                        <div class="feature-card"><div class="feature-name">w₂</div><div class="feature-value">${w[1].toFixed(3)}</div></div>
-                        <div class="feature-card"><div class="feature-name">b</div><div class="feature-value">${b.toFixed(3)}</div></div>
+                title: 'Our Binary Classification',
+                content: `<p>We have ${data.length} points in 2 classes:</p>
+                    <div class="calc-box">
+                    Class +1 (green): ${data.filter(d => d.label === 1).length} points<br>
+                    Class -1 (red): ${data.filter(d => d.label === -1).length} points
                     </div>
-                    <div class="calc-result"><span class="calc-result-label">Margin Width</span><span class="calc-result-value">${margin.toFixed(3)}</span></div>`,
-                phase: 'complete'
+                    <p>Goal: Find a line that separates them with MAXIMUM margin!</p>`,
+                w1: 0, w2: 0, b: 0, sv: []
+            });
+
+            steps.push({
+                title: 'SVM Goal: Maximum Margin',
+                content: `<p>We want the widest "street" between classes:</p>
+                    <div class="calc-box">
+                    Decision boundary: w₁x + w₂y + b = 0<br><br>
+                    Margin = 2 / ||w|| = 2 / √(w₁² + w₂²)<br><br>
+                    Wider margin = more confidence in predictions!
+                    </div>`,
+                w1: 0, w2: 0, b: 0, sv: []
+            });
+
+            // Simple gradient descent for linear SVM
+            let wn1 = 0, wn2 = 0, bn = 0;
+            const lr = 0.01;
+
+            for (let ep = 1; ep <= 30; ep++) {
+                let dw1 = 0, dw2 = 0, db = 0;
+
+                norm.forEach(d => {
+                    const margin = d.label * (wn1 * d.x + wn2 * d.y + bn);
+                    if (margin < 1) {
+                        dw1 += -d.label * d.x * params.C;
+                        dw2 += -d.label * d.y * params.C;
+                        db += -d.label * params.C;
+                    }
+                });
+                dw1 += wn1;
+                dw2 += wn2;
+
+                wn1 -= lr * dw1;
+                wn2 -= lr * dw2;
+                bn -= lr * db;
+
+                if (ep % 5 === 0 || ep === 1) {
+                    // Convert back
+                    w1 = wn1 / xStd;
+                    w2 = wn2 / yStd;
+                    b = bn - w1 * xMean - w2 * yMean;
+
+                    const norm_w = Math.sqrt(wn1 * wn1 + wn2 * wn2);
+                    const marginWidth = norm_w > 0 ? 2 / norm_w : 0;
+
+                    // Find support vectors
+                    supportVectors = [];
+                    data.forEach((d, i) => {
+                        const dist = Math.abs(w1 * d.x + w2 * d.y + b) / Math.sqrt(w1 * w1 + w2 * w2);
+                        if (dist < marginWidth * 0.6) supportVectors.push(i);
+                    });
+
+                    let svDetail = supportVectors.slice(0, 4).map(i => {
+                        const d = data[i];
+                        const dist = Math.abs(w1 * d.x + w2 * d.y + b) / Math.sqrt(w1 * w1 + w2 * w2);
+                        return `Point ${i + 1}: (${d.x.toFixed(2)}, ${d.y.toFixed(2)}) dist=${dist.toFixed(3)}`;
+                    }).join('<br>');
+
+                    steps.push({
+                        title: `Epoch ${ep}: Optimize Margin`,
+                        content: `<p>Update weights to maximize margin:</p>
+                            <div class="calc-box">
+                            w₁ = ${wn1.toFixed(4)}<br>
+                            w₂ = ${wn2.toFixed(4)}<br>
+                            b = ${bn.toFixed(4)}<br><br>
+                            ||w|| = √(${wn1.toFixed(3)}² + ${wn2.toFixed(3)}²) = ${norm_w.toFixed(4)}<br>
+                            Margin = 2 / ${norm_w.toFixed(4)} = <strong>${marginWidth.toFixed(4)}</strong>
+                            </div>
+                            <p>Support vectors (closest):</p>
+                            <div class="calc-box">${svDetail || 'Finding...'}</div>`,
+                        w1, w2, b, sv: [...supportVectors]
+                    });
+                }
+            }
+
+            // Final
+            const finalNorm = Math.sqrt(wn1 * wn1 + wn2 * wn2);
+            const finalMargin = finalNorm > 0 ? 2 / finalNorm : 0;
+
+            steps.push({
+                title: '✅ SVM Trained!',
+                content: `<p>Final hyperplane:</p>
+                    <div class="calc-box">
+                    ${w1.toFixed(3)}x + ${w2.toFixed(3)}y + ${b.toFixed(3)} = 0<br><br>
+                    Support Vectors: ${supportVectors.length} points
+                    </div>
+                    <div class="calc-result"><span class="calc-result-label">Final Margin</span><span class="calc-result-value">${finalMargin.toFixed(4)}</span></div>`,
+                w1, w2, b, sv: [...supportVectors]
             });
 
             document.getElementById('total-steps').textContent = steps.length;
@@ -510,35 +525,59 @@
 
         function resizeCanvas() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
 
-        function render(phase = 'complete') {
+        function render(step = null) {
             const ww = canvas.width, hh = canvas.height;
             ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, ww, hh);
-            const pad = 40, scaleX = v => pad + (v / 10) * (ww - 2 * pad), scaleY = v => hh - pad - (v / 10) * (hh - 2 * pad);
+            const pad = 50;
+            const scaleX = v => pad + (v / 10) * (ww - 2 * pad);
+            const scaleY = v => hh - pad - (v / 10) * (hh - 2 * pad);
+
+            const cw1 = step?.w1 ?? w1, cw2 = step?.w2 ?? w2, cb = step?.b ?? b;
+            const csv = step?.sv ?? supportVectors;
+
+            // Grid
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx.fillStyle = '#666';
+            ctx.font = '10px Inter';
+            for (let i = 0; i <= 10; i += 2) {
+                ctx.beginPath(); ctx.moveTo(scaleX(i), pad); ctx.lineTo(scaleX(i), hh - pad); ctx.stroke();
+                ctx.textAlign = 'center';
+                ctx.fillText(i, scaleX(i), hh - 20);
+            }
 
             // Decision regions
-            if (w && (phase === 'support' || phase === 'complete')) {
-                for (let px = 0; px < ww; px += 4) {
-                    for (let py = 0; py < hh; py += 4) {
+            if (cw1 !== 0 || cw2 !== 0) {
+                for (let px = pad; px < ww - pad; px += 4) {
+                    for (let py = pad; py < hh - pad; py += 4) {
                         const rx = ((px - pad) / (ww - 2 * pad)) * 10;
                         const ry = ((hh - pad - py) / (hh - 2 * pad)) * 10;
-                        const decision = w[0] * rx + w[1] * ry + b;
-                        ctx.fillStyle = decision > 0 ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)';
+                        const val = cw1 * rx + cw2 * ry + cb;
+                        ctx.fillStyle = val > 0 ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)';
                         ctx.fillRect(px, py, 4, 4);
                     }
                 }
 
-                // Margin lines
-                const norm = Math.sqrt(w[0] ** 2 + w[1] ** 2);
+                // Decision boundary and margins
+                const norm = Math.sqrt(cw1 * cw1 + cw2 * cw2);
                 if (norm > 0) {
-                    [-1, 0, 1].forEach(offset => {
+                    const margin = 1 / norm;
+
+                    // Draw boundary and margin lines
+                    [0, margin, -margin].forEach((offset, idx) => {
+                        ctx.strokeStyle = idx === 0 ? '#6366f1' : 'rgba(99,102,241,0.5)';
+                        ctx.lineWidth = idx === 0 ? 3 : 2;
+                        ctx.setLineDash(idx === 0 ? [] : [5, 5]);
                         ctx.beginPath();
-                        ctx.strokeStyle = offset === 0 ? '#fff' : 'rgba(255,255,255,0.3)';
-                        ctx.lineWidth = offset === 0 ? 2 : 1;
-                        ctx.setLineDash(offset === 0 ? [] : [5, 5]);
-                        const y0 = (-(w[0] * 0 + b) + offset) / w[1];
-                        const y10 = (-(w[0] * 10 + b) + offset) / w[1];
-                        ctx.moveTo(scaleX(0), scaleY(y0));
-                        ctx.lineTo(scaleX(10), scaleY(y10));
+
+                        for (let x = 0; x <= 10; x += 0.5) {
+                            if (cw2 !== 0) {
+                                const y = (-cw1 * x - cb + offset * norm) / cw2;
+                                if (y >= 0 && y <= 10) {
+                                    if (x === 0) ctx.moveTo(scaleX(x), scaleY(y));
+                                    else ctx.lineTo(scaleX(x), scaleY(y));
+                                }
+                            }
+                        }
                         ctx.stroke();
                     });
                     ctx.setLineDash([]);
@@ -547,12 +586,22 @@
 
             // Data points
             data.forEach((d, i) => {
+                const px = scaleX(d.x), py = scaleY(d.y);
+                const isSV = csv.includes(i);
+
                 ctx.beginPath();
-                const isSV = supportVectors.includes(i) && (phase === 'support' || phase === 'complete');
-                ctx.arc(scaleX(d.x), scaleY(d.y), isSV ? 10 : 7, 0, Math.PI * 2);
+                ctx.arc(px, py, isSV ? 14 : 12, 0, Math.PI * 2);
                 ctx.fillStyle = d.label === 1 ? '#10b981' : '#ef4444';
                 ctx.fill();
-                if (isSV) { ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 3; ctx.stroke(); }
+                ctx.strokeStyle = isSV ? '#f59e0b' : '#fff';
+                ctx.lineWidth = isSV ? 3 : 2;
+                ctx.stroke();
+
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 9px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(i + 1, px, py);
             });
         }
 
@@ -567,24 +616,27 @@
             container.appendChild(div);
             div.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
-            if (step.phase === 'support' || step.phase === 'complete') highlightSupportVectors();
-            render(step.phase);
+            w1 = step.w1; w2 = step.w2; b = step.b;
+            supportVectors = step.sv;
+            renderTable();
+            render(step);
 
-            const margin = w ? (2 / Math.sqrt(w[0] ** 2 + w[1] ** 2)).toFixed(2) : '-';
-            document.getElementById('viz-margin').textContent = margin;
+            const norm = Math.sqrt(w1 * w1 + w2 * w2);
+            document.getElementById('viz-margin').textContent = norm > 0 ? (2 / norm).toFixed(4) : '-';
             document.getElementById('viz-sv').textContent = supportVectors.length;
         }
 
         function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
-        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 1200); }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 600); }
         function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
-        function reset() { stopAuto(); data = generateData(); currentStep = 0; supportVectors = []; w = null; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to learn SVM</p></div>'; renderTable(); generateSteps(); render('setup'); }
+        function reset() { stopAuto(); currentStep = 0; w1 = w2 = b = 0; supportVectors = []; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to find the margin</p></div>'; generateSteps(); renderTable(); render(); }
 
         document.getElementById('step-btn').addEventListener('click', step);
         document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
         document.getElementById('reset-btn').addEventListener('click', reset);
         document.getElementById('apply-btn').addEventListener('click', reset);
-        document.getElementById('c-slider').addEventListener('input', e => { params.C = parseFloat(e.target.value); document.getElementById('c-value').textContent = params.C.toFixed(1); });
+        document.getElementById('random-btn').addEventListener('click', () => { data = generateData(); reset(); });
+        document.getElementById('c-slider').addEventListener('input', e => { params.C = parseFloat(e.target.value); document.getElementById('c-value').textContent = params.C; });
 
         window.addEventListener('resize', resizeCanvas);
         renderTable();

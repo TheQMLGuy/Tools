@@ -9,92 +9,597 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="../../styles/shared.css">
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        .app-container {
+            display: grid;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr 1.2fr 260px;
+            gap: 12px;
+            padding: 12px;
+            overflow: hidden;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header h2 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .panel-body {
+            flex: 1;
+            overflow: auto;
+            padding: 12px;
+        }
+
+        .panel-footer {
+            padding: 10px 14px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+
+        .data-table th {
+            background: var(--bg-secondary);
+            padding: 8px;
+            text-align: left;
+            border-bottom: 2px solid var(--accent-primary);
+        }
+
+        .data-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table tr.labeled td {
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .data-table tr.pseudo td {
+            background: rgba(245, 158, 11, 0.2);
+        }
+
+        .calc-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .calc-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .calc-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            animation: fadeIn 0.3s;
+        }
+
+        .calc-step.active {
+            border-color: var(--accent-primary);
+        }
+
+        .calc-step.completed {
+            opacity: 0.7;
+        }
+
+        .calc-step-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .calc-step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: white;
+        }
+
+        .calc-step-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .calc-step-content {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .calc-equation {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            margin: 8px 0;
+            font-family: var(--font-mono);
+            text-align: center;
+        }
+
+        .calc-result {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 6px;
+            margin-top: 8px;
+        }
+
+        .calc-result-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .calc-result-value {
+            font-family: var(--font-mono);
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .feature-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .feature-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .feature-card.added {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.5);
+        }
+
+        .feature-name {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .feature-value {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .viz-panel .panel-body {
+            padding: 0;
+        }
+
+        .viz-panel canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .viz-stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .param-section {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .param-section:last-child {
+            border-bottom: none;
+        }
+
+        .param-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .param-item {
+            margin-bottom: 12px;
+        }
+
+        .param-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-size: 0.75rem;
+        }
+
+        .param-name code {
+            font-family: var(--font-mono);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .param-value {
+            font-family: var(--font-mono);
+            color: var(--accent-primary);
+        }
+
+        .taming-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .taming-list li {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 3px 0 3px 14px;
+            position: relative;
+        }
+
+        .taming-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <div class="app-container">
-        <aside class="left-panel">
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>🔄 Self-Training</h2>
-                </div>
-                <div class="panel-body">
-                    <p class="description">Semi-supervised learning: train on labeled data, then iteratively add
-                        confident predictions.</p>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Data</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Labeled Points</label>
-                        <input type="range" id="num-labeled" min="2" max="20" value="6" class="slider">
-                        <span id="num-labeled-value" class="value-display">6</span>
-                    </div>
-                    <div class="param-group">
-                        <label>Unlabeled Points</label>
-                        <input type="range" id="num-unlabeled" min="20" max="100" value="50" class="slider">
-                        <span id="num-unlabeled-value" class="value-display">50</span>
-                    </div>
-                    <button id="generate-btn" class="btn btn-secondary btn-block">Generate Data</button>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header compact">
-                    <h2>Training</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="param-group">
-                        <label>Confidence Threshold</label>
-                        <input type="range" id="threshold" min="50" max="99" value="80" class="slider">
-                        <span id="threshold-value" class="value-display">0.80</span>
-                    </div>
-                    <div class="button-row">
-                        <button id="train-btn" class="btn btn-primary">▶ Train</button>
-                        <button id="step-btn" class="btn btn-secondary">Step</button>
-                    </div>
-                    <button id="reset-btn" class="btn btn-ghost btn-block" style="margin-top: 8px;">Reset</button>
-                </div>
-            </section>
-
-            <section class="panel stats-panel">
-                <div class="panel-header compact">
-                    <h2>Progress</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="stat-row">
-                        <span class="stat-label">Iteration</span>
-                        <span id="iteration" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Labeled</span>
-                        <span id="labeled-count" class="stat-value">-</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Unlabeled</span>
-                        <span id="unlabeled-count" class="stat-value">-</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Accuracy</span>
-                        <span id="accuracy" class="stat-value">-</span>
-                    </div>
-                </div>
-            </section>
-        </aside>
-
-        <main class="main-panel">
-            <div class="single-viz">
-                <canvas id="self-training-canvas"></canvas>
+        <header class="app-header">
+            <h1 class="app-title">🔄 Self-Training Classifier</h1>
+            <div class="header-right">
+                <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
+                <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
+                <button id="reset-btn" class="btn btn-ghost">↻ Reset</button>
             </div>
+        </header>
+        <main class="main-content">
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📊 Dataset</h2>
+                </div>
+                <div class="panel-body">
+                    <table id="data-table" class="data-table">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="panel-footer" style="font-size:0.7rem">
+                    <span style="color:#10b981">●</span> Labeled &nbsp;
+                    <span style="color:#f59e0b">●</span> Pseudo-labeled &nbsp;
+                    <span style="color:#666">●</span> Unlabeled
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>📐 Self-Training Steps</h2>
+                    <span style="font-size:0.75rem;color:var(--text-muted)">Iter <span id="current-step">0</span></span>
+                </div>
+                <div class="panel-body">
+                    <div id="calc-steps" class="calc-steps">
+                        <div class="calc-placeholder">
+                            <p>Click <strong>Step</strong> to start training</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="panel viz-panel">
+                <div class="panel-header">
+                    <h2>🎨 Decision Boundary</h2>
+                </div>
+                <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
+                <div class="panel-footer">
+                    <div class="viz-stats">
+                        <span>Labeled: <strong id="viz-labeled">0</strong></span>
+                        <span>Unlabeled: <strong id="viz-unlabeled">0</strong></span>
+                    </div>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>⚙️ Parameters</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="param-section">
+                        <div class="param-item">
+                            <div class="param-header"><span class="param-name"><code>threshold</code></span><span
+                                    class="param-value" id="thresh-value">0.8</span></div>
+                            <input type="range" id="thresh-slider" class="slider" min="0.6" max="0.95" step="0.05"
+                                value="0.8" style="width:100%">
+                            <div style="font-size:0.65rem;color:var(--text-muted);margin-top:2px">Min confidence to add
+                                pseudo-label</div>
+                        </div>
+                    </div>
+                    <div class="param-section">
+                        <div class="param-section-title">💡 Algorithm</div>
+                        <ul class="taming-list">
+                            <li>Train on labeled data</li>
+                            <li>Predict unlabeled with confidence</li>
+                            <li>Add high-conf predictions as pseudo-labels</li>
+                            <li>Repeat until convergence</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <button id="apply-btn" class="btn btn-primary btn-block">Reset</button>
+                </div>
+            </section>
         </main>
     </div>
+    <script>
+        function generateData() {
+            const data = [];
+            // Labeled points (few)
+            [[2, 2], [3, 3]].forEach(c => data.push({ x: c[0] + (Math.random() - 0.5) * 0.5, y: c[1] + (Math.random() - 0.5) * 0.5, label: 0, status: 'labeled' }));
+            [[7, 7], [6, 6]].forEach(c => data.push({ x: c[0] + (Math.random() - 0.5) * 0.5, y: c[1] + (Math.random() - 0.5) * 0.5, label: 1, status: 'labeled' }));
+            // Unlabeled points (many)
+            for (let i = 0; i < 8; i++) {
+                const cx = Math.random() > 0.5 ? 2.5 : 6.5;
+                const cy = Math.random() > 0.5 ? 2.5 : 6.5;
+                data.push({ x: cx + (Math.random() - 0.5) * 2, y: cy + (Math.random() - 0.5) * 2, label: -1, status: 'unlabeled', trueLabel: cx < 5 ? 0 : 1 });
+            }
+            return data;
+        }
 
-    <script src="js/self-training.js"></script>
+        const colors = ['#ef4444', '#10b981'];
+        let data = generateData();
+        let params = { threshold: 0.8 };
+        let steps = [], currentStep = 0;
+        let isAutoRunning = false, autoInterval = null;
+
+        function sigmoid(z) { return 1 / (1 + Math.exp(-z)); }
+
+        function trainClassifier(labeledData) {
+            if (labeledData.length < 2) return { w1: 0, w2: 0, b: 0 };
+            let w1 = 0, w2 = 0, b = 0;
+            for (let ep = 0; ep < 100; ep++) {
+                labeledData.forEach(d => {
+                    const pred = sigmoid(w1 * d.x + w2 * d.y + b);
+                    const error = pred - d.label;
+                    w1 -= 0.1 * error * d.x;
+                    w2 -= 0.1 * error * d.y;
+                    b -= 0.1 * error;
+                });
+            }
+            return { w1, w2, b };
+        }
+
+        function predict(model, point) {
+            const z = model.w1 * point.x + model.w2 * point.y + model.b;
+            const prob = sigmoid(z);
+            return { pred: prob > 0.5 ? 1 : 0, conf: prob > 0.5 ? prob : 1 - prob };
+        }
+
+        function renderTable() {
+            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>Label</th><th>Status</th></tr>';
+            document.querySelector('#data-table tbody').innerHTML = data.map((d, i) => {
+                const cls = d.status === 'labeled' ? 'labeled' : d.status === 'pseudo' ? 'pseudo' : '';
+                return `<tr class="${cls}"><td style="color:var(--text-muted)">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td><td style="color:${d.label >= 0 ? colors[d.label] : '#666'}">${d.label >= 0 ? d.label : '?'}</td><td style="font-size:0.65rem">${d.status}</td></tr>`;
+            }).join('');
+        }
+
+        function generateSteps() {
+            steps = [];
+            data = generateData();
+            const labeled = data.filter(d => d.status === 'labeled');
+            const unlabeled = data.filter(d => d.status === 'unlabeled');
+
+            steps.push({
+                title: 'Initial State',
+                content: `<p>Few labeled samples, many unlabeled</p>
+                    <div class="feature-comparison">
+                        <div class="feature-card"><div class="feature-name">Labeled</div><div class="feature-value">${labeled.length}</div></div>
+                        <div class="feature-card"><div class="feature-name">Unlabeled</div><div class="feature-value">${unlabeled.length}</div></div>
+                    </div>`,
+                data: data.map(d => ({ ...d })), model: null
+            });
+
+            let currentData = data.map(d => ({ ...d }));
+            let iteration = 0;
+
+            while (iteration < 5) {
+                iteration++;
+                const labeledNow = currentData.filter(d => d.label >= 0);
+                const unlabeledNow = currentData.filter(d => d.label < 0);
+
+                if (unlabeledNow.length === 0) break;
+
+                // Train
+                const model = trainClassifier(labeledNow);
+
+                // Predict and find high confidence
+                let added = 0;
+                unlabeledNow.forEach(point => {
+                    const { pred, conf } = predict(model, point);
+                    if (conf >= params.threshold) {
+                        const idx = currentData.findIndex(d => d.x === point.x && d.y === point.y);
+                        if (idx >= 0) {
+                            currentData[idx].label = pred;
+                            currentData[idx].status = 'pseudo';
+                            added++;
+                        }
+                    }
+                });
+
+                steps.push({
+                    title: `Iteration ${iteration}`,
+                    content: `<p>Train on ${labeledNow.length} labeled points, predict unlabeled</p>
+                        <div class="feature-comparison">
+                            <div class="feature-card added"><div class="feature-name">Added</div><div class="feature-value">${added}</div></div>
+                            <div class="feature-card"><div class="feature-name">Remaining</div><div class="feature-value">${unlabeledNow.length - added}</div></div>
+                        </div>`,
+                    data: currentData.map(d => ({ ...d })), model
+                });
+
+                if (added === 0) break;
+            }
+
+            steps.push({
+                title: 'Training Complete',
+                content: `<div class="calc-result"><span class="calc-result-label">Final Labeled</span><span class="calc-result-value">${currentData.filter(d => d.label >= 0).length}</span></div>`,
+                data: currentData.map(d => ({ ...d })), model: trainClassifier(currentData.filter(d => d.label >= 0))
+            });
+        }
+
+        const canvas = document.getElementById('viz-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
+
+        function render(step = null) {
+            const w = canvas.width, h = canvas.height;
+            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, w, h);
+            const pad = 40, scale = v => pad + (v / 10) * (Math.min(w, h) - 2 * pad);
+
+            const currentData = step?.data || data;
+            const model = step?.model;
+
+            // Decision boundary
+            if (model && (model.w1 !== 0 || model.w2 !== 0)) {
+                for (let px = 0; px < w; px += 4) {
+                    for (let py = 0; py < h; py += 4) {
+                        const rx = ((px - pad) / (Math.min(w, h) - 2 * pad)) * 10;
+                        const ry = ((h - pad - py) / (Math.min(w, h) - 2 * pad)) * 10;
+                        const prob = sigmoid(model.w1 * rx + model.w2 * ry + model.b);
+                        ctx.fillStyle = prob > 0.5 ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)';
+                        ctx.fillRect(px, py, 4, 4);
+                    }
+                }
+            }
+
+            // Points
+            currentData.forEach(d => {
+                ctx.beginPath();
+                const radius = d.status === 'labeled' ? 10 : d.status === 'pseudo' ? 8 : 6;
+                ctx.arc(scale(d.x), h - scale(d.y), radius, 0, Math.PI * 2);
+
+                if (d.label >= 0) ctx.fillStyle = colors[d.label];
+                else ctx.fillStyle = '#555';
+                ctx.fill();
+
+                if (d.status === 'labeled') {
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                } else if (d.status === 'pseudo') {
+                    ctx.strokeStyle = '#f59e0b';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            });
+        }
+
+        function displayStep(step) {
+            const container = document.getElementById('calc-steps');
+            container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
+            container.querySelector('.calc-placeholder')?.remove();
+
+            const div = document.createElement('div');
+            div.className = 'calc-step active';
+            div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
+            container.appendChild(div);
+            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+            data = step.data;
+            renderTable();
+            render(step);
+            document.getElementById('viz-labeled').textContent = step.data.filter(d => d.label >= 0).length;
+            document.getElementById('viz-unlabeled').textContent = step.data.filter(d => d.label < 0).length;
+        }
+
+        function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 1200); }
+        function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
+        function reset() { stopAuto(); currentStep = 0; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to start training</p></div>'; generateSteps(); renderTable(); render(); }
+
+        document.getElementById('step-btn').addEventListener('click', step);
+        document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
+        document.getElementById('reset-btn').addEventListener('click', reset);
+        document.getElementById('apply-btn').addEventListener('click', reset);
+        document.getElementById('thresh-slider').addEventListener('input', e => { params.threshold = parseFloat(e.target.value); document.getElementById('thresh-value').textContent = params.threshold; });
+
+        window.addEventListener('resize', resizeCanvas);
+        generateSteps();
+        renderTable();
+        resizeCanvas();
+    </script>
 </body>
 
 </html>

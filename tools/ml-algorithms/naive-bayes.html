@@ -41,7 +41,7 @@
 
         .main-content {
             display: grid;
-            grid-template-columns: 280px 1fr 1fr 280px;
+            grid-template-columns: 300px 1fr 1fr 260px;
             gap: 12px;
             padding: 12px;
             overflow: hidden;
@@ -86,30 +86,25 @@
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
         }
 
         .data-table th {
             background: var(--bg-secondary);
-            padding: 6px;
+            padding: 5px;
             text-align: left;
             border-bottom: 2px solid var(--accent-primary);
-            font-size: 0.7rem;
         }
 
         .data-table td {
-            padding: 5px 6px;
+            padding: 4px 5px;
             border-bottom: 1px solid var(--border-color);
-        }
-
-        .data-table tr.query {
-            background: rgba(245, 158, 11, 0.2);
         }
 
         .calc-steps {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .calc-placeholder {
@@ -125,7 +120,7 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 12px;
+            padding: 10px;
             animation: fadeIn 0.3s;
         }
 
@@ -134,130 +129,132 @@
         }
 
         .calc-step.completed {
-            opacity: 0.7;
+            opacity: 0.6;
         }
 
         .calc-step-header {
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .calc-step-number {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             background: var(--accent-gradient);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: white;
         }
 
         .calc-step-title {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
         }
 
         .calc-step-content {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: var(--text-secondary);
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
-        .calc-equation {
+        .calc-box {
             background: rgba(0, 0, 0, 0.3);
             border-radius: 6px;
-            padding: 10px;
-            margin: 8px 0;
+            padding: 8px;
+            margin: 6px 0;
             font-family: var(--font-mono);
-            text-align: center;
-            font-size: 0.85rem;
+            font-size: 0.6rem;
+            overflow-x: auto;
+            line-height: 1.6;
         }
 
         .calc-result {
             display: flex;
             justify-content: space-between;
-            padding: 8px 12px;
+            padding: 6px 10px;
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.3);
             border-radius: 6px;
-            margin-top: 8px;
+            margin-top: 6px;
         }
 
         .calc-result-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
         }
 
         .calc-result-value {
             font-family: var(--font-mono);
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--success);
         }
 
-        .feature-comparison {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .feature-card {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
-            padding: 8px;
-            text-align: center;
-        }
-
-        .feature-card.best {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.4);
-        }
-
-        .feature-name {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .feature-value {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .viz-stats {
+        .viz-panel .panel-body {
+            padding: 16px;
             display: flex;
-            gap: 20px;
-            justify-content: center;
-            font-size: 0.75rem;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .prob-bar {
             display: flex;
-            height: 30px;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 8px 0;
+            align-items: center;
+            gap: 10px;
         }
 
-        .prob-bar-segment {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+        .prob-label {
+            width: 60px;
             font-size: 0.75rem;
             font-weight: 600;
         }
 
+        .prob-track {
+            flex: 1;
+            height: 24px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .prob-fill {
+            height: 100%;
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            font-size: 0.7rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .prob-fill.yes {
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+
+        .prob-fill.no {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+        }
+
+        .query-box {
+            padding: 10px;
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 8px;
+            font-size: 0.75rem;
+        }
+
         .param-section {
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
-            margin-bottom: 12px;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
         }
 
         .param-section:last-child {
@@ -269,7 +266,7 @@
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .taming-list {
@@ -278,9 +275,9 @@
         }
 
         .taming-list li {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-muted);
-            padding: 4px 0 4px 16px;
+            padding: 3px 0 3px 14px;
             position: relative;
         }
 
@@ -289,6 +286,11 @@
             position: absolute;
             left: 0;
             color: var(--success);
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-top: 6px;
         }
 
         @keyframes fadeIn {
@@ -306,7 +308,7 @@
 <body>
     <div class="app-container">
         <header class="app-header">
-            <h1 class="app-title">📊 Naive Bayes Classifier</h1>
+            <h1 class="app-title">📊 Naive Bayes - Step by Step</h1>
             <div class="header-right">
                 <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
                 <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
@@ -316,7 +318,7 @@
         <main class="main-content">
             <section class="panel">
                 <div class="panel-header">
-                    <h2>📊 Training Data</h2>
+                    <h2>📊 Training Data (Play Tennis)</h2>
                 </div>
                 <div class="panel-body">
                     <table id="data-table" class="data-table">
@@ -324,11 +326,14 @@
                         <tbody></tbody>
                     </table>
                 </div>
+                <div class="panel-footer" style="font-size:0.65rem;color:var(--text-muted)">
+                    <span style="color:#10b981">Yes</span> = Play | <span style="color:#ef4444">No</span> = Don't Play
+                </div>
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>📐 Bayes Calculations</h2>
-                    <span style="font-size:0.75rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
+                    <h2>📐 Bayes Theorem Calculations</h2>
+                    <span style="font-size:0.7rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
                             id="total-steps">0</span></span>
                 </div>
                 <div class="panel-body">
@@ -339,180 +344,206 @@
                     </div>
                 </div>
             </section>
-            <section class="panel">
+            <section class="panel viz-panel">
                 <div class="panel-header">
-                    <h2>🎨 Probability Breakdown</h2>
+                    <h2>🎨 Probability Visualization</h2>
                 </div>
-                <div class="panel-body" id="prob-viz">
-                    <p style="color:var(--text-muted);text-align:center;margin-top:40px">Probabilities will appear as
-                        you step through</p>
-                </div>
-                <div class="panel-footer">
-                    <div class="viz-stats">
-                        <span>Query: <strong id="viz-query">-</strong></span>
-                        <span>Prediction: <strong id="viz-pred">-</strong></span>
+                <div class="panel-body">
+                    <div class="query-box" id="query-box">Query: ?</div>
+                    <div style="margin-top: 20px">
+                        <h4 style="font-size:0.75rem;margin-bottom:10px">P(Play | Evidence):</h4>
+                        <div class="prob-bar">
+                            <span class="prob-label" style="color:#10b981">Yes</span>
+                            <div class="prob-track">
+                                <div id="prob-yes" class="prob-fill yes" style="width:50%">50%</div>
+                            </div>
+                        </div>
+                        <div class="prob-bar" style="margin-top:8px">
+                            <span class="prob-label" style="color:#ef4444">No</span>
+                            <div class="prob-track">
+                                <div id="prob-no" class="prob-fill no" style="width:50%">50%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="prediction-box"
+                        style="margin-top:20px;padding:12px;background:rgba(99,102,241,0.2);border-radius:8px;text-align:center">
+                        <span style="font-size:0.8rem">Prediction: <strong id="viz-pred">?</strong></span>
                     </div>
                 </div>
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>⚙️ Parameters</h2>
+                    <h2>⚙️ Bayes Formula</h2>
                 </div>
                 <div class="panel-body">
                     <div class="param-section">
-                        <div class="param-section-title">💡 Bayes Theorem</div>
-                        <div class="calc-equation" style="font-size:0.8rem">P(C|X) = P(X|C) × P(C) / P(X)</div>
+                        <div class="calc-box" style="text-align:center;font-size:0.7rem">
+                            P(C|X) = P(X|C) × P(C) / P(X)
+                        </div>
+                    </div>
+                    <div class="param-section">
+                        <div class="param-section-title">💡 Key Concepts</div>
                         <ul class="taming-list">
                             <li>P(C) = Prior probability of class</li>
                             <li>P(X|C) = Likelihood of features given class</li>
                             <li>"Naive" = features are independent</li>
+                            <li>Multiply likelihoods together</li>
                         </ul>
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button id="apply-btn" class="btn btn-primary btn-block">New Random Query</button>
+                    <button id="random-btn" class="btn btn-primary btn-block">🎲 Random Query</button>
+                    <button id="apply-btn" class="btn btn-secondary btn-block">Reset</button>
                 </div>
             </section>
         </main>
     </div>
     <script>
-        // Weather dataset for golf
         const data = [
-            { outlook: 'Sunny', temp: 'Hot', humidity: 'High', play: 'No' },
-            { outlook: 'Sunny', temp: 'Hot', humidity: 'High', play: 'No' },
-            { outlook: 'Overcast', temp: 'Hot', humidity: 'High', play: 'Yes' },
-            { outlook: 'Rain', temp: 'Mild', humidity: 'High', play: 'Yes' },
-            { outlook: 'Rain', temp: 'Cool', humidity: 'Normal', play: 'Yes' },
-            { outlook: 'Rain', temp: 'Cool', humidity: 'Normal', play: 'No' },
-            { outlook: 'Overcast', temp: 'Cool', humidity: 'Normal', play: 'Yes' },
-            { outlook: 'Sunny', temp: 'Mild', humidity: 'High', play: 'No' },
-            { outlook: 'Sunny', temp: 'Cool', humidity: 'Normal', play: 'Yes' },
-            { outlook: 'Rain', temp: 'Mild', humidity: 'Normal', play: 'Yes' },
-            { outlook: 'Sunny', temp: 'Mild', humidity: 'Normal', play: 'Yes' },
-            { outlook: 'Overcast', temp: 'Mild', humidity: 'High', play: 'Yes' },
-            { outlook: 'Overcast', temp: 'Hot', humidity: 'Normal', play: 'Yes' },
-            { outlook: 'Rain', temp: 'Mild', humidity: 'High', play: 'No' }
+            { id: 1, outlook: 'Sunny', temp: 'Hot', humidity: 'High', wind: 'Weak', play: 'No' },
+            { id: 2, outlook: 'Sunny', temp: 'Hot', humidity: 'High', wind: 'Strong', play: 'No' },
+            { id: 3, outlook: 'Overcast', temp: 'Hot', humidity: 'High', wind: 'Weak', play: 'Yes' },
+            { id: 4, outlook: 'Rain', temp: 'Mild', humidity: 'High', wind: 'Weak', play: 'Yes' },
+            { id: 5, outlook: 'Rain', temp: 'Cool', humidity: 'Normal', wind: 'Weak', play: 'Yes' },
+            { id: 6, outlook: 'Rain', temp: 'Cool', humidity: 'Normal', wind: 'Strong', play: 'No' },
+            { id: 7, outlook: 'Overcast', temp: 'Cool', humidity: 'Normal', wind: 'Strong', play: 'Yes' },
+            { id: 8, outlook: 'Sunny', temp: 'Mild', humidity: 'High', wind: 'Weak', play: 'No' },
+            { id: 9, outlook: 'Sunny', temp: 'Cool', humidity: 'Normal', wind: 'Weak', play: 'Yes' },
+            { id: 10, outlook: 'Rain', temp: 'Mild', humidity: 'Normal', wind: 'Weak', play: 'Yes' },
+            { id: 11, outlook: 'Sunny', temp: 'Mild', humidity: 'Normal', wind: 'Strong', play: 'Yes' },
+            { id: 12, outlook: 'Overcast', temp: 'Mild', humidity: 'High', wind: 'Strong', play: 'Yes' },
+            { id: 13, outlook: 'Overcast', temp: 'Hot', humidity: 'Normal', wind: 'Weak', play: 'Yes' },
+            { id: 14, outlook: 'Rain', temp: 'Mild', humidity: 'High', wind: 'Strong', play: 'No' }
         ];
 
-        const features = ['outlook', 'temp', 'humidity'];
-        const classes = ['Yes', 'No'];
-        const colors = { Yes: '#10b981', No: '#ef4444' };
-        let query = { outlook: 'Sunny', temp: 'Cool', humidity: 'High' };
+        const outlooks = ['Sunny', 'Overcast', 'Rain'];
+        const humidities = ['High', 'Normal'];
+        const winds = ['Weak', 'Strong'];
+
+        function randomQuery() {
+            return {
+                outlook: outlooks[Math.floor(Math.random() * 3)],
+                humidity: humidities[Math.floor(Math.random() * 2)],
+                wind: winds[Math.floor(Math.random() * 2)]
+            };
+        }
+
+        let query = randomQuery();
         let steps = [], currentStep = 0;
+        let pYes = 0.5, pNo = 0.5;
         let isAutoRunning = false, autoInterval = null;
 
         function renderTable() {
-            document.querySelector('#data-table thead').innerHTML = '<tr><th>Outlook</th><th>Temp</th><th>Humid</th><th>Play?</th></tr>';
+            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>Outlook</th><th>Humid</th><th>Wind</th><th>Play?</th></tr>';
             document.querySelector('#data-table tbody').innerHTML = data.map(d =>
-                `<tr><td>${d.outlook}</td><td>${d.temp}</td><td>${d.humidity}</td><td style="color:${colors[d.play]}">${d.play}</td></tr>`
+                `<tr><td style="font-weight:600">${d.id}</td><td>${d.outlook}</td><td>${d.humidity}</td><td>${d.wind}</td><td style="color:${d.play === 'Yes' ? '#10b981' : '#ef4444'};font-weight:600">${d.play}</td></tr>`
             ).join('');
         }
 
-        // Calculate counts
-        function countClass(c) { return data.filter(d => d.play === c).length; }
-        function countFeatureGivenClass(feature, value, c) { return data.filter(d => d.play === c && d[feature] === value).length; }
+        function count(feature, value, playValue) {
+            return data.filter(d => d[feature] === value && d.play === playValue).length;
+        }
 
         function generateSteps() {
             steps = [];
-            const outlooks = ['Sunny', 'Overcast', 'Rain'];
-            const temps = ['Hot', 'Mild', 'Cool'];
-            const humids = ['High', 'Normal'];
-            query = { outlook: outlooks[Math.floor(Math.random() * 3)], temp: temps[Math.floor(Math.random() * 3)], humidity: humids[Math.floor(Math.random() * 2)] };
+            const yesCount = data.filter(d => d.play === 'Yes').length;
+            const noCount = data.length - yesCount;
+
+            document.getElementById('query-box').innerHTML = `<strong>Query:</strong> Outlook=${query.outlook}, Humidity=${query.humidity}, Wind=${query.wind}<br><br>Will we play tennis?`;
 
             steps.push({
-                title: 'Query to Classify',
-                content: `<p>Classify this weather condition:</p>
-                    <div class="feature-comparison">
-                        ${features.map(f => `<div class="feature-card"><div class="feature-name">${f}</div><div class="feature-value">${query[f]}</div></div>`).join('')}
+                title: 'Our Classification Problem',
+                content: `<p>Given this evidence:</p>
+                    <div class="calc-box">
+                    Outlook = ${query.outlook}<br>
+                    Humidity = ${query.humidity}<br>
+                    Wind = ${query.wind}
                     </div>
-                    <p style="margin-top:10px">Will we play golf?</p>`,
-                probs: null
+                    <p>Should we play tennis (Yes or No)?</p>`,
+                pYes: 0.5, pNo: 0.5
             });
 
             // Prior probabilities
-            const n = data.length;
-            const priors = {};
-            classes.forEach(c => priors[c] = countClass(c) / n);
+            const priorYes = yesCount / data.length;
+            const priorNo = noCount / data.length;
 
             steps.push({
-                title: 'Calculate Priors P(C)',
-                content: `<p>Count occurrences of each class:</p>
-                    <div class="feature-comparison">
-                        ${classes.map(c => `<div class="feature-card" style="border-left:3px solid ${colors[c]}"><div class="feature-name">P(${c})</div><div class="feature-value">${countClass(c)}/${n} = ${priors[c].toFixed(3)}</div></div>`).join('')}
-                    </div>`,
-                probs: { priors }
+                title: 'Step 1: Prior Probabilities',
+                content: `<p>How often does each class occur?</p>
+                    <div class="calc-box">
+                    Total examples: ${data.length}<br><br>
+                    P(Yes) = ${yesCount} / ${data.length} = <strong>${priorYes.toFixed(4)}</strong><br>
+                    P(No) = ${noCount} / ${data.length} = <strong>${priorNo.toFixed(4)}</strong>
+                    </div>
+                    <p>These are our starting beliefs before seeing evidence.</p>`,
+                pYes: priorYes, pNo: priorNo
             });
 
-            // Likelihoods
-            const likelihoods = {};
-            classes.forEach(c => {
-                likelihoods[c] = {};
-                const classCount = countClass(c);
-                features.forEach(f => {
-                    likelihoods[c][f] = (countFeatureGivenClass(f, query[f], c) + 1) / (classCount + 2); // Laplace smoothing
-                });
-            });
+            // Likelihoods for each feature
+            const features = [
+                { name: 'outlook', value: query.outlook },
+                { name: 'humidity', value: query.humidity },
+                { name: 'wind', value: query.wind }
+            ];
+
+            let runningYes = priorYes;
+            let runningNo = priorNo;
 
             features.forEach(f => {
+                const countYes = count(f.name, f.value, 'Yes');
+                const countNo = count(f.name, f.value, 'No');
+                const likelihoodYes = (countYes + 1) / (yesCount + 3); // Laplace smoothing
+                const likelihoodNo = (countNo + 1) / (noCount + 3);
+
+                runningYes *= likelihoodYes;
+                runningNo *= likelihoodNo;
+
                 steps.push({
-                    title: `Likelihood: ${f} = ${query[f]}`,
-                    content: `<p>P(${f}=${query[f]} | Class):</p>
-                        <div class="feature-comparison">
-                            ${classes.map(c => `<div class="feature-card" style="border-left:3px solid ${colors[c]}"><div class="feature-name">P(${query[f]}|${c})</div><div class="feature-value">${likelihoods[c][f].toFixed(3)}</div></div>`).join('')}
+                    title: `Likelihood: ${f.name}=${f.value}`,
+                    content: `<p>How often does ${f.name}=${f.value} occur in each class?</p>
+                        <div class="calc-box">
+                        In Yes examples: ${countYes} out of ${yesCount}<br>
+                        P(${f.value}|Yes) = (${countYes}+1)/(${yesCount}+3) = <strong>${likelihoodYes.toFixed(4)}</strong><br><br>
+                        In No examples: ${countNo} out of ${noCount}<br>
+                        P(${f.value}|No) = (${countNo}+1)/(${noCount}+3) = <strong>${likelihoodNo.toFixed(4)}</strong><br><br>
+                        <em>(+1 and +3 are Laplace smoothing to avoid zeros)</em>
                         </div>`,
-                    probs: { priors, likelihoods }
+                    pYes: runningYes / (runningYes + runningNo), pNo: runningNo / (runningYes + runningNo)
                 });
             });
 
-            // Posterior
-            const posteriors = {};
-            classes.forEach(c => {
-                posteriors[c] = priors[c];
-                features.forEach(f => posteriors[c] *= likelihoods[c][f]);
-            });
-
-            // Normalize
-            const total = Object.values(posteriors).reduce((s, v) => s + v, 0);
-            classes.forEach(c => posteriors[c] /= total);
+            // Final calculation
+            const total = runningYes + runningNo;
+            const finalPYes = runningYes / total;
+            const finalPNo = runningNo / total;
+            const prediction = finalPYes > finalPNo ? 'Yes' : 'No';
 
             steps.push({
-                title: 'Combine: P(C|X)',
-                content: `<div class="calc-equation">P(C|X) ∝ P(C) × Π P(xᵢ|C)</div>
-                    <div class="feature-comparison">
-                        ${classes.map(c => `<div class="feature-card ${posteriors[c] > 0.5 ? 'best' : ''}" style="border-left:3px solid ${colors[c]}"><div class="feature-name">P(${c}|X)</div><div class="feature-value">${(posteriors[c] * 100).toFixed(1)}%</div></div>`).join('')}
-                    </div>`,
-                probs: { posteriors }
-            });
-
-            const prediction = posteriors.Yes > posteriors.No ? 'Yes' : 'No';
-            steps.push({
-                title: 'Prediction',
-                content: `<div class="calc-result"><span class="calc-result-label">Play Golf?</span><span class="calc-result-value" style="color:${colors[prediction]}">${prediction}</span></div>
-                    <p style="margin-top:10px;font-size:0.8rem">Confidence: ${(Math.max(posteriors.Yes, posteriors.No) * 100).toFixed(1)}%</p>`,
-                probs: { posteriors, prediction }
+                title: 'Final: Combine All Probabilities',
+                content: `<p>Multiply prior × all likelihoods:</p>
+                    <div class="calc-box">
+                    P(Yes) × P(evidence|Yes) = ${runningYes.toFixed(6)}<br>
+                    P(No) × P(evidence|No) = ${runningNo.toFixed(6)}<br><br>
+                    Normalize to sum to 1:<br>
+                    P(Yes|evidence) = ${runningYes.toFixed(6)} / ${total.toFixed(6)} = <strong>${finalPYes.toFixed(4)}</strong><br>
+                    P(No|evidence) = ${runningNo.toFixed(6)} / ${total.toFixed(6)} = <strong>${finalPNo.toFixed(4)}</strong>
+                    </div>
+                    <div class="calc-result"><span class="calc-result-label">Prediction</span><span class="calc-result-value" style="color:${prediction === 'Yes' ? '#10b981' : '#ef4444'}">${prediction}</span></div>`,
+                pYes: finalPYes, pNo: finalPNo, prediction
             });
 
             document.getElementById('total-steps').textContent = steps.length;
         }
 
-        function renderProbViz(probs) {
-            const container = document.getElementById('prob-viz');
-            if (!probs) { container.innerHTML = '<p style="color:var(--text-muted);text-align:center;margin-top:40px">Probabilities will appear as you step through</p>'; return; }
-
-            let html = '';
-            if (probs.priors) {
-                html += `<h4 style="font-size:0.8rem;margin-bottom:8px">Prior Probabilities</h4>
-                    <div class="prob-bar">
-                        ${classes.map(c => `<div class="prob-bar-segment" style="width:${probs.priors[c] * 100}%;background:${colors[c]}">${(probs.priors[c] * 100).toFixed(0)}%</div>`).join('')}
-                    </div>`;
-            }
-            if (probs.posteriors) {
-                html += `<h4 style="font-size:0.8rem;margin:16px 0 8px">Posterior Probabilities</h4>
-                    <div class="prob-bar">
-                        ${classes.map(c => `<div class="prob-bar-segment" style="width:${probs.posteriors[c] * 100}%;background:${colors[c]}">${c}: ${(probs.posteriors[c] * 100).toFixed(0)}%</div>`).join('')}
-                    </div>`;
-            }
-            container.innerHTML = html || '<p style="color:var(--text-muted);text-align:center">...</p>';
+        function updateViz(step) {
+            const pY = step?.pYes ?? 0.5;
+            const pN = step?.pNo ?? 0.5;
+            document.getElementById('prob-yes').style.width = (pY * 100) + '%';
+            document.getElementById('prob-yes').textContent = (pY * 100).toFixed(1) + '%';
+            document.getElementById('prob-no').style.width = (pN * 100) + '%';
+            document.getElementById('prob-no').textContent = (pN * 100).toFixed(1) + '%';
+            document.getElementById('viz-pred').textContent = step?.prediction || '?';
+            document.getElementById('viz-pred').style.color = step?.prediction === 'Yes' ? '#10b981' : step?.prediction === 'No' ? '#ef4444' : '#fff';
         }
 
         function displayStep(step) {
@@ -526,21 +557,19 @@
             container.appendChild(div);
             div.scrollIntoView({ behavior: 'smooth', block: 'end' });
 
-            renderProbViz(step.probs);
-            document.getElementById('viz-query').textContent = `${query.outlook}, ${query.temp}, ${query.humidity}`;
-            document.getElementById('viz-pred').textContent = step.probs?.prediction || '-';
-            document.getElementById('viz-pred').style.color = step.probs?.prediction ? colors[step.probs.prediction] : 'inherit';
+            updateViz(step);
         }
 
         function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
         function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 1000); }
         function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
-        function reset() { stopAuto(); currentStep = 0; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to classify</p></div>'; generateSteps(); renderProbViz(null); document.getElementById('viz-pred').textContent = '-'; }
+        function reset() { stopAuto(); currentStep = 0; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to classify</p></div>'; generateSteps(); updateViz(null); }
 
         document.getElementById('step-btn').addEventListener('click', step);
         document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
         document.getElementById('reset-btn').addEventListener('click', reset);
         document.getElementById('apply-btn').addEventListener('click', reset);
+        document.getElementById('random-btn').addEventListener('click', () => { query = randomQuery(); reset(); });
 
         renderTable();
         generateSteps();

@@ -41,7 +41,7 @@
 
         .main-content {
             display: grid;
-            grid-template-columns: 260px 1fr 1.2fr 280px;
+            grid-template-columns: 280px 1fr 1.2fr 280px;
             gap: 12px;
             padding: 12px;
             overflow: hidden;
@@ -86,25 +86,30 @@
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
 
         .data-table th {
             background: var(--bg-secondary);
-            padding: 8px;
+            padding: 6px;
             text-align: left;
             border-bottom: 2px solid var(--accent-primary);
         }
 
         .data-table td {
-            padding: 6px 8px;
+            padding: 5px 6px;
             border-bottom: 1px solid var(--border-color);
+            font-family: var(--font-mono);
+        }
+
+        .data-table tr.highlight td {
+            background: rgba(99, 102, 241, 0.2);
         }
 
         .calc-steps {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .calc-placeholder {
@@ -120,7 +125,7 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 12px;
+            padding: 10px;
             animation: fadeIn 0.3s;
         }
 
@@ -129,94 +134,70 @@
         }
 
         .calc-step.completed {
-            opacity: 0.7;
+            opacity: 0.6;
         }
 
         .calc-step-header {
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .calc-step-number {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             background: var(--accent-gradient);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             color: white;
         }
 
         .calc-step-title {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
         }
 
         .calc-step-content {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
-        .calc-equation {
+        .calc-box {
             background: rgba(0, 0, 0, 0.3);
             border-radius: 6px;
-            padding: 10px;
-            margin: 8px 0;
+            padding: 8px;
+            margin: 6px 0;
             font-family: var(--font-mono);
-            text-align: center;
+            font-size: 0.7rem;
+            overflow-x: auto;
         }
 
         .calc-result {
             display: flex;
             justify-content: space-between;
-            padding: 8px 12px;
+            padding: 6px 10px;
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.3);
             border-radius: 6px;
-            margin-top: 8px;
+            margin-top: 6px;
         }
 
         .calc-result-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
         }
 
         .calc-result-value {
             font-family: var(--font-mono);
-            font-weight: 600;
-            color: var(--success);
-        }
-
-        .feature-comparison {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .feature-card {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
-            padding: 8px;
-            text-align: center;
-        }
-
-        .feature-name {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .feature-value {
-            font-family: var(--font-mono);
             font-size: 0.8rem;
             font-weight: 600;
+            color: var(--success);
         }
 
         .viz-panel .panel-body {
@@ -231,15 +212,15 @@
 
         .viz-stats {
             display: flex;
-            gap: 20px;
+            gap: 16px;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
 
         .param-section {
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
-            margin-bottom: 12px;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
         }
 
         .param-section:last-child {
@@ -251,17 +232,17 @@
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .param-item {
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .param-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .param-name code {
@@ -269,19 +250,19 @@
             background: rgba(0, 0, 0, 0.3);
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
 
         .param-value {
             font-family: var(--font-mono);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--accent-primary);
         }
 
         .param-description {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-muted);
-            margin-top: 4px;
+            margin-top: 2px;
         }
 
         .taming-list {
@@ -290,9 +271,9 @@
         }
 
         .taming-list li {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-muted);
-            padding: 4px 0 4px 16px;
+            padding: 3px 0 3px 14px;
             position: relative;
         }
 
@@ -301,6 +282,11 @@
             position: absolute;
             left: 0;
             color: var(--success);
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-top: 6px;
         }
 
         @keyframes fadeIn {
@@ -318,7 +304,7 @@
 <body>
     <div class="app-container">
         <header class="app-header">
-            <h1 class="app-title">🎯 Logistic Regression</h1>
+            <h1 class="app-title">🎯 Logistic Regression - Step by Step</h1>
             <div class="header-right">
                 <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
                 <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
@@ -336,17 +322,21 @@
                         <tbody></tbody>
                     </table>
                 </div>
+                <div class="panel-footer" style="font-size:0.65rem;color:var(--text-muted)">
+                    Point # shown on graph. <span style="color:#ef4444">●</span> Class 0 | <span
+                        style="color:#10b981">●</span> Class 1
+                </div>
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>📐 Gradient Descent</h2>
-                    <span style="font-size:0.75rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
+                    <h2>📐 Full Calculations</h2>
+                    <span style="font-size:0.7rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
                             id="total-steps">0</span></span>
                 </div>
                 <div class="panel-body">
                     <div id="calc-steps" class="calc-steps">
                         <div class="calc-placeholder">
-                            <p>Click <strong>Step</strong> to train classifier</p>
+                            <p>Click <strong>Step</strong> to see every calculation</p>
                         </div>
                     </div>
                 </div>
@@ -359,8 +349,8 @@
                 <div class="panel-footer">
                     <div class="viz-stats">
                         <span>Epoch: <strong id="viz-epoch">0</strong></span>
-                        <span>Log-Loss: <strong id="viz-loss">-</strong></span>
-                        <span>Accuracy: <strong id="viz-acc">-</strong></span>
+                        <span>Loss: <strong id="viz-loss">-</strong></span>
+                        <span>Acc: <strong id="viz-acc">-</strong></span>
                     </div>
                 </div>
             </section>
@@ -378,114 +368,194 @@
                             </div>
                             <input type="range" id="lr-slider" class="slider" min="0.1" max="2" step="0.1" value="0.5"
                                 style="width:100%">
+                            <div class="param-description">How big each weight update is</div>
                         </div>
                         <div class="param-item">
                             <div class="param-header">
                                 <span class="param-name"><code>max_iter</code></span>
-                                <span class="param-value" id="iter-value">30</span>
+                                <span class="param-value" id="iter-value">20</span>
                             </div>
-                            <input type="range" id="iter-slider" class="slider" min="10" max="100" step="10" value="30"
+                            <input type="range" id="iter-slider" class="slider" min="5" max="50" step="5" value="20"
                                 style="width:100%">
+                            <div class="param-description">Number of training epochs (ALL shown)</div>
                         </div>
                     </div>
                     <div class="param-section">
-                        <div class="param-section-title">💡 Key Insight</div>
+                        <div class="param-section-title">💡 Key Formulas</div>
                         <ul class="taming-list">
-                            <li>σ(z) = 1/(1+e⁻ᶻ) squashes to [0,1]</li>
-                            <li>Log-loss penalizes confident wrong predictions</li>
-                            <li>Decision boundary: where P(y=1) = 0.5</li>
+                            <li>σ(z) = 1/(1+e⁻ᶻ) → squashes to [0,1]</li>
+                            <li>z = w₁x + w₂y + b</li>
+                            <li>Loss = -[y·log(p) + (1-y)·log(1-p)]</li>
                         </ul>
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button id="apply-btn" class="btn btn-primary btn-block">Apply & Restart</button>
+                    <button id="random-btn" class="btn btn-primary btn-block">🎲 Random Data</button>
+                    <button id="apply-btn" class="btn btn-secondary btn-block">Apply & Restart</button>
                 </div>
             </section>
         </main>
     </div>
     <script>
-        // Generate linearly separable data
-        const data = [];
-        for (let i = 0; i < 15; i++) {
-            data.push({ x: Math.random() * 4, y: Math.random() * 4 + 3, label: 0 });
-            data.push({ x: Math.random() * 4 + 4, y: Math.random() * 4, label: 1 });
+        function generateData() {
+            const data = [];
+            // Class 0 - bottom-left region
+            for (let i = 0; i < 8; i++) {
+                data.push({ x: 1 + Math.random() * 3, y: 4 + Math.random() * 3, label: 0 });
+            }
+            // Class 1 - top-right region  
+            for (let i = 0; i < 8; i++) {
+                data.push({ x: 4 + Math.random() * 3, y: 1 + Math.random() * 3, label: 1 });
+            }
+            return data;
         }
 
-        let params = { lr: 0.5, maxIter: 30 };
+        let data = generateData();
+        let params = { lr: 0.5, maxIter: 20 };
         let w1 = 0, w2 = 0, b = 0;
         let steps = [], currentStep = 0;
         let isAutoRunning = false, autoInterval = null;
 
-        // Normalize
-        const xVals = data.map(d => d.x), yVals = data.map(d => d.y);
-        const xMean = xVals.reduce((a, b) => a + b) / xVals.length;
-        const yMean = yVals.reduce((a, b) => a + b) / yVals.length;
-        const xStd = Math.sqrt(xVals.reduce((s, v) => s + (v - xMean) ** 2, 0) / xVals.length) || 1;
-        const yStd = Math.sqrt(yVals.reduce((s, v) => s + (v - yMean) ** 2, 0) / yVals.length) || 1;
-        const norm = data.map(d => ({ x: (d.x - xMean) / xStd, y: (d.y - yMean) / yStd, label: d.label }));
+        // Normalize data
+        let norm = [], xMean, yMean, xStd, yStd;
+        function normalizeData() {
+            const xVals = data.map(d => d.x), yVals = data.map(d => d.y);
+            xMean = xVals.reduce((a, b) => a + b) / xVals.length;
+            yMean = yVals.reduce((a, b) => a + b) / yVals.length;
+            xStd = Math.sqrt(xVals.reduce((s, v) => s + (v - xMean) ** 2, 0) / xVals.length) || 1;
+            yStd = Math.sqrt(yVals.reduce((s, v) => s + (v - yMean) ** 2, 0) / yVals.length) || 1;
+            norm = data.map(d => ({ x: (d.x - xMean) / xStd, y: (d.y - yMean) / yStd, label: d.label }));
+        }
 
-        function sigmoid(z) { return 1 / (1 + Math.exp(-z)); }
+        function sigmoid(z) { return 1 / (1 + Math.exp(-Math.max(-500, Math.min(500, z)))); }
         function predict(d) { return sigmoid(w1 * d.x + w2 * d.y + b); }
-        function logLoss() { return -norm.reduce((s, d) => s + (d.label * Math.log(predict(d) + 1e-10) + (1 - d.label) * Math.log(1 - predict(d) + 1e-10)), 0) / norm.length; }
+        function logLoss() {
+            return -norm.reduce((s, d) => {
+                const p = Math.max(1e-10, Math.min(1 - 1e-10, predict(d)));
+                return s + (d.label * Math.log(p) + (1 - d.label) * Math.log(1 - p));
+            }, 0) / norm.length;
+        }
         function accuracy() { return norm.filter(d => (predict(d) >= 0.5) === (d.label === 1)).length / norm.length; }
 
         function renderTable() {
             document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>Class</th></tr>';
             document.querySelector('#data-table tbody').innerHTML = data.map((d, i) =>
-                `<tr><td style="color:var(--text-muted)">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td><td style="color:${d.label ? '#10b981' : '#ef4444'}">${d.label}</td></tr>`
+                `<tr id="row-${i}"><td style="font-weight:600">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td><td style="color:${d.label ? '#10b981' : '#ef4444'};font-weight:600">${d.label}</td></tr>`
             ).join('');
         }
 
         function generateSteps() {
             steps = []; w1 = 0; w2 = 0; b = 0;
+            normalizeData();
 
+            // Step 1: Show dataset
             steps.push({
-                title: 'Dataset Overview',
-                content: `<p>${data.length} samples, 2 classes (0 and 1)</p>
-                    <div class="calc-equation">P(y=1|x) = σ(w₁x₁ + w₂x₂ + b)</div>
-                    <p style="margin-top:8px">Goal: Learn weights to separate classes</p>`,
+                title: 'Our Dataset',
+                content: `<p>We have <strong>${data.length} points</strong> with 2 classes:</p>
+                    <div class="calc-box">
+                    Class 0 (red): ${data.filter(d => d.label === 0).length} points<br>
+                    Class 1 (green): ${data.filter(d => d.label === 1).length} points
+                    </div>
+                    <p>Look at the graph - each point has a number matching the table!</p>`,
                 w1: 0, w2: 0, b: 0, epoch: 0
             });
 
+            // Step 2: Initial weights
             steps.push({
-                title: 'Sigmoid Function',
-                content: `<div class="calc-equation">σ(z) = 1 / (1 + e⁻ᶻ)</div>
-                    <p>Maps any input to probability [0, 1]</p>
-                    <div class="feature-comparison">
-                        <div class="feature-card"><div class="feature-name">σ(-∞)</div><div class="feature-value">→ 0</div></div>
-                        <div class="feature-card"><div class="feature-name">σ(0)</div><div class="feature-value">= 0.5</div></div>
-                        <div class="feature-card"><div class="feature-name">σ(+∞)</div><div class="feature-value">→ 1</div></div>
+                title: 'Initialize Weights to 0',
+                content: `<p>We start with all weights = 0:</p>
+                    <div class="calc-box">
+                    w₁ = 0 (weight for X)<br>
+                    w₂ = 0 (weight for Y)<br>
+                    b = 0 (bias)
+                    </div>
+                    <p>The model knows nothing yet - it will predict 0.5 for everything!</p>`,
+                w1: 0, w2: 0, b: 0, epoch: 0
+            });
+
+            // Step 3: Explain sigmoid
+            steps.push({
+                title: 'The Sigmoid Function',
+                content: `<p>We use sigmoid to convert any number to a probability (0 to 1):</p>
+                    <div class="calc-box">σ(z) = 1 / (1 + e^(-z))</div>
+                    <p>Examples:</p>
+                    <div class="calc-box">
+                    σ(-5) = ${sigmoid(-5).toFixed(4)} ≈ 0 (very likely class 0)<br>
+                    σ(0) = ${sigmoid(0).toFixed(4)} = 0.5 (unsure)<br>
+                    σ(5) = ${sigmoid(5).toFixed(4)} ≈ 1 (very likely class 1)
                     </div>`,
                 w1: 0, w2: 0, b: 0, epoch: 0
             });
 
-            const showEvery = Math.max(1, Math.floor(params.maxIter / 10));
+            // All epochs with FULL detail
             for (let ep = 1; ep <= params.maxIter; ep++) {
+                // Compute gradients with full detail
                 let dw1 = 0, dw2 = 0, db = 0;
-                norm.forEach(d => {
-                    const error = predict(d) - d.label;
-                    dw1 += error * d.x; dw2 += error * d.y; db += error;
-                });
-                dw1 /= norm.length; dw2 /= norm.length; db /= norm.length;
-                w1 -= params.lr * dw1; w2 -= params.lr * dw2; b -= params.lr * db;
+                const predictions = [];
+                const errors = [];
 
-                if (ep <= 3 || ep % showEvery === 0 || ep === params.maxIter) {
-                    steps.push({
-                        title: `Epoch ${ep}`,
-                        content: `<div class="feature-comparison">
-                                <div class="feature-card"><div class="feature-name">w₁</div><div class="feature-value">${w1.toFixed(3)}</div></div>
-                                <div class="feature-card"><div class="feature-name">w₂</div><div class="feature-value">${w2.toFixed(3)}</div></div>
-                                <div class="feature-card"><div class="feature-name">b</div><div class="feature-value">${b.toFixed(3)}</div></div>
-                            </div>
-                            <div class="calc-result"><span class="calc-result-label">Log-Loss</span><span class="calc-result-value">${logLoss().toFixed(4)}</span></div>`,
-                        w1, w2, b, epoch: ep
-                    });
+                norm.forEach((d, i) => {
+                    const z = w1 * d.x + w2 * d.y + b;
+                    const p = sigmoid(z);
+                    const error = p - d.label;
+                    predictions.push(p);
+                    errors.push(error);
+                    dw1 += error * d.x;
+                    dw2 += error * d.y;
+                    db += error;
+                });
+                dw1 /= norm.length;
+                dw2 /= norm.length;
+                db /= norm.length;
+
+                const oldW1 = w1, oldW2 = w2, oldB = b;
+                const oldLoss = logLoss();
+
+                // Show predictions for first few points
+                let predDetail = '';
+                for (let i = 0; i < Math.min(4, norm.length); i++) {
+                    const z = oldW1 * norm[i].x + oldW2 * norm[i].y + oldB;
+                    predDetail += `Point ${i + 1}: z = ${oldW1.toFixed(2)}×${norm[i].x.toFixed(2)} + ${oldW2.toFixed(2)}×${norm[i].y.toFixed(2)} + ${oldB.toFixed(2)} = ${z.toFixed(3)}<br>`;
+                    predDetail += `  → σ(${z.toFixed(3)}) = ${predictions[i].toFixed(4)} (actual: ${data[i].label})<br>`;
                 }
+
+                steps.push({
+                    title: `Epoch ${ep}: Forward Pass`,
+                    content: `<p>Calculate prediction for each point:</p>
+                        <div class="calc-box" style="font-size:0.65rem">${predDetail}... (${norm.length - 4} more)</div>
+                        <div class="calc-result"><span class="calc-result-label">Current Loss</span><span class="calc-result-value">${oldLoss.toFixed(4)}</span></div>`,
+                    w1: oldW1, w2: oldW2, b: oldB, epoch: ep
+                });
+
+                // Update weights
+                w1 -= params.lr * dw1;
+                w2 -= params.lr * dw2;
+                b -= params.lr * db;
+
+                steps.push({
+                    title: `Epoch ${ep}: Update Weights`,
+                    content: `<p>Gradient descent update:</p>
+                        <div class="calc-box" style="font-size:0.65rem">
+                        ∂Loss/∂w₁ = ${dw1.toFixed(4)}<br>
+                        ∂Loss/∂w₂ = ${dw2.toFixed(4)}<br>
+                        ∂Loss/∂b = ${db.toFixed(4)}<br><br>
+                        w₁ = ${oldW1.toFixed(4)} - ${params.lr}×${dw1.toFixed(4)} = <strong>${w1.toFixed(4)}</strong><br>
+                        w₂ = ${oldW2.toFixed(4)} - ${params.lr}×${dw2.toFixed(4)} = <strong>${w2.toFixed(4)}</strong><br>
+                        b = ${oldB.toFixed(4)} - ${params.lr}×${db.toFixed(4)} = <strong>${b.toFixed(4)}</strong>
+                        </div>
+                        <div class="calc-result"><span class="calc-result-label">Accuracy</span><span class="calc-result-value">${(accuracy() * 100).toFixed(1)}%</span></div>`,
+                    w1, w2, b, epoch: ep
+                });
             }
 
+            // Final result
             steps.push({
-                title: 'Training Complete!',
-                content: `<div class="calc-equation">P(y=1) = σ(${w1.toFixed(2)}x₁ + ${w2.toFixed(2)}x₂ + ${b.toFixed(2)})</div>
+                title: '✅ Training Complete!',
+                content: `<p>Final model:</p>
+                    <div class="calc-box">
+                    P(class=1) = σ(${w1.toFixed(3)}×x + ${w2.toFixed(3)}×y + ${b.toFixed(3)})
+                    </div>
+                    <p>Decision boundary: where P = 0.5</p>
                     <div class="calc-result"><span class="calc-result-label">Final Accuracy</span><span class="calc-result-value">${(accuracy() * 100).toFixed(1)}%</span></div>`,
                 w1, w2, b, epoch: params.maxIter
             });
@@ -501,31 +571,66 @@
         function render(step = null) {
             const ww = canvas.width, hh = canvas.height;
             ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, ww, hh);
-            const pad = 40, scaleX = v => pad + (v / 8) * (ww - 2 * pad), scaleY = v => hh - pad - (v / 8) * (hh - 2 * pad);
+            const pad = 50, scaleX = v => pad + (v / 8) * (ww - 2 * pad), scaleY = v => hh - pad - (v / 8) * (hh - 2 * pad);
 
             const cw1 = step?.w1 ?? w1, cw2 = step?.w2 ?? w2, cb = step?.b ?? b;
 
+            // Grid lines
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 8; i++) {
+                ctx.beginPath(); ctx.moveTo(scaleX(i), pad); ctx.lineTo(scaleX(i), hh - pad); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(pad, scaleY(i)); ctx.lineTo(ww - pad, scaleY(i)); ctx.stroke();
+            }
+
+            // Axis labels
+            ctx.fillStyle = '#666';
+            ctx.font = '10px Inter';
+            ctx.textAlign = 'center';
+            for (let i = 0; i <= 8; i += 2) {
+                ctx.fillText(i, scaleX(i), hh - 20);
+                ctx.fillText(i, 20, scaleY(i) + 3);
+            }
+            ctx.fillText('X', ww / 2, hh - 5);
+            ctx.save();
+            ctx.translate(8, hh / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Y', 0, 0);
+            ctx.restore();
+
             // Decision boundary region
             if (cw1 !== 0 || cw2 !== 0 || cb !== 0) {
-                for (let px = 0; px < ww; px += 4) {
-                    for (let py = 0; py < hh; py += 4) {
+                for (let px = pad; px < ww - pad; px += 4) {
+                    for (let py = pad; py < hh - pad; py += 4) {
                         const rx = ((px - pad) / (ww - 2 * pad)) * 8;
                         const ry = ((hh - pad - py) / (hh - 2 * pad)) * 8;
                         const nx = (rx - xMean) / xStd, ny = (ry - yMean) / yStd;
                         const p = sigmoid(cw1 * nx + cw2 * ny + cb);
-                        ctx.fillStyle = p > 0.5 ? `rgba(16,185,129,${(p - 0.5) * 0.3})` : `rgba(239,68,68,${(0.5 - p) * 0.3})`;
+                        ctx.fillStyle = p > 0.5 ? `rgba(16,185,129,${(p - 0.5) * 0.4})` : `rgba(239,68,68,${(0.5 - p) * 0.4})`;
                         ctx.fillRect(px, py, 4, 4);
                     }
                 }
             }
 
-            // Points
-            data.forEach(d => {
+            // Data points with numbers
+            data.forEach((d, i) => {
+                const px = scaleX(d.x), py = scaleY(d.y);
+
+                // Point circle
                 ctx.beginPath();
-                ctx.arc(scaleX(d.x), scaleY(d.y), 7, 0, Math.PI * 2);
+                ctx.arc(px, py, 12, 0, Math.PI * 2);
                 ctx.fillStyle = d.label ? '#10b981' : '#ef4444';
                 ctx.fill();
-                ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.stroke();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Point number
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 9px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(i + 1, px, py);
             });
         }
 
@@ -543,23 +648,25 @@
             w1 = step.w1; w2 = step.w2; b = step.b;
             render(step);
             document.getElementById('viz-epoch').textContent = step.epoch;
-            document.getElementById('viz-loss').textContent = logLoss().toFixed(3);
+            document.getElementById('viz-loss').textContent = logLoss().toFixed(4);
             document.getElementById('viz-acc').textContent = (accuracy() * 100).toFixed(0) + '%';
         }
 
         function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
-        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 600); }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 400); }
         function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
-        function reset() { stopAuto(); currentStep = 0; w1 = w2 = b = 0; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to train classifier</p></div>'; generateSteps(); render(); }
+        function reset() { stopAuto(); currentStep = 0; w1 = w2 = b = 0; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to see every calculation</p></div>'; generateSteps(); render(); }
 
         document.getElementById('step-btn').addEventListener('click', step);
         document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
         document.getElementById('reset-btn').addEventListener('click', reset);
         document.getElementById('apply-btn').addEventListener('click', reset);
+        document.getElementById('random-btn').addEventListener('click', () => { data = generateData(); reset(); renderTable(); });
         document.getElementById('lr-slider').addEventListener('input', e => { params.lr = parseFloat(e.target.value); document.getElementById('lr-value').textContent = params.lr; });
         document.getElementById('iter-slider').addEventListener('input', e => { params.maxIter = parseInt(e.target.value); document.getElementById('iter-value').textContent = params.maxIter; });
 
         window.addEventListener('resize', resizeCanvas);
+        normalizeData();
         renderTable();
         resizeCanvas();
         generateSteps();
