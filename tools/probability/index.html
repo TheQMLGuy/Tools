@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Probability Distributions | QML Hub</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../styles/shared.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .app {
+            display: grid;
+            grid-template-rows: 60px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            gap: 16px;
+        }
+
+        .title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            white-space: nowrap;
+        }
+
+        .dist-selector {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .dist-selector-btn {
+            width: 100%;
+            padding: 10px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+
+        .dist-selector-btn:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .dist-selector-btn .selected-name {
+            font-weight: 500;
+        }
+
+        .dist-selector-btn .category-badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            background: var(--accent-primary);
+            border-radius: 4px;
+            color: white;
+        }
+
+        .dist-selector-btn .arrow {
+            transition: transform 0.2s;
+        }
+
+        .dist-selector-btn.open .arrow {
+            transform: rotate(180deg);
+        }
+
+        .dist-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 4px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            max-height: 400px;
+            overflow: hidden;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .dist-dropdown.open {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dist-search {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dist-search input {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .dist-search input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .dist-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .dist-category {
+            padding: 8px 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--bg-secondary);
+            position: sticky;
+            top: 0;
+        }
+
+        .dist-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.15s;
+        }
+
+        .dist-item:hover {
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        .dist-item.active {
+            background: rgba(99, 102, 241, 0.25);
+        }
+
+        .dist-item .name {
+            font-size: 0.9rem;
+        }
+
+        .dist-count {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 16px;
+            padding: 16px;
+            overflow: hidden;
+        }
+
+        .graph-section {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .graph-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .graph-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .graph-toggle {
+            display: flex;
+            gap: 6px;
+        }
+
+        .toggle-btn {
+            padding: 6px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .toggle-btn.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        .graph-body {
+            flex: 1;
+            position: relative;
+            min-height: 400px;
+        }
+
+        .graph-body canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .graph-overlay {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            display: none;
+        }
+
+        .graph-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .panel {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-body {
+            padding: 16px;
+            overflow: auto;
+        }
+
+        .param {
+            margin-bottom: 16px;
+        }
+
+        .param:last-child {
+            margin-bottom: 0;
+        }
+
+        .param-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .param-name {
+            font-size: 0.85rem;
+        }
+
+        .param-name code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .param-value {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-primary);
+        }
+
+        .formula-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .sample-table {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sample-table .panel-body {
+            flex: 1;
+            overflow: auto;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+
+        th {
+            background: var(--bg-secondary);
+            padding: 10px 12px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            border-bottom: 2px solid var(--accent-primary);
+        }
+
+        td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        tr:hover td {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .actions .btn {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <header class="header">
+            <h1 class="title">🎲 Probability Distributions</h1>
+            <div class="dist-selector">
+                <button class="dist-selector-btn" onclick="toggleDropdown()">
+                    <span class="selected-name" id="selected-dist-name">Normal</span>
+                    <span class="category-badge" id="selected-dist-category">Continuous</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="dist-dropdown" id="dist-dropdown">
+                    <div class="dist-search">
+                        <input type="text" placeholder="Search distributions..." id="dist-search"
+                            oninput="filterDistributions()">
+                    </div>
+                    <div class="dist-list" id="dist-list"></div>
+                    <div class="dist-count" id="dist-count">50+ distributions</div>
+                </div>
+            </div>
+            <div class="graph-toggle">
+                <button class="toggle-btn active" data-type="pdf">PDF</button>
+                <button class="toggle-btn" data-type="cdf">CDF</button>
+            </div>
+        </header>
+        <main class="main">
+            <section class="graph-section">
+                <div class="graph-header">
+                    <span class="graph-title" id="dist-name">Normal Distribution</span>
+                </div>
+                <div class="graph-body">
+                    <canvas id="graph"></canvas>
+                    <div class="graph-overlay" id="overlay"></div>
+                </div>
+                <div class="graph-footer">
+                    <div class="stat-item"><span class="stat-label">Mean (μ):</span><span class="stat-value"
+                            id="stat-mean">0</span></div>
+                    <div class="stat-item"><span class="stat-label">Variance (σ²):</span><span class="stat-value"
+                            id="stat-var">1</span></div>
+                    <div class="stat-item"><span class="stat-label">Std Dev (σ):</span><span class="stat-value"
+                            id="stat-std">1</span></div>
+                </div>
+            </section>
+            <div class="right-panel">
+                <section class="panel">
+                    <div class="panel-header">⚙️ Parameters</div>
+                    <div class="panel-body" id="params-container"></div>
+                </section>
+                <section class="panel">
+                    <div class="panel-header">📐 Formula</div>
+                    <div class="panel-body">
+                        <div class="formula-box" id="formula-box"></div>
+                    </div>
+                </section>
+                <section class="panel sample-table">
+                    <div class="panel-header">
+                        📊 Sample Data
+                        <span style="font-size:0.7rem;color:var(--text-muted)" id="sample-count">20 samples</span>
+                    </div>
+                    <div class="panel-body">
+                        <table id="sample-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+                <div class="actions">
+                    <button class="btn btn-primary" onclick="generateSamples()">🎲 New Samples</button>
+                    <button class="btn btn-secondary" onclick="resetParams()">↻ Reset</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="distributions.js"></script>
+    <script>
+        let currentDist = 'normal', showCDF = false, params = {}, samples = [];
+        const canvas = document.getElementById('graph');
+        const ctx = canvas.getContext('2d');
+
+        function buildDropdown() {
+            const list = document.getElementById('dist-list');
+            const categories = ['Continuous', 'Discrete', 'Special'];
+            let html = '';
+            let count = 0;
+
+            categories.forEach(cat => {
+                const dists = Object.keys(DISTRIBUTIONS).filter(k => DISTRIBUTIONS[k].category === cat);
+                if (dists.length === 0) return;
+                html += `<div class="dist-category">${cat} (${dists.length})</div>`;
+                dists.forEach(key => {
+                    html += `<div class="dist-item ${key === currentDist ? 'active' : ''}" data-key="${key}" onclick="selectDistribution('${key}')">
+                        <span class="name">${DISTRIBUTIONS[key].name}</span>
+                    </div>`;
+                    count++;
+                });
+            });
+
+            list.innerHTML = html;
+            document.getElementById('dist-count').textContent = `${count} distributions available`;
+        }
+
+        function filterDistributions() {
+            const query = document.getElementById('dist-search').value.toLowerCase();
+            const items = document.querySelectorAll('.dist-item');
+            const categories = document.querySelectorAll('.dist-category');
+
+            items.forEach(item => {
+                const name = DISTRIBUTIONS[item.dataset.key].name.toLowerCase();
+                item.style.display = name.includes(query) ? 'flex' : 'none';
+            });
+
+            // Hide empty categories
+            categories.forEach(cat => {
+                const catName = cat.textContent.split(' (')[0];
+                const visibleItems = Array.from(items).filter(item =>
+                    item.style.display !== 'none' && DISTRIBUTIONS[item.dataset.key].category === catName
+                );
+                cat.style.display = visibleItems.length > 0 ? 'block' : 'none';
+            });
+        }
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dist-dropdown');
+            const btn = document.querySelector('.dist-selector-btn');
+            dropdown.classList.toggle('open');
+            btn.classList.toggle('open');
+            if (dropdown.classList.contains('open')) {
+                document.getElementById('dist-search').focus();
+            }
+        }
+
+        function selectDistribution(key) {
+            currentDist = key;
+            document.getElementById('dist-dropdown').classList.remove('open');
+            document.querySelector('.dist-selector-btn').classList.remove('open');
+            document.getElementById('selected-dist-name').textContent = DISTRIBUTIONS[key].name;
+            document.getElementById('selected-dist-category').textContent = DISTRIBUTIONS[key].category;
+            document.querySelectorAll('.dist-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.key === key);
+            });
+            resetParams();
+        }
+
+        function initParams() {
+            const dist = DISTRIBUTIONS[currentDist];
+            params = {};
+            dist.params.forEach(p => params[p.id] = p.default);
+        }
+
+        function renderParams() {
+            const dist = DISTRIBUTIONS[currentDist];
+            const container = document.getElementById('params-container');
+            container.innerHTML = dist.params.map(p => `
+                <div class="param">
+                    <div class="param-header">
+                        <span class="param-name"><code>${p.name}</code></span>
+                        <span class="param-value" id="val-${p.id}">${params[p.id]}</span>
+                    </div>
+                    <input type="range" id="slider-${p.id}" min="${p.min}" max="${p.max}" step="${p.step}" value="${params[p.id]}" oninput="updateParam('${p.id}', this.value)">
+                </div>
+            `).join('');
+            document.getElementById('formula-box').textContent = dist.formula;
+            document.getElementById('dist-name').textContent = dist.name + ' Distribution';
+        }
+
+        function updateParam(id, val) {
+            params[id] = parseFloat(val);
+            document.getElementById(`val-${id}`).textContent = val;
+            render();
+            updateStats();
+        }
+
+        function updateStats() {
+            const dist = DISTRIBUTIONS[currentDist];
+            const mean = dist.mean(params);
+            const variance = dist.variance(params);
+            document.getElementById('stat-mean').textContent = isNaN(mean) || !isFinite(mean) ? '∞' : mean.toFixed(4);
+            document.getElementById('stat-var').textContent = isNaN(variance) || !isFinite(variance) ? '∞' : variance.toFixed(4);
+            document.getElementById('stat-std').textContent = isNaN(variance) || !isFinite(variance) ? '∞' : Math.sqrt(variance).toFixed(4);
+        }
+
+        function generateSamples() {
+            const dist = DISTRIBUTIONS[currentDist];
+            samples = [];
+            for (let i = 0; i < 20; i++) samples.push(dist.sample(params));
+            renderSamples();
+            render();
+        }
+
+        function renderSamples() {
+            const dist = DISTRIBUTIONS[currentDist];
+            document.querySelector('#sample-table thead').innerHTML = '<tr><th>#</th><th>Value (x)</th><th>PDF f(x)</th><th>CDF F(x)</th></tr>';
+            document.querySelector('#sample-table tbody').innerHTML = samples.map((s, i) => {
+                const pdf = dist.pdf(s, params), cdf = dist.cdf(s, params);
+                return `<tr><td>${i + 1}</td><td>${s.toFixed(4)}</td><td>${pdf.toFixed(6)}</td><td>${cdf.toFixed(6)}</td></tr>`;
+            }).join('');
+        }
+
+        function resize() {
+            const parent = canvas.parentElement;
+            if (!parent) return;
+
+            const rect = parent.getBoundingClientRect();
+            const w = Math.floor(rect.width);
+            const h = Math.floor(rect.height);
+
+            if (w > 0 && h > 0 && (canvas.width !== w || canvas.height !== h)) {
+                canvas.width = w;
+                canvas.height = h;
+                console.log('Canvas resized to:', w, 'x', h);
+                render();
+            }
+        }
+
+        function render() {
+            if (!ctx || !canvas.width || !canvas.height) {
+                console.log('Canvas not ready');
+                return;
+            }
+
+            const w = canvas.width, h = canvas.height;
+            const pad = 60;
+
+            // Clear canvas
+            ctx.fillStyle = '#0a0a0f';
+            ctx.fillRect(0, 0, w, h);
+
+            const dist = DISTRIBUTIONS[currentDist];
+            const [xMin, xMax] = dist.range(params);
+            const fn = showCDF ? dist.cdf : dist.pdf;
+
+            // Validate range
+            if (!isFinite(xMin) || !isFinite(xMax) || xMax <= xMin) {
+                console.error('Invalid range:', xMin, xMax);
+                ctx.fillStyle = '#ff0000';
+                ctx.font = '16px Inter';
+                ctx.fillText('Invalid distribution range', 20, h / 2);
+                return;
+            }
+
+            // Calculate max Y
+            let maxY = 0;
+            const step = dist.discrete ? 1 : (xMax - xMin) / 200;
+            for (let x = xMin; x <= xMax; x += step) {
+                const y = fn(x, params);
+                if (isFinite(y)) maxY = Math.max(maxY, y);
+            }
+            maxY = showCDF ? 1.1 : maxY * 1.2;
+            if (!isFinite(maxY) || maxY === 0) maxY = 1;
+
+            const rangeX = xMax - xMin;
+            const toX = x => pad + ((x - xMin) / rangeX) * (w - 2 * pad);
+            const toY = y => h - pad - (y / maxY) * (h - 2 * pad);
+
+            // Draw grid
+            ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const x = xMin + (xMax - xMin) * i / 5;
+                ctx.beginPath();
+                ctx.moveTo(toX(x), pad);
+                ctx.lineTo(toX(x), h - pad);
+                ctx.stroke();
+            }
+            for (let i = 0; i <= 4; i++) {
+                const y = maxY * i / 4;
+                ctx.beginPath();
+                ctx.moveTo(pad, toY(y));
+                ctx.lineTo(w - pad, toY(y));
+                ctx.stroke();
+            }
+
+            // Draw axis labels
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.font = '11px Inter';
+            ctx.textAlign = 'center';
+            for (let i = 0; i <= 5; i++) {
+                const x = xMin + (xMax - xMin) * i / 5;
+                ctx.fillText(x.toFixed(1), toX(x), h - pad + 20);
+            }
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 4; i++) {
+                const y = maxY * i / 4;
+                ctx.fillText(y.toFixed(2), pad - 10, toY(y) + 4);
+            }
+
+            // Draw distribution
+            if (dist.discrete) {
+                ctx.fillStyle = '#6366f1';
+                for (let x = Math.ceil(xMin); x <= Math.floor(xMax); x++) {
+                    const y = fn(x, params);
+                    if (!isFinite(y)) continue;
+                    const bw = Math.max(8, (w - 2 * pad) / (xMax - xMin + 1) * 0.6);
+                    ctx.fillRect(toX(x) - bw / 2, toY(y), bw, toY(0) - toY(y));
+                }
+            } else {
+                // Fill area under curve
+                ctx.beginPath();
+                ctx.moveTo(toX(xMin), toY(0));
+                for (let x = xMin; x <= xMax; x += step) {
+                    const y = fn(x, params);
+                    if (isFinite(y)) ctx.lineTo(toX(x), toY(y));
+                }
+                ctx.lineTo(toX(xMax), toY(0));
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(99,102,241,0.3)';
+                ctx.fill();
+
+                // Draw line
+                ctx.beginPath();
+                let started = false;
+                for (let x = xMin; x <= xMax; x += step) {
+                    const y = fn(x, params);
+                    if (!isFinite(y)) continue;
+                    if (!started) {
+                        ctx.moveTo(toX(x), toY(y));
+                        started = true;
+                    } else {
+                        ctx.lineTo(toX(x), toY(y));
+                    }
+                }
+                ctx.strokeStyle = '#6366f1';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+
+            // Draw sample points
+            ctx.fillStyle = '#10b981';
+            samples.forEach(s => {
+                if (s >= xMin && s <= xMax) {
+                    const y = fn(s, params);
+                    if (isFinite(y)) {
+                        ctx.beginPath();
+                        ctx.arc(toX(s), toY(y), 5, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            });
+        }
+
+        // Mouse hover overlay
+        const overlay = document.getElementById('overlay');
+        canvas.onmousemove = e => {
+            const r = canvas.getBoundingClientRect();
+            const mx = e.clientX - r.left;
+            const dist = DISTRIBUTIONS[currentDist];
+            const [xMin, xMax] = dist.range(params);
+            const pad = 60;
+            const x = xMin + ((mx - pad) / (canvas.width - 2 * pad)) * (xMax - xMin);
+            if (x >= xMin && x <= xMax) {
+                overlay.style.display = 'block';
+                const pdf = dist.pdf(x, params);
+                const cdf = dist.cdf(x, params);
+                overlay.innerHTML = `x = ${x.toFixed(3)}<br>PDF = ${isFinite(pdf) ? pdf.toFixed(6) : '∞'}<br>CDF = ${isFinite(cdf) ? cdf.toFixed(6) : '∞'}`;
+            } else {
+                overlay.style.display = 'none';
+            }
+        };
+        canvas.onmouseleave = () => overlay.style.display = 'none';
+
+        function resetParams() {
+            initParams();
+            renderParams();
+            generateSamples();
+            render();
+            updateStats();
+        }
+
+        // PDF/CDF toggle
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                showCDF = btn.dataset.type === 'cdf';
+                render();
+            };
+        });
+
+        // Close dropdown on outside click
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.dist-selector')) {
+                document.getElementById('dist-dropdown').classList.remove('open');
+                document.querySelector('.dist-selector-btn').classList.remove('open');
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', resize);
+
+        // Initialize everything
+        function init() {
+            console.log('Initializing probability distributions...');
+            buildDropdown();
+            initParams();
+            renderParams();
+            generateSamples();
+            
+            // Set canvas size and render
+            requestAnimationFrame(() => {
+                resize();
+                updateStats();
+            });
+        }
+
+        // Start when DOM and distributions are ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+
+</html>

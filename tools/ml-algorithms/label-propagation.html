@@ -383,7 +383,8 @@
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button id="apply-btn" class="btn btn-primary btn-block">Reset</button>
+                    <button id="random-btn" class="btn btn-primary btn-block">🎲 Random Data</button>
+                    <button id="apply-btn" class="btn btn-secondary btn-block" style="margin-top:6px">Reset</button>
                 </div>
             </section>
         </main>
@@ -561,6 +562,7 @@
         document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
         document.getElementById('reset-btn').addEventListener('click', reset);
         document.getElementById('apply-btn').addEventListener('click', reset);
+        document.getElementById('random-btn').addEventListener('click', () => { data = generateData(); reset(); });
         document.getElementById('gamma-slider').addEventListener('input', e => { params.gamma = parseFloat(e.target.value); document.getElementById('gamma-value').textContent = params.gamma.toFixed(1); });
 
         window.addEventListener('resize', resizeCanvas);

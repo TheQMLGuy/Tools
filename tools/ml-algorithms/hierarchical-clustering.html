@@ -41,10 +41,21 @@
 
         .main-content {
             display: grid;
-            grid-template-columns: 260px 1fr 1.2fr 280px;
+            grid-template-columns: 280px 1fr 1.2fr 280px;
             gap: 12px;
             padding: 12px;
             overflow: hidden;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .left-column .panel {
+            flex: 1;
+            min-height: 0;
         }
 
         .panel {
@@ -60,13 +71,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-bottom: 1px solid var(--border-color);
             background: rgba(0, 0, 0, 0.2);
         }
 
         .panel-header h2 {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
@@ -75,43 +86,46 @@
         .panel-body {
             flex: 1;
             overflow: auto;
-            padding: 12px;
+            padding: 10px;
         }
 
         .panel-footer {
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-top: 1px solid var(--border-color);
         }
 
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
         }
 
         .data-table th {
             background: var(--bg-secondary);
-            padding: 8px;
+            padding: 4px;
             text-align: left;
             border-bottom: 2px solid var(--accent-primary);
+            position: sticky;
+            top: 0;
         }
 
         .data-table td {
-            padding: 6px 8px;
+            padding: 3px 4px;
             border-bottom: 1px solid var(--border-color);
+            font-family: var(--font-mono);
         }
 
         .calc-steps {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
         }
 
         .calc-placeholder {
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 200px;
+            height: 100px;
             color: var(--text-muted);
             text-align: center;
         }
@@ -119,8 +133,8 @@
         .calc-step {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
+            border-radius: 6px;
+            padding: 8px;
             animation: fadeIn 0.3s;
         }
 
@@ -129,102 +143,57 @@
         }
 
         .calc-step.completed {
-            opacity: 0.7;
+            opacity: 0.6;
         }
 
         .calc-step-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
+            gap: 6px;
+            margin-bottom: 4px;
         }
 
         .calc-step-number {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             background: var(--accent-gradient);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
+            font-weight: 600;
             color: white;
         }
 
         .calc-step-title {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
 
         .calc-step-content {
-            font-size: 0.8rem;
+            font-size: 0.65rem;
             color: var(--text-secondary);
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
-        .calc-equation {
+        .calc-box {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            padding: 10px;
-            margin: 8px 0;
+            border-radius: 4px;
+            padding: 6px;
+            margin: 4px 0;
             font-family: var(--font-mono);
-            text-align: center;
-        }
-
-        .calc-result {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 12px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 6px;
-            margin-top: 8px;
-        }
-
-        .calc-result-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .calc-result-value {
-            font-family: var(--font-mono);
-            font-weight: 600;
-            color: var(--success);
-        }
-
-        .feature-comparison {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .feature-card {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
-            padding: 8px;
-            text-align: center;
-        }
-
-        .feature-card.merged {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.4);
-        }
-
-        .feature-name {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .feature-value {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.55rem;
+            overflow-x: auto;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
         }
 
         .viz-panel .panel-body {
             padding: 0;
+            position: relative;
         }
 
         .viz-panel canvas {
@@ -235,15 +204,15 @@
 
         .viz-stats {
             display: flex;
-            gap: 20px;
+            gap: 12px;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
         }
 
         .param-section {
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
-            margin-bottom: 12px;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
         }
 
         .param-section:last-child {
@@ -251,48 +220,131 @@
         }
 
         .param-section-title {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
         }
 
         .param-item {
-            margin-bottom: 14px;
+            margin-bottom: 10px;
         }
 
         .param-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 6px;
+            margin-bottom: 3px;
+            font-size: 0.7rem;
         }
 
         .param-name code {
             font-family: var(--font-mono);
             background: rgba(0, 0, 0, 0.3);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.75rem;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.65rem;
         }
 
-        .taming-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .taming-list li {
+        .param-value {
+            font-family: var(--font-mono);
             font-size: 0.7rem;
-            color: var(--text-muted);
-            padding: 4px 0 4px 16px;
-            position: relative;
+            color: var(--accent-primary);
         }
 
-        .taming-list li::before {
-            content: '→';
+        .btn-block {
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .btn-fs {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .btn-fs:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .graph-overlay {
             position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            pointer-events: none;
+            display: none;
+            z-index: 10;
+        }
+
+        .graph-controls {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            display: flex;
+            gap: 4px;
+            z-index: 10;
+        }
+
+        .graph-controls button {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .graph-controls button:hover {
+            background: var(--accent-primary);
+        }
+
+        .fullscreen-overlay {
+            position: fixed;
+            top: 0;
             left: 0;
-            color: var(--success);
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .fullscreen-overlay.active {
+            display: flex;
+        }
+
+        .fullscreen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .fullscreen-header h2 {
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .fullscreen-content {
+            flex: 1;
+            overflow: auto;
+            background: var(--bg-panel);
+            border-radius: 8px;
+            padding: 16px;
         }
 
         @keyframes fadeIn {
@@ -310,7 +362,7 @@
 <body>
     <div class="app-container">
         <header class="app-header">
-            <h1 class="app-title">🌿 Hierarchical Clustering</h1>
+            <h1 class="app-title">🌿 Hierarchical Clustering - Step by Step</h1>
             <div class="header-right">
                 <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
                 <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
@@ -318,27 +370,45 @@
             </div>
         </header>
         <main class="main-content">
+            <div class="left-column">
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>📊 Points</h2>
+                        <button class="btn-fs" onclick="openFullscreen('data')">⛶</button>
+                    </div>
+                    <div class="panel-body">
+                        <table id="data-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>🔗 Merge History</h2>
+                        <button class="btn-fs" onclick="openFullscreen('merge')">⛶</button>
+                    </div>
+                    <div class="panel-body">
+                        <table id="merge-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>📊 Data Points</h2>
-                </div>
-                <div class="panel-body">
-                    <table id="data-table" class="data-table">
-                        <thead></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </section>
-            <section class="panel">
-                <div class="panel-header">
-                    <h2>📐 Agglomerative Steps</h2>
-                    <span style="font-size:0.75rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
-                            id="total-steps">0</span></span>
+                    <h2>📐 Distance Calculations</h2>
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <span style="font-size:0.65rem;color:var(--text-muted)"><span id="current-step">0</span>/<span
+                                id="total-steps">0</span></span>
+                        <button class="btn-fs" onclick="openFullscreen('calc')">⛶</button>
+                    </div>
                 </div>
                 <div class="panel-body">
                     <div id="calc-steps" class="calc-steps">
                         <div class="calc-placeholder">
-                            <p>Click <strong>Step</strong> to cluster</p>
+                            <p>Click <strong>Step</strong></p>
                         </div>
                     </div>
                 </div>
@@ -347,115 +417,118 @@
                 <div class="panel-header">
                     <h2>🎨 Dendrogram</h2>
                 </div>
-                <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
+                <div class="panel-body">
+                    <canvas id="viz-canvas"></canvas>
+                    <div id="graph-overlay" class="graph-overlay"></div>
+                </div>
                 <div class="panel-footer">
                     <div class="viz-stats">
                         <span>Clusters: <strong id="viz-clusters">0</strong></span>
-                        <span>Merge Height: <strong id="viz-height">-</strong></span>
+                        <span>Merges: <strong id="viz-merges">0</strong></span>
                     </div>
                 </div>
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>⚙️ Linkage</h2>
+                    <h2>⚙️ Params</h2>
                 </div>
                 <div class="panel-body">
                     <div class="param-section">
-                        <div class="param-section-title">Method</div>
-                        <select id="linkage-select" class="select" style="width:100%">
+                        <div class="param-section-title">Linkage</div>
+                        <select id="linkage-select"
+                            style="width:100%;padding:6px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:4px;color:#fff">
                             <option value="single">Single (Min)</option>
                             <option value="complete">Complete (Max)</option>
                             <option value="average" selected>Average</option>
                         </select>
-                        <div style="font-size:0.7rem;color:var(--text-muted);margin-top:8px">How to measure cluster
-                            distance</div>
                     </div>
                     <div class="param-section">
-                        <div class="param-section-title">💡 Linkage Types</div>
-                        <ul class="taming-list">
-                            <li><b>Single:</b> min dist between points</li>
-                            <li><b>Complete:</b> max dist between points</li>
-                            <li><b>Average:</b> mean dist between points</li>
-                        </ul>
+                        <div class="param-section-title">Algorithm</div>
+                        <div style="font-size:0.55rem;color:var(--text-muted)">1. Start: each point = cluster<br>2. Find
+                            closest pair<br>3. Merge into one cluster<br>4. Repeat until one cluster</div>
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button id="apply-btn" class="btn btn-primary btn-block">Regenerate Data</button>
+                    <button id="random-btn" class="btn btn-primary btn-block">🎲 Random</button>
+                    <button id="apply-btn" class="btn btn-secondary btn-block">Apply</button>
                 </div>
             </section>
         </main>
     </div>
+    <div id="fullscreen-overlay" class="fullscreen-overlay">
+        <div class="fullscreen-header">
+            <h2 id="fullscreen-title">Fullscreen</h2><button class="btn btn-ghost" onclick="closeFullscreen()">✕
+                Close</button>
+        </div>
+        <div class="fullscreen-content" id="fullscreen-content"></div>
+    </div>
     <script>
+        const colors = ['#ef4444', '#10b981', '#6366f1', '#f59e0b', '#ec4899', '#14b8a6', '#8b5cf6', '#f97316'];
         function generateData() {
-            const data = [];
-            [[2, 2], [6, 6], [2, 6]].forEach(c => {
-                for (let i = 0; i < 3; i++) data.push({ x: c[0] + (Math.random() - 0.5) * 1.5, y: c[1] + (Math.random() - 0.5) * 1.5 });
-            });
-            return data;
+            const d = [];
+            for (let i = 0; i < 8; i++) d.push({ x: 1 + Math.random() * 8, y: 1 + Math.random() * 8 });
+            return d;
         }
-
-        const colors = ['#ef4444', '#10b981', '#6366f1', '#f59e0b', '#ec4899', '#14b8a6', '#8b5cf6', '#f97316', '#06b6d4'];
         let data = generateData();
-        let linkage = 'average';
-        let merges = [], steps = [], currentStep = 0;
+        let params = { linkage: 'average' };
+        let mergeHistory = [], dendrogram = [];
+        let steps = [], currentStep = 0;
         let isAutoRunning = false, autoInterval = null;
 
-        function distance(a, b) { return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2); }
+        function dist(a, b) { return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2); }
 
-        function clusterDistance(c1, c2, clusters) {
+        function linkageDist(c1, c2, linkage) {
             const dists = [];
-            c1.forEach(i => c2.forEach(j => dists.push(distance(data[i], data[j]))));
+            c1.forEach(i => c2.forEach(j => dists.push(dist(data[i], data[j]))));
             if (linkage === 'single') return Math.min(...dists);
             if (linkage === 'complete') return Math.max(...dists);
-            return dists.reduce((a, b) => a + b) / dists.length;
+            return dists.reduce((a, b) => a + b, 0) / dists.length;
         }
 
         function renderTable() {
             document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th></tr>';
             document.querySelector('#data-table tbody').innerHTML = data.map((d, i) =>
-                `<tr><td style="color:var(--text-muted)">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td></tr>`
+                `<tr><td>${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td></tr>`
+            ).join('');
+        }
+
+        function renderMergeTable() {
+            document.querySelector('#merge-table thead').innerHTML = '<tr><th>Step</th><th>Merged</th><th>Dist</th></tr>';
+            document.querySelector('#merge-table tbody').innerHTML = mergeHistory.map((m, i) =>
+                `<tr><td>${i + 1}</td><td>{${m.c1.map(x => x + 1).join(',')}} + {${m.c2.map(x => x + 1).join(',')}}</td><td>${m.dist.toFixed(4)}</td></tr>`
             ).join('');
         }
 
         function generateSteps() {
-            steps = []; merges = [];
+            steps = []; mergeHistory = []; dendrogram = [];
             let clusters = data.map((_, i) => [i]);
 
-            steps.push({
-                title: 'Initial State',
-                content: `<p>Each point starts as its own cluster</p>
-                    <div class="calc-result"><span class="calc-result-label">Clusters</span><span class="calc-result-value">${data.length}</span></div>`,
-                clusters: clusters.map(c => [...c]), mergeHeight: 0
-            });
+            let dataStr = data.map((d, i) => `P${i + 1}: (${d.x.toFixed(3)}, ${d.y.toFixed(3)})`).join('\n');
+            steps.push({ title: 'Dataset', content: `<div class="calc-box">${dataStr}\n\nLinkage: ${params.linkage}</div>`, clusters: clusters.map(c => [...c]) });
 
             while (clusters.length > 1) {
+                // Find closest pair with FULL distance calculations
                 let minDist = Infinity, minI = 0, minJ = 1;
+                let distCalcs = '';
                 for (let i = 0; i < clusters.length; i++) {
                     for (let j = i + 1; j < clusters.length; j++) {
-                        const d = clusterDistance(clusters[i], clusters[j], clusters);
+                        const d = linkageDist(clusters[i], clusters[j], params.linkage);
+                        distCalcs += `{${clusters[i].map(x => x + 1).join(',')}} ↔ {${clusters[j].map(x => x + 1).join(',')}}: ${d.toFixed(4)}\n`;
                         if (d < minDist) { minDist = d; minI = i; minJ = j; }
                     }
                 }
 
-                const merged = [...clusters[minI], ...clusters[minJ]];
-                merges.push({ c1: [...clusters[minI]], c2: [...clusters[minJ]], height: minDist });
+                distCalcs += `\nClosest: {${clusters[minI].map(x => x + 1).join(',')}} + {${clusters[minJ].map(x => x + 1).join(',')}}\nDistance: ${minDist.toFixed(6)}`;
+                steps.push({ title: `Merge ${mergeHistory.length + 1}`, content: `<div class="calc-box">${distCalcs}</div>`, clusters: clusters.map(c => [...c]) });
 
-                steps.push({
-                    title: `Merge at Height ${minDist.toFixed(2)}`,
-                    content: `<p>Merge closest clusters using ${linkage} linkage:</p>
-                        <div class="feature-comparison">
-                            <div class="feature-card merged"><div class="feature-name">Cluster A</div><div class="feature-value">${clusters[minI].map(i => i + 1).join(', ')}</div></div>
-                            <div class="feature-card merged"><div class="feature-name">Cluster B</div><div class="feature-value">${clusters[minJ].map(i => i + 1).join(', ')}</div></div>
-                        </div>
-                        <div class="calc-result"><span class="calc-result-label">Distance</span><span class="calc-result-value">${minDist.toFixed(3)}</span></div>`,
-                    clusters: [...clusters.filter((_, i) => i !== minI && i !== minJ), merged].map(c => [...c]),
-                    mergeHeight: minDist
-                });
+                mergeHistory.push({ c1: [...clusters[minI]], c2: [...clusters[minJ]], dist: minDist });
+                dendrogram.push({ left: clusters[minI], right: clusters[minJ], dist: minDist });
 
-                clusters = clusters.filter((_, i) => i !== minI && i !== minJ);
-                clusters.push(merged);
+                clusters[minI] = [...clusters[minI], ...clusters[minJ]];
+                clusters.splice(minJ, 1);
             }
 
+            steps.push({ title: '✅ Complete!', content: `<div class="calc-box">${mergeHistory.length} merges completed\n\nFinal cluster contains all ${data.length} points</div>`, clusters: [[...Array(data.length).keys()]] });
             document.getElementById('total-steps').textContent = steps.length;
         }
 
@@ -465,89 +538,84 @@
         function resizeCanvas() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
 
         function render(step = null) {
-            const w = canvas.width, h = canvas.height;
-            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, w, h);
+            const ww = canvas.width, hh = canvas.height;
+            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, ww, hh);
+            const clusters = step?.clusters ?? [[...Array(data.length).keys()]];
 
-            const currClusters = step?.clusters || [[...Array(data.length).keys()]];
+            // Draw current clusters as points
             const pad = 40;
-
-            // Draw dendrogram-style
-            const leafX = {};
-            data.forEach((_, i) => leafX[i] = pad + (i + 0.5) * ((w - 2 * pad) / data.length));
-
-            // Leaves
-            data.forEach((_, i) => {
-                const clusterIdx = currClusters.findIndex(c => c.includes(i));
-                ctx.beginPath();
-                ctx.arc(leafX[i], h - 50, 8, 0, Math.PI * 2);
-                ctx.fillStyle = colors[clusterIdx % colors.length];
-                ctx.fill();
-                ctx.fillStyle = '#fff';
-                ctx.font = '10px Inter';
-                ctx.textAlign = 'center';
-                ctx.fillText(i + 1, leafX[i], h - 47);
+            clusters.forEach((cluster, ci) => {
+                cluster.forEach(i => {
+                    const px = pad + (data[i].x / 10) * (ww - 2 * pad);
+                    const py = hh - pad - (data[i].y / 10) * (hh - 2 * pad);
+                    ctx.beginPath();
+                    ctx.arc(px, py, 10, 0, Math.PI * 2);
+                    ctx.fillStyle = colors[ci % colors.length];
+                    ctx.fill();
+                    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+                    ctx.fillStyle = '#fff'; ctx.font = 'bold 7px Inter'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                    ctx.fillText(i + 1, px, py);
+                });
             });
 
-            // Merge lines
-            const maxH = merges.length > 0 ? Math.max(...merges.map(m => m.height)) * 1.2 : 1;
-            const scaleH = height => h - 70 - (height / maxH) * (h - 120);
-
-            const currentMergeIdx = step ? steps.indexOf(step) - 1 : merges.length - 1;
-            const clusterPos = {};
-            data.forEach((_, i) => clusterPos[i] = leafX[i]);
-
-            for (let mi = 0; mi <= currentMergeIdx && mi < merges.length; mi++) {
-                const merge = merges[mi];
-                const x1 = merge.c1.reduce((s, i) => s + (clusterPos[i] || leafX[i]), 0) / merge.c1.length;
-                const x2 = merge.c2.reduce((s, i) => s + (clusterPos[i] || leafX[i]), 0) / merge.c2.length;
-                const yH = scaleH(merge.height);
-
-                ctx.strokeStyle = '#6366f1';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(x1, h - 58);
-                ctx.lineTo(x1, yH);
-                ctx.lineTo(x2, yH);
-                ctx.lineTo(x2, h - 58);
-                ctx.stroke();
-
-                // Update positions
-                const newX = (x1 + x2) / 2;
-                [...merge.c1, ...merge.c2].forEach(i => clusterPos[i] = newX);
-            }
+            // Draw merge lines for current clusters
+            clusters.forEach((cluster, ci) => {
+                if (cluster.length > 1) {
+                    const cx = cluster.reduce((s, i) => s + data[i].x, 0) / cluster.length;
+                    const cy = cluster.reduce((s, i) => s + data[i].y, 0) / cluster.length;
+                    const pcx = pad + (cx / 10) * (ww - 2 * pad);
+                    const pcy = hh - pad - (cy / 10) * (hh - 2 * pad);
+                    ctx.strokeStyle = colors[ci % colors.length] + '40';
+                    ctx.lineWidth = 1;
+                    cluster.forEach(i => {
+                        const px = pad + (data[i].x / 10) * (ww - 2 * pad);
+                        const py = hh - pad - (data[i].y / 10) * (hh - 2 * pad);
+                        ctx.beginPath(); ctx.moveTo(pcx, pcy); ctx.lineTo(px, py); ctx.stroke();
+                    });
+                }
+            });
         }
+
+        function openFullscreen(type) {
+            const o = document.getElementById('fullscreen-overlay'), t = document.getElementById('fullscreen-title'), c = document.getElementById('fullscreen-content');
+            o.classList.add('active');
+            if (type === 'data') {
+                t.textContent = '📊 Points';
+                c.innerHTML = `<table class="data-table" style="font-size:0.9rem"><thead><tr><th>#</th><th>X</th><th>Y</th></tr></thead><tbody>${data.map((d, i) => `<tr><td>${i + 1}</td><td>${d.x.toFixed(6)}</td><td>${d.y.toFixed(6)}</td></tr>`).join('')}</tbody></table>`;
+            } else if (type === 'merge') {
+                t.textContent = '🔗 Merge History';
+                c.innerHTML = `<table class="data-table" style="font-size:0.9rem"><thead><tr><th>Step</th><th>Cluster 1</th><th>Cluster 2</th><th>Distance</th></tr></thead><tbody>${mergeHistory.map((m, i) => `<tr><td>${i + 1}</td><td>{${m.c1.map(x => x + 1).join(',')}}</td><td>{${m.c2.map(x => x + 1).join(',')}}</td><td>${m.dist.toFixed(8)}</td></tr>`).join('')}</tbody></table>`;
+            } else if (type === 'calc') { t.textContent = '📐 All Steps'; c.innerHTML = document.getElementById('calc-steps').innerHTML; }
+        }
+        function closeFullscreen() { document.getElementById('fullscreen-overlay').classList.remove('active'); }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFullscreen(); });
 
         function displayStep(step) {
             const container = document.getElementById('calc-steps');
             container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
             container.querySelector('.calc-placeholder')?.remove();
-
-            const div = document.createElement('div');
-            div.className = 'calc-step active';
+            const div = document.createElement('div'); div.className = 'calc-step active';
             div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
-            container.appendChild(div);
-            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
-
-            render(step);
+            container.appendChild(div); div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            renderTable(); renderMergeTable(); render(step);
             document.getElementById('viz-clusters').textContent = step.clusters.length;
-            document.getElementById('viz-height').textContent = step.mergeHeight.toFixed(2);
+            document.getElementById('viz-merges').textContent = mergeHistory.length;
         }
 
         function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
-        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 1200); }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 700); }
         function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
-        function reset() { stopAuto(); data = generateData(); currentStep = 0; merges = []; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to cluster</p></div>'; renderTable(); generateSteps(); render(); }
+        function reset() { stopAuto(); currentStep = 0; mergeHistory = []; dendrogram = []; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong></p></div>'; generateSteps(); renderTable(); renderMergeTable(); render(); }
 
         document.getElementById('step-btn').addEventListener('click', step);
         document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
         document.getElementById('reset-btn').addEventListener('click', reset);
         document.getElementById('apply-btn').addEventListener('click', reset);
-        document.getElementById('linkage-select').addEventListener('change', e => { linkage = e.target.value; reset(); });
+        document.getElementById('random-btn').addEventListener('click', () => { data = generateData(); reset(); });
+        document.getElementById('linkage-select').addEventListener('change', e => { params.linkage = e.target.value; });
 
         window.addEventListener('resize', resizeCanvas);
-        renderTable();
-        resizeCanvas();
-        generateSteps();
+        renderTable(); renderMergeTable(); resizeCanvas(); generateSteps();
     </script>
 </body>
 

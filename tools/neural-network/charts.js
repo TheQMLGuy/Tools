@@ -37,7 +37,8 @@ class LossChart {
         this.canvas.width = rect.width * dpr;
         this.canvas.height = rect.height * dpr;
 
-        this.ctx.scale(dpr, dpr);
+        // Reset transformation matrix and set scale (prevents accumulation)
+        this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         this.width = rect.width;
         this.height = rect.height;
@@ -194,7 +195,8 @@ class AccuracyChart {
         this.canvas.width = rect.width * dpr;
         this.canvas.height = rect.height * dpr;
 
-        this.ctx.scale(dpr, dpr);
+        // Reset transformation matrix and set scale (prevents accumulation)
+        this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         this.width = rect.width;
         this.height = rect.height;

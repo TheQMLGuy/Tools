@@ -393,9 +393,11 @@ class CurveVisualizer {
             return { inputs: [], targets: [] };
         }
 
+        // Use more training points for smoother, more stable learning
+        const numPoints = 50;
         const trainingPoints = [];
-        for (let i = 0; i < 30; i++) {
-            const x = -1 + (i / 29) * 2;
+        for (let i = 0; i < numPoints; i++) {
+            const x = -1 + (i / (numPoints - 1)) * 2;
             trainingPoints.push(x);
         }
 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K-Nearest Neighbors - ML Visualizer</title>
+    <title>KNN - ML Visualizer</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
@@ -47,6 +47,17 @@
             overflow: hidden;
         }
 
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .left-column .panel {
+            flex: 1;
+            min-height: 0;
+        }
+
         .panel {
             display: flex;
             flex-direction: column;
@@ -60,13 +71,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-bottom: 1px solid var(--border-color);
             background: rgba(0, 0, 0, 0.2);
         }
 
         .panel-header h2 {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
@@ -75,48 +86,54 @@
         .panel-body {
             flex: 1;
             overflow: auto;
-            padding: 12px;
+            padding: 10px;
         }
 
         .panel-footer {
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-top: 1px solid var(--border-color);
         }
 
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
         }
 
         .data-table th {
             background: var(--bg-secondary);
-            padding: 6px;
+            padding: 4px;
             text-align: left;
             border-bottom: 2px solid var(--accent-primary);
+            position: sticky;
+            top: 0;
         }
 
         .data-table td {
-            padding: 5px 6px;
+            padding: 3px 4px;
             border-bottom: 1px solid var(--border-color);
             font-family: var(--font-mono);
         }
 
+        .data-table tr.highlighted td {
+            background: rgba(99, 102, 241, 0.4) !important;
+        }
+
         .data-table tr.neighbor td {
-            background: rgba(99, 102, 241, 0.25);
+            background: rgba(245, 158, 11, 0.3) !important;
         }
 
         .calc-steps {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .calc-placeholder {
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 200px;
+            height: 100px;
             color: var(--text-muted);
             text-align: center;
         }
@@ -124,8 +141,8 @@
         .calc-step {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px;
+            border-radius: 6px;
+            padding: 8px;
             animation: fadeIn 0.3s;
         }
 
@@ -140,69 +157,51 @@
         .calc-step-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
+            gap: 6px;
+            margin-bottom: 4px;
         }
 
         .calc-step-number {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             background: var(--accent-gradient);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: white;
         }
 
         .calc-step-title {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
 
         .calc-step-content {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-secondary);
             line-height: 1.5;
         }
 
         .calc-box {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            padding: 8px;
-            margin: 6px 0;
+            border-radius: 4px;
+            padding: 6px;
+            margin: 4px 0;
             font-family: var(--font-mono);
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             overflow-x: auto;
-            line-height: 1.6;
-        }
-
-        .calc-result {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 10px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 6px;
-            margin-top: 6px;
-        }
-
-        .calc-result-label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .calc-result-value {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--success);
+            line-height: 1.4;
+            white-space: pre-wrap;
+            max-height: 250px;
+            overflow-y: auto;
         }
 
         .viz-panel .panel-body {
             padding: 0;
+            position: relative;
         }
 
         .viz-panel canvas {
@@ -213,15 +212,15 @@
 
         .viz-stats {
             display: flex;
-            gap: 16px;
+            gap: 12px;
             justify-content: center;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
         }
 
         .param-section {
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 10px;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
         }
 
         .param-section:last-child {
@@ -229,73 +228,131 @@
         }
 
         .param-section-title {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .param-item {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .param-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
+            font-size: 0.7rem;
         }
 
         .param-name code {
             font-family: var(--font-mono);
             background: rgba(0, 0, 0, 0.3);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.65rem;
         }
 
         .param-value {
             font-family: var(--font-mono);
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--accent-primary);
-        }
-
-        .taming-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .taming-list li {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            padding: 3px 0 3px 14px;
-            position: relative;
-        }
-
-        .taming-list li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: var(--success);
         }
 
         .btn-block {
             width: 100%;
-            margin-top: 6px;
+            margin-top: 4px;
         }
 
-        .query-point {
+        .btn-fs {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .btn-fs:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .graph-overlay {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            pointer-events: none;
+            display: none;
+            z-index: 10;
+        }
+
+        .graph-controls {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
             display: flex;
-            gap: 8px;
-            align-items: center;
-            padding: 8px;
-            background: rgba(245, 158, 11, 0.2);
-            border-radius: 6px;
-            margin-bottom: 10px;
+            gap: 4px;
+            z-index: 10;
         }
 
-        .query-point span {
-            font-size: 0.7rem;
+        .graph-controls button {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .graph-controls button:hover {
+            background: var(--accent-primary);
+        }
+
+        .fullscreen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .fullscreen-overlay.active {
+            display: flex;
+        }
+
+        .fullscreen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .fullscreen-header h2 {
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .fullscreen-content {
+            flex: 1;
+            overflow: auto;
+            background: var(--bg-panel);
+            border-radius: 8px;
+            padding: 16px;
         }
 
         @keyframes fadeIn {
@@ -321,317 +378,307 @@
             </div>
         </header>
         <main class="main-content">
-            <section class="panel">
-                <div class="panel-header">
-                    <h2>📊 Training Data</h2>
-                </div>
-                <div class="panel-body">
-                    <div class="query-point">
-                        <span>🔶 Query: (<span id="qx">?</span>, <span id="qy">?</span>)</span>
+            <div class="left-column">
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>📊 Training Data</h2>
+                        <button class="btn-fs" onclick="openFullscreen('data')">⛶</button>
                     </div>
-                    <table id="data-table" class="data-table">
-                        <thead></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <div class="panel-footer" style="font-size:0.65rem;color:var(--text-muted)">
-                    <span style="color:#ef4444">●</span> Class 0 | <span style="color:#10b981">●</span> Class 1 | <span
-                        style="color:#f59e0b">◆</span> Query
-                </div>
-            </section>
+                    <div class="panel-body">
+                        <table id="data-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>📏 Distance Ranking</h2>
+                        <button class="btn-fs" onclick="openFullscreen('dist')">⛶</button>
+                    </div>
+                    <div class="panel-body">
+                        <table id="dist-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
             <section class="panel">
                 <div class="panel-header">
                     <h2>📐 Full Distance Calculations</h2>
-                    <span style="font-size:0.7rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
-                            id="total-steps">0</span></span>
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <span style="font-size:0.65rem;color:var(--text-muted)"><span id="current-step">0</span>/<span
+                                id="total-steps">0</span></span>
+                        <button class="btn-fs" onclick="openFullscreen('calc')">⛶</button>
+                    </div>
                 </div>
                 <div class="panel-body">
                     <div id="calc-steps" class="calc-steps">
                         <div class="calc-placeholder">
-                            <p>Click <strong>Step</strong> to calculate distances</p>
+                            <p>Click <strong>Step</strong></p>
                         </div>
                     </div>
                 </div>
             </section>
             <section class="panel viz-panel">
                 <div class="panel-header">
-                    <h2>🎨 Visualization</h2>
+                    <h2>🎨 Graph</h2>
                 </div>
-                <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
+                <div class="panel-body">
+                    <canvas id="viz-canvas"></canvas>
+                    <div id="graph-overlay" class="graph-overlay"></div>
+                    <div class="graph-controls">
+                        <button onclick="zoomIn()">+</button>
+                        <button onclick="zoomOut()">−</button>
+                        <button onclick="resetView()">⌂</button>
+                    </div>
+                </div>
                 <div class="panel-footer">
                     <div class="viz-stats">
-                        <span>k: <strong id="viz-k">3</strong></span>
-                        <span>Prediction: <strong id="viz-pred">?</strong></span>
+                        <span>k = <strong id="viz-k">3</strong></span>
+                        <span>Query: <strong id="viz-query">?</strong></span>
+                        <span>Pred: <strong id="viz-pred">?</strong></span>
                     </div>
                 </div>
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>⚙️ Hyperparameters</h2>
+                    <h2>⚙️ Parameters</h2>
                 </div>
                 <div class="panel-body">
                     <div class="param-section">
                         <div class="param-item">
-                            <div class="param-header">
-                                <span class="param-name"><code>n_neighbors (k)</code></span>
-                                <span class="param-value" id="k-value">3</span>
-                            </div>
-                            <input type="range" id="k-slider" class="slider" min="1" max="7" value="3"
+                            <div class="param-header"><span class="param-name"><code>k</code></span><span
+                                    class="param-value" id="k-value">3</span></div>
+                            <input type="range" id="k-slider" class="slider" min="1" max="7" step="2" value="3"
                                 style="width:100%">
-                            <div style="font-size:0.6rem;color:var(--text-muted)">How many neighbors to check</div>
                         </div>
                     </div>
                     <div class="param-section">
-                        <div class="param-section-title">💡 Euclidean Distance</div>
-                        <div class="calc-box">d = √[(x₂-x₁)² + (y₂-y₁)²]</div>
-                        <ul class="taming-list">
-                            <li>Calculate distance to ALL points</li>
-                            <li>Pick k closest neighbors</li>
-                            <li>Majority vote decides class</li>
-                        </ul>
+                        <div class="param-section-title">Formula</div>
+                        <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-muted)">d =
+                            √[(x₂-x₁)² + (y₂-y₁)²]</div>
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button id="random-btn" class="btn btn-primary btn-block">🎲 Random Data</button>
-                    <button id="new-query-btn" class="btn btn-secondary btn-block">🔶 New Query Point</button>
+                    <button id="random-btn" class="btn btn-primary btn-block">🎲 Random</button>
+                    <button id="query-btn" class="btn btn-secondary btn-block">🎯 New Query</button>
                 </div>
             </section>
         </main>
     </div>
+    <div id="fullscreen-overlay" class="fullscreen-overlay">
+        <div class="fullscreen-header">
+            <h2 id="fullscreen-title">Fullscreen</h2><button class="btn btn-ghost" onclick="closeFullscreen()">✕
+                Close</button>
+        </div>
+        <div class="fullscreen-content" id="fullscreen-content"></div>
+    </div>
     <script>
         function generateData() {
-            const data = [];
-            // Class 0 cluster
-            for (let i = 0; i < 8; i++) {
-                data.push({ x: 2 + Math.random() * 3, y: 5 + Math.random() * 3, label: 0 });
-            }
-            // Class 1 cluster
-            for (let i = 0; i < 8; i++) {
-                data.push({ x: 5 + Math.random() * 3, y: 2 + Math.random() * 3, label: 1 });
-            }
-            return data;
+            const d = [];
+            for (let i = 0; i < 6; i++) d.push({ x: 2 + Math.random() * 2.5, y: 6 + Math.random() * 2.5, label: 0 });
+            for (let i = 0; i < 6; i++) d.push({ x: 6 + Math.random() * 2.5, y: 2 + Math.random() * 2.5, label: 1 });
+            return d;
         }
-
-        function generateQuery() {
-            return { x: 3 + Math.random() * 4, y: 3 + Math.random() * 4 };
-        }
-
         let data = generateData();
-        let query = generateQuery();
+        let query = { x: 5, y: 5 };
         let params = { k: 3 };
-        let distances = [], neighbors = [];
+        let distances = [], neighbors = [], prediction = null;
         let steps = [], currentStep = 0;
         let isAutoRunning = false, autoInterval = null;
+        let hoveredPoint = -1, pointPositions = [];
+        let view = { x: 0, y: 0, scale: 1 };
+        let isDragging = false, dragStart = { x: 0, y: 0 };
 
-        function distance(a, b) { return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2); }
+        function dist(a, b) { return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2); }
 
         function renderTable() {
-            document.getElementById('qx').textContent = query.x.toFixed(2);
-            document.getElementById('qy').textContent = query.y.toFixed(2);
-            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>Class</th><th>Dist</th></tr>';
+            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>Class</th></tr>';
             document.querySelector('#data-table tbody').innerHTML = data.map((d, i) => {
-                const dist = distances[i]?.toFixed(2) || '-';
-                const isNeighbor = neighbors.includes(i);
-                return `<tr class="${isNeighbor ? 'neighbor' : ''}" id="row-${i}"><td style="font-weight:600">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td><td style="color:${d.label ? '#10b981' : '#ef4444'}">${d.label}</td><td>${dist}</td></tr>`;
+                const isN = neighbors.includes(i);
+                return `<tr class="${hoveredPoint === i ? 'highlighted' : ''} ${isN ? 'neighbor' : ''}"><td>${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td><td style="color:${d.label ? '#10b981' : '#ef4444'}">${d.label}</td></tr>`;
             }).join('');
         }
 
+        function renderDistTable() {
+            document.querySelector('#dist-table thead').innerHTML = '<tr><th>Rank</th><th>#</th><th>Dist</th><th>C</th><th>N?</th></tr>';
+            document.querySelector('#dist-table tbody').innerHTML = distances.map((d, rank) =>
+                `<tr class="${neighbors.includes(d.idx) ? 'neighbor' : ''}"><td>${rank + 1}</td><td>${d.idx + 1}</td><td>${d.dist.toFixed(4)}</td><td style="color:${data[d.idx].label ? '#10b981' : '#ef4444'}">${data[d.idx].label}</td><td>${neighbors.includes(d.idx) ? '✓' : ''}</td></tr>`
+            ).join('');
+        }
+
         function generateSteps() {
-            steps = []; distances = []; neighbors = [];
+            steps = []; distances = []; neighbors = []; prediction = null;
+            document.getElementById('viz-query').textContent = `(${query.x.toFixed(2)}, ${query.y.toFixed(2)})`;
 
-            steps.push({
-                title: 'Our Problem',
-                content: `<p>We have ${data.length} labeled points and a <strong>new query point</strong>:</p>
-                    <div class="calc-box">
-                    Query: (${query.x.toFixed(2)}, ${query.y.toFixed(2)})<br><br>
-                    Question: What class should this point be?
-                    </div>
-                    <p>KNN will find the k closest points and vote!</p>`,
-                distances: [], neighbors: [], phase: 'intro'
-            });
+            // Step 1: Query
+            steps.push({ title: 'Query Point', content: `<div class="calc-box">Query: (${query.x.toFixed(4)}, ${query.y.toFixed(4)})\nk = ${params.k} (find ${params.k} nearest neighbors)</div>`, distances: [], neighbors: [], prediction: null });
 
-            // Calculate distance to EACH point with full calculation
-            for (let i = 0; i < data.length; i++) {
-                const d = data[i];
-                const dx = query.x - d.x;
-                const dy = query.y - d.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                distances.push(dist);
+            // Step 2: Calculate ALL distances with FULL detail
+            let distCalcs = data.map((d, i) => {
+                const dx = query.x - d.x, dy = query.y - d.y;
+                const distVal = Math.sqrt(dx * dx + dy * dy);
+                return `P${i + 1}: d = √[(${query.x.toFixed(3)} - ${d.x.toFixed(3)})² + (${query.y.toFixed(3)} - ${d.y.toFixed(3)})²]\n     = √[(${dx.toFixed(3)})² + (${dy.toFixed(3)})²]\n     = √[${(dx * dx).toFixed(4)} + ${(dy * dy).toFixed(4)}]\n     = √${(dx * dx + dy * dy).toFixed(4)}\n     = ${distVal.toFixed(6)}`;
+            }).join('\n\n');
 
-                steps.push({
-                    title: `Distance to Point ${i + 1}`,
-                    content: `<p>Calculate Euclidean distance:</p>
-                        <div class="calc-box">
-                        Point ${i + 1}: (${d.x.toFixed(2)}, ${d.y.toFixed(2)}) - Class ${d.label}<br>
-                        Query: (${query.x.toFixed(2)}, ${query.y.toFixed(2)})<br><br>
-                        dx = ${query.x.toFixed(2)} - ${d.x.toFixed(2)} = ${dx.toFixed(3)}<br>
-                        dy = ${query.y.toFixed(2)} - ${d.y.toFixed(2)} = ${dy.toFixed(3)}<br><br>
-                        d = √(${dx.toFixed(3)}² + ${dy.toFixed(3)}²)<br>
-                        d = √(${(dx * dx).toFixed(3)} + ${(dy * dy).toFixed(3)})<br>
-                        d = √${(dx * dx + dy * dy).toFixed(3)}<br>
-                        <strong>d = ${dist.toFixed(4)}</strong>
-                        </div>`,
-                    distances: [...distances], neighbors: [], phase: 'distance', currentPoint: i
-                });
-            }
+            distances = data.map((d, i) => ({ idx: i, dist: dist(d, query), label: d.label }));
+            steps.push({ title: 'Calculate ALL Distances', content: `<div class="calc-box">${distCalcs}</div>`, distances: [...distances], neighbors: [], prediction: null });
 
-            // Sort and find k nearest
-            const sorted = distances.map((d, i) => ({ i, d, label: data[i].label })).sort((a, b) => a.d - b.d);
-            neighbors = sorted.slice(0, params.k).map(s => s.i);
+            // Step 3: Sort
+            distances.sort((a, b) => a.dist - b.dist);
+            let sortedStr = distances.map((d, r) => `${r + 1}. P${d.idx + 1}: d = ${d.dist.toFixed(6)}, class = ${d.label}`).join('\n');
+            steps.push({ title: 'Sort by Distance', content: `<div class="calc-box">${sortedStr}</div>`, distances: [...distances], neighbors: [], prediction: null });
 
-            let sortDetail = sorted.slice(0, Math.min(10, sorted.length)).map((s, rank) =>
-                `${rank + 1}. Point ${s.i + 1}: ${s.d.toFixed(3)} (Class ${s.label}) ${rank < params.k ? '← NEIGHBOR' : ''}`
-            ).join('<br>');
+            // Step 4: Select k nearest
+            neighbors = distances.slice(0, params.k).map(d => d.idx);
+            let kStr = distances.slice(0, params.k).map((d, r) => `${r + 1}. P${d.idx + 1}: d = ${d.dist.toFixed(6)}, class = ${d.label}`).join('\n');
+            steps.push({ title: `Select Top ${params.k}`, content: `<div class="calc-box">K Nearest Neighbors:\n${kStr}</div>`, distances: [...distances], neighbors: [...neighbors], prediction: null });
 
-            steps.push({
-                title: `Sort & Find ${params.k} Nearest`,
-                content: `<p>Sort all distances (smallest first):</p>
-                    <div class="calc-box">${sortDetail}</div>
-                    <p>The top ${params.k} are our neighbors!</p>`,
-                distances: [...distances], neighbors: [...neighbors], phase: 'sort'
-            });
-
-            // Voting
+            // Step 5: Vote
             const votes = { 0: 0, 1: 0 };
-            neighbors.forEach(n => votes[data[n].label]++);
-            const prediction = votes[1] > votes[0] ? 1 : 0;
-
-            let voteDetail = neighbors.map(n => `Point ${n + 1} votes: Class ${data[n].label}`).join('<br>');
-
-            steps.push({
-                title: 'Majority Vote',
-                content: `<p>Each neighbor votes for their class:</p>
-                    <div class="calc-box">${voteDetail}<br><br>
-                    Class 0 votes: ${votes[0]}<br>
-                    Class 1 votes: ${votes[1]}
-                    </div>
-                    <div class="calc-result"><span class="calc-result-label">Prediction</span><span class="calc-result-value" style="color:${prediction ? '#10b981' : '#ef4444'}">Class ${prediction}</span></div>`,
-                distances: [...distances], neighbors: [...neighbors], phase: 'vote', prediction
-            });
+            neighbors.forEach(i => votes[data[i].label]++);
+            prediction = votes[1] > votes[0] ? 1 : 0;
+            let voteStr = `Class 0 votes: ${votes[0]}\nClass 1 votes: ${votes[1]}\n\nMajority: Class ${prediction}`;
+            steps.push({ title: 'Majority Vote', content: `<div class="calc-box">${voteStr}</div><div style="margin-top:6px;padding:6px;background:${prediction ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'};border-radius:4px;font-weight:600">Prediction: Class ${prediction}</div>`, distances: [...distances], neighbors: [...neighbors], prediction });
 
             document.getElementById('total-steps').textContent = steps.length;
         }
 
         const canvas = document.getElementById('viz-canvas');
         const ctx = canvas.getContext('2d');
+        const overlay = document.getElementById('graph-overlay');
 
         function resizeCanvas() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
 
+        function toScreen(x, y) {
+            const ww = canvas.width, hh = canvas.height, pad = 40;
+            return { x: pad + ((x - view.x) / 10 * view.scale) * (ww - 2 * pad), y: hh - pad - ((y - view.y) / 10 * view.scale) * (hh - 2 * pad) };
+        }
+        function toWorld(sx, sy) {
+            const ww = canvas.width, hh = canvas.height, pad = 40;
+            return { x: view.x + ((sx - pad) / (ww - 2 * pad)) * 10 / view.scale, y: view.y + ((hh - pad - sy) / (hh - 2 * pad)) * 10 / view.scale };
+        }
+
         function render(step = null) {
-            const w = canvas.width, h = canvas.height;
-            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, w, h);
-            const pad = 50;
-            const scaleX = v => pad + (v / 10) * (w - 2 * pad);
-            const scaleY = v => h - pad - (v / 10) * (h - 2 * pad);
+            const ww = canvas.width, hh = canvas.height;
+            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, ww, hh);
+            const currNeighbors = step?.neighbors ?? neighbors;
+            const currPred = step?.prediction ?? prediction;
+            pointPositions = [];
 
-            const currDist = step?.distances || distances;
-            const currNeigh = step?.neighbors || neighbors;
-            const currPoint = step?.currentPoint;
+            // Grid
+            ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
+            for (let i = 0; i <= 10; i += 2) { const p = toScreen(i, 0); ctx.beginPath(); ctx.moveTo(p.x, 40); ctx.lineTo(p.x, hh - 40); ctx.stroke(); }
 
-            // Grid and axis labels
-            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-            ctx.fillStyle = '#666';
-            ctx.font = '10px Inter';
-            for (let i = 0; i <= 10; i += 2) {
-                ctx.beginPath(); ctx.moveTo(scaleX(i), pad); ctx.lineTo(scaleX(i), h - pad); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(pad, scaleY(i)); ctx.lineTo(w - pad, scaleY(i)); ctx.stroke();
-                ctx.textAlign = 'center';
-                ctx.fillText(i, scaleX(i), h - 20);
-                ctx.textAlign = 'right';
-                ctx.fillText(i, pad - 8, scaleY(i) + 3);
-            }
+            // Axis labels
+            ctx.fillStyle = '#666'; ctx.font = '9px Inter'; ctx.textAlign = 'center';
+            for (let i = 0; i <= 10; i += 2) { const p = toScreen(i, 0); ctx.fillText(i, p.x, hh - 20); }
 
-            // Draw lines to neighbors
-            currNeigh.forEach(n => {
-                ctx.strokeStyle = 'rgba(99,102,241,0.5)';
-                ctx.lineWidth = 2;
-                ctx.setLineDash([5, 5]);
-                ctx.beginPath();
-                ctx.moveTo(scaleX(query.x), scaleY(query.y));
-                ctx.lineTo(scaleX(data[n].x), scaleY(data[n].y));
-                ctx.stroke();
+            // Lines to neighbors
+            currNeighbors.forEach(i => {
+                const d = data[i];
+                const pq = toScreen(query.x, query.y), pd = toScreen(d.x, d.y);
+                ctx.strokeStyle = 'rgba(245,158,11,0.6)'; ctx.lineWidth = 2; ctx.setLineDash([5, 5]);
+                ctx.beginPath(); ctx.moveTo(pq.x, pq.y); ctx.lineTo(pd.x, pd.y); ctx.stroke();
                 ctx.setLineDash([]);
+                // Distance label
+                const mx = (pq.x + pd.x) / 2, my = (pq.y + pd.y) / 2;
+                ctx.fillStyle = '#f59e0b'; ctx.font = '8px JetBrains Mono';
+                ctx.fillText(dist(d, query).toFixed(2), mx, my - 5);
             });
 
-            // Line to current point being calculated
-            if (currPoint !== undefined) {
-                ctx.strokeStyle = 'rgba(245,158,11,0.7)';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(scaleX(query.x), scaleY(query.y));
-                ctx.lineTo(scaleX(data[currPoint].x), scaleY(data[currPoint].y));
-                ctx.stroke();
-            }
-
-            // Data points with numbers
+            // Data points
             data.forEach((d, i) => {
-                const px = scaleX(d.x), py = scaleY(d.y);
-                const isNeighbor = currNeigh.includes(i);
-                const isCurrent = i === currPoint;
-
+                const p = toScreen(d.x, d.y);
+                const isN = currNeighbors.includes(i);
+                pointPositions.push({ x: p.x, y: p.y, idx: i, dataX: d.x, dataY: d.y, label: d.label });
                 ctx.beginPath();
-                ctx.arc(px, py, isNeighbor ? 14 : 12, 0, Math.PI * 2);
+                ctx.arc(p.x, p.y, isN ? 13 : (hoveredPoint === i ? 12 : 9), 0, Math.PI * 2);
                 ctx.fillStyle = d.label ? '#10b981' : '#ef4444';
                 ctx.fill();
-                ctx.strokeStyle = isNeighbor ? '#6366f1' : isCurrent ? '#f59e0b' : '#fff';
-                ctx.lineWidth = isNeighbor || isCurrent ? 3 : 2;
-                ctx.stroke();
-
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 9px Inter';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(i + 1, px, py);
+                ctx.strokeStyle = isN ? '#f59e0b' : (hoveredPoint === i ? '#fff' : 'rgba(255,255,255,0.5)');
+                ctx.lineWidth = isN ? 3 : 2; ctx.stroke();
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 7px Inter'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(i + 1, p.x, p.y);
             });
 
             // Query point
+            const pq = toScreen(query.x, query.y);
             ctx.beginPath();
-            ctx.moveTo(scaleX(query.x), scaleY(query.y) - 12);
-            ctx.lineTo(scaleX(query.x) + 10, scaleY(query.y) + 8);
-            ctx.lineTo(scaleX(query.x) - 10, scaleY(query.y) + 8);
-            ctx.closePath();
-            ctx.fillStyle = '#f59e0b';
+            ctx.arc(pq.x, pq.y, 14, 0, Math.PI * 2);
+            ctx.fillStyle = currPred !== null ? (currPred ? '#10b981' : '#ef4444') : '#6366f1';
             ctx.fill();
-            ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 2;
-            ctx.stroke();
+            ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke();
+            ctx.fillStyle = '#fff'; ctx.font = 'bold 9px Inter';
+            ctx.fillText('?', pq.x, pq.y);
         }
+
+        canvas.addEventListener('mousemove', e => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+            if (isDragging) { const dx = (mx - dragStart.x) / canvas.width * 10 / view.scale; const dy = -(my - dragStart.y) / canvas.height * 10 / view.scale; view.x -= dx; view.y -= dy; dragStart = { x: mx, y: my }; render(); return; }
+            const world = toWorld(mx, my);
+            overlay.style.display = 'block';
+            overlay.innerHTML = `x: ${world.x.toFixed(2)}, y: ${world.y.toFixed(2)}`;
+            let found = -1;
+            pointPositions.forEach(p => { if (Math.hypot(p.x - mx, p.y - my) < 12) found = p.idx; });
+            if (found !== -1) {
+                const pp = pointPositions[found], d = dist({ x: pp.dataX, y: pp.dataY }, query);
+                overlay.innerHTML = `P${found + 1}: (${pp.dataX.toFixed(3)}, ${pp.dataY.toFixed(3)})<br>Class: ${pp.label}, Dist: ${d.toFixed(4)}`;
+            }
+            if (found !== hoveredPoint) { hoveredPoint = found; renderTable(); render(); }
+        });
+        canvas.addEventListener('mouseleave', () => { overlay.style.display = 'none'; if (hoveredPoint !== -1) { hoveredPoint = -1; renderTable(); render(); } });
+        canvas.addEventListener('mousedown', e => { isDragging = true; dragStart = { x: e.offsetX, y: e.offsetY }; canvas.style.cursor = 'grabbing'; });
+        canvas.addEventListener('mouseup', () => { isDragging = false; canvas.style.cursor = 'crosshair'; });
+        canvas.addEventListener('wheel', e => { e.preventDefault(); view.scale *= e.deltaY > 0 ? 0.9 : 1.1; render(); });
+        function zoomIn() { view.scale *= 1.2; render(); }
+        function zoomOut() { view.scale *= 0.8; render(); }
+        function resetView() { view = { x: 0, y: 0, scale: 1 }; render(); }
+
+        function openFullscreen(type) {
+            const o = document.getElementById('fullscreen-overlay'), t = document.getElementById('fullscreen-title'), c = document.getElementById('fullscreen-content');
+            o.classList.add('active');
+            if (type === 'data') {
+                t.textContent = '📊 Training Data';
+                c.innerHTML = `<table class="data-table" style="font-size:0.9rem"><thead><tr><th>#</th><th>X</th><th>Y</th><th>Class</th><th>Dist to Query</th></tr></thead><tbody>${data.map((d, i) => `<tr><td>${i + 1}</td><td>${d.x.toFixed(6)}</td><td>${d.y.toFixed(6)}</td><td>${d.label}</td><td>${dist(d, query).toFixed(6)}</td></tr>`).join('')}</tbody></table>`;
+            } else if (type === 'dist') {
+                t.textContent = '📏 Distance Ranking';
+                c.innerHTML = `<p style="margin-bottom:12px">Query: (${query.x.toFixed(4)}, ${query.y.toFixed(4)})</p><table class="data-table" style="font-size:0.9rem"><thead><tr><th>Rank</th><th>Point</th><th>X</th><th>Y</th><th>Distance</th><th>Class</th><th>Is k-Neighbor?</th></tr></thead><tbody>${distances.map((d, r) => `<tr><td>${r + 1}</td><td>${d.idx + 1}</td><td>${data[d.idx].x.toFixed(6)}</td><td>${data[d.idx].y.toFixed(6)}</td><td>${d.dist.toFixed(8)}</td><td>${data[d.idx].label}</td><td>${neighbors.includes(d.idx) ? '✓' : ''}</td></tr>`).join('')}</tbody></table>`;
+            } else if (type === 'calc') { t.textContent = '📐 All Steps'; c.innerHTML = document.getElementById('calc-steps').innerHTML; }
+        }
+        function closeFullscreen() { document.getElementById('fullscreen-overlay').classList.remove('active'); }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFullscreen(); });
 
         function displayStep(step) {
             const container = document.getElementById('calc-steps');
             container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
             container.querySelector('.calc-placeholder')?.remove();
-
-            const div = document.createElement('div');
-            div.className = 'calc-step active';
+            const div = document.createElement('div'); div.className = 'calc-step active';
             div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
-            container.appendChild(div);
-            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
-
-            distances = step.distances || [];
-            neighbors = step.neighbors || [];
-            renderTable();
-            render(step);
+            container.appendChild(div); div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            distances = step.distances; neighbors = step.neighbors; prediction = step.prediction;
+            renderTable(); renderDistTable(); render(step);
             document.getElementById('viz-k').textContent = params.k;
-            document.getElementById('viz-pred').textContent = step.prediction !== undefined ? `Class ${step.prediction}` : '?';
+            document.getElementById('viz-pred').textContent = prediction !== null ? prediction : '?';
         }
 
         function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
-        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 400); }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 600); }
         function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
-        function reset() { stopAuto(); currentStep = 0; distances = []; neighbors = []; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to calculate distances</p></div>'; generateSteps(); renderTable(); render(); }
+        function reset() { stopAuto(); currentStep = 0; distances = []; neighbors = []; prediction = null; hoveredPoint = -1; view = { x: 0, y: 0, scale: 1 }; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong></p></div>'; generateSteps(); renderTable(); renderDistTable(); render(); }
 
         document.getElementById('step-btn').addEventListener('click', step);
         document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
         document.getElementById('reset-btn').addEventListener('click', reset);
-        document.getElementById('random-btn').addEventListener('click', () => { data = generateData(); query = generateQuery(); reset(); });
-        document.getElementById('new-query-btn').addEventListener('click', () => { query = generateQuery(); reset(); });
-        document.getElementById('k-slider').addEventListener('input', e => { params.k = parseInt(e.target.value); document.getElementById('k-value').textContent = params.k; reset(); });
+        document.getElementById('random-btn').addEventListener('click', () => { data = generateData(); query = { x: 4 + Math.random() * 2, y: 4 + Math.random() * 2 }; reset(); });
+        document.getElementById('query-btn').addEventListener('click', () => { query = { x: 2 + Math.random() * 6, y: 2 + Math.random() * 6 }; reset(); });
+        document.getElementById('k-slider').addEventListener('input', e => { params.k = parseInt(e.target.value); document.getElementById('k-value').textContent = params.k; });
 
         window.addEventListener('resize', resizeCanvas);
-        renderTable();
-        resizeCanvas();
-        generateSteps();
+        renderTable(); renderDistTable(); resizeCanvas(); generateSteps();
     </script>
 </body>
 

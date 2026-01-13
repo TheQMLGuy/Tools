@@ -47,6 +47,17 @@
             overflow: hidden;
         }
 
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .left-column .panel {
+            flex: 1;
+            min-height: 0;
+        }
+
         .panel {
             display: flex;
             flex-direction: column;
@@ -60,13 +71,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-bottom: 1px solid var(--border-color);
             background: rgba(0, 0, 0, 0.2);
         }
 
         .panel-header h2 {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
@@ -75,48 +86,54 @@
         .panel-body {
             flex: 1;
             overflow: auto;
-            padding: 12px;
+            padding: 10px;
         }
 
         .panel-footer {
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-top: 1px solid var(--border-color);
         }
 
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
         }
 
         .data-table th {
             background: var(--bg-secondary);
-            padding: 6px;
+            padding: 4px;
             text-align: left;
             border-bottom: 2px solid var(--accent-primary);
+            position: sticky;
+            top: 0;
         }
 
         .data-table td {
-            padding: 5px 6px;
+            padding: 3px 4px;
             border-bottom: 1px solid var(--border-color);
             font-family: var(--font-mono);
         }
 
-        .data-table tr.support td {
-            background: rgba(245, 158, 11, 0.2);
+        .data-table tr.highlighted td {
+            background: rgba(99, 102, 241, 0.4) !important;
+        }
+
+        .data-table tr.sv td {
+            background: rgba(245, 158, 11, 0.3) !important;
         }
 
         .calc-steps {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .calc-placeholder {
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 200px;
+            height: 100px;
             color: var(--text-muted);
             text-align: center;
         }
@@ -124,8 +141,8 @@
         .calc-step {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px;
+            border-radius: 6px;
+            padding: 8px;
             animation: fadeIn 0.3s;
         }
 
@@ -140,69 +157,51 @@
         .calc-step-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
+            gap: 6px;
+            margin-bottom: 4px;
         }
 
         .calc-step-number {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             background: var(--accent-gradient);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: white;
         }
 
         .calc-step-title {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
 
         .calc-step-content {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-secondary);
             line-height: 1.5;
         }
 
         .calc-box {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            padding: 8px;
-            margin: 6px 0;
+            border-radius: 4px;
+            padding: 6px;
+            margin: 4px 0;
             font-family: var(--font-mono);
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             overflow-x: auto;
-            line-height: 1.6;
-        }
-
-        .calc-result {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 10px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 6px;
-            margin-top: 6px;
-        }
-
-        .calc-result-label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .calc-result-value {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--success);
+            line-height: 1.4;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
         }
 
         .viz-panel .panel-body {
             padding: 0;
+            position: relative;
         }
 
         .viz-panel canvas {
@@ -213,15 +212,15 @@
 
         .viz-stats {
             display: flex;
-            gap: 16px;
+            gap: 12px;
             justify-content: center;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
         }
 
         .param-section {
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 10px;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
         }
 
         .param-section:last-child {
@@ -229,59 +228,131 @@
         }
 
         .param-section-title {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .param-item {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .param-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
+            font-size: 0.7rem;
         }
 
         .param-name code {
             font-family: var(--font-mono);
             background: rgba(0, 0, 0, 0.3);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.65rem;
         }
 
         .param-value {
             font-family: var(--font-mono);
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--accent-primary);
-        }
-
-        .taming-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .taming-list li {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            padding: 3px 0 3px 14px;
-            position: relative;
-        }
-
-        .taming-list li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: var(--success);
         }
 
         .btn-block {
             width: 100%;
-            margin-top: 6px;
+            margin-top: 4px;
+        }
+
+        .btn-fs {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .btn-fs:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .graph-overlay {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            pointer-events: none;
+            display: none;
+            z-index: 10;
+        }
+
+        .graph-controls {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            display: flex;
+            gap: 4px;
+            z-index: 10;
+        }
+
+        .graph-controls button {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .graph-controls button:hover {
+            background: var(--accent-primary);
+        }
+
+        .fullscreen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .fullscreen-overlay.active {
+            display: flex;
+        }
+
+        .fullscreen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .fullscreen-header h2 {
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .fullscreen-content {
+            flex: 1;
+            overflow: auto;
+            background: var(--bg-panel);
+            border-radius: 8px;
+            padding: 16px;
         }
 
         @keyframes fadeIn {
@@ -299,7 +370,7 @@
 <body>
     <div class="app-container">
         <header class="app-header">
-            <h1 class="app-title">⚔️ Support Vector Machine - Step by Step</h1>
+            <h1 class="app-title">⚡ SVM - Step by Step</h1>
             <div class="header-right">
                 <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
                 <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
@@ -307,341 +378,329 @@
             </div>
         </header>
         <main class="main-content">
+            <div class="left-column">
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>📊 Training Data</h2>
+                        <button class="btn-fs" onclick="openFullscreen('data')">⛶</button>
+                    </div>
+                    <div class="panel-body">
+                        <table id="data-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>📉 Training Progress</h2>
+                        <button class="btn-fs" onclick="openFullscreen('epoch')">⛶</button>
+                    </div>
+                    <div class="panel-body">
+                        <table id="epoch-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>📊 Training Data</h2>
-                </div>
-                <div class="panel-body">
-                    <table id="data-table" class="data-table">
-                        <thead></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <div class="panel-footer" style="font-size:0.65rem;color:var(--text-muted)">
-                    <span style="color:#f59e0b">●</span> Support vectors (closest to boundary)
-                </div>
-            </section>
-            <section class="panel">
-                <div class="panel-header">
-                    <h2>📐 SVM Calculations</h2>
-                    <span style="font-size:0.7rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
-                            id="total-steps">0</span></span>
+                    <h2>📐 Full Calculations</h2>
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <span style="font-size:0.65rem;color:var(--text-muted)"><span id="current-step">0</span>/<span
+                                id="total-steps">0</span></span>
+                        <button class="btn-fs" onclick="openFullscreen('calc')">⛶</button>
+                    </div>
                 </div>
                 <div class="panel-body">
                     <div id="calc-steps" class="calc-steps">
                         <div class="calc-placeholder">
-                            <p>Click <strong>Step</strong> to find the margin</p>
+                            <p>Click <strong>Step</strong></p>
                         </div>
                     </div>
                 </div>
             </section>
             <section class="panel viz-panel">
                 <div class="panel-header">
-                    <h2>🎨 Decision Boundary</h2>
+                    <h2>🎨 Hyperplane</h2>
                 </div>
-                <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
+                <div class="panel-body">
+                    <canvas id="viz-canvas"></canvas>
+                    <div id="graph-overlay" class="graph-overlay"></div>
+                    <div class="graph-controls">
+                        <button onclick="zoomIn()">+</button>
+                        <button onclick="zoomOut()">−</button>
+                        <button onclick="resetView()">⌂</button>
+                    </div>
+                </div>
                 <div class="panel-footer">
                     <div class="viz-stats">
-                        <span>Margin: <strong id="viz-margin">-</strong></span>
-                        <span>Support Vectors: <strong id="viz-sv">0</strong></span>
+                        <span>Iter: <strong id="viz-iter">0</strong></span>
+                        <span>Acc: <strong id="viz-acc">-</strong></span>
+                        <span>SVs: <strong id="viz-sv">-</strong></span>
                     </div>
                 </div>
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>⚙️ Hyperparameters</h2>
+                    <h2>⚙️ Params</h2>
                 </div>
                 <div class="panel-body">
                     <div class="param-section">
                         <div class="param-item">
-                            <div class="param-header">
-                                <span class="param-name"><code>C</code></span>
-                                <span class="param-value" id="c-value">1.0</span>
-                            </div>
-                            <input type="range" id="c-slider" class="slider" min="0.1" max="10" step="0.1" value="1"
+                            <div class="param-header"><span class="param-name"><code>C</code></span><span
+                                    class="param-value" id="c-value">1.0</span></div>
+                            <input type="range" id="c-slider" class="slider" min="0.1" max="2" step="0.1" value="1"
                                 style="width:100%">
-                            <div style="font-size:0.6rem;color:var(--text-muted)">Regularization (higher = stricter
-                                margin)</div>
+                        </div>
+                        <div class="param-item">
+                            <div class="param-header"><span class="param-name"><code>lr</code></span><span
+                                    class="param-value" id="lr-value">0.01</span></div>
+                            <input type="range" id="lr-slider" class="slider" min="0.001" max="0.1" step="0.001"
+                                value="0.01" style="width:100%">
+                        </div>
+                        <div class="param-item">
+                            <div class="param-header"><span class="param-name"><code>epochs</code></span><span
+                                    class="param-value" id="iter-value">20</span></div>
+                            <input type="range" id="iter-slider" class="slider" min="10" max="50" step="10" value="20"
+                                style="width:100%">
                         </div>
                     </div>
                     <div class="param-section">
-                        <div class="param-section-title">💡 Key Concepts</div>
-                        <ul class="taming-list">
-                            <li>Find line that maximizes margin</li>
-                            <li>Margin = distance to nearest points</li>
-                            <li>Support vectors define the boundary</li>
-                            <li>f(x) = w·x + b = 0 is the boundary</li>
-                        </ul>
+                        <div class="param-section-title">Hinge Loss</div>
+                        <div style="font-size:0.55rem;color:var(--text-muted)">max(0, 1 - y·(w·x + b))</div>
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button id="random-btn" class="btn btn-primary btn-block">🎲 Random Data</button>
-                    <button id="apply-btn" class="btn btn-secondary btn-block">Apply & Restart</button>
+                    <button id="random-btn" class="btn btn-primary btn-block">🎲 Random</button>
+                    <button id="apply-btn" class="btn btn-secondary btn-block">Apply</button>
                 </div>
             </section>
         </main>
     </div>
+    <div id="fullscreen-overlay" class="fullscreen-overlay">
+        <div class="fullscreen-header">
+            <h2 id="fullscreen-title">Fullscreen</h2><button class="btn btn-ghost" onclick="closeFullscreen()">✕
+                Close</button>
+        </div>
+        <div class="fullscreen-content" id="fullscreen-content"></div>
+    </div>
     <script>
         function generateData() {
-            const data = [];
-            for (let i = 0; i < 8; i++) {
-                data.push({ x: 1 + Math.random() * 3, y: 5 + Math.random() * 3, label: -1 });
-            }
-            for (let i = 0; i < 8; i++) {
-                data.push({ x: 5 + Math.random() * 3, y: 2 + Math.random() * 3, label: 1 });
-            }
-            return data;
+            const d = [];
+            for (let i = 0; i < 8; i++) d.push({ x1: 1 + Math.random() * 3, x2: 5 + Math.random() * 3, y: -1 });
+            for (let i = 0; i < 8; i++) d.push({ x1: 5 + Math.random() * 3, x2: 1 + Math.random() * 3, y: 1 });
+            return d;
         }
-
         let data = generateData();
-        let params = { C: 1.0 };
-        let w1 = 0, w2 = 0, b = 0;
-        let supportVectors = [];
+        let params = { C: 1.0, lr: 0.01, maxIter: 20 };
+        let w1 = 0, w2 = 0, b = 0, epochHistory = [], supportVectors = [];
         let steps = [], currentStep = 0;
         let isAutoRunning = false, autoInterval = null;
+        let hoveredPoint = -1, pointPositions = [];
+        let view = { x: 0, y: 0, scale: 1 };
+        let isDragging = false, dragStart = { x: 0, y: 0 };
+
+        function predict(d) { return w1 * d.x1 + w2 * d.x2 + b; }
+        function accuracy() { return data.filter(d => (predict(d) >= 0 ? 1 : -1) === d.y).length / data.length; }
 
         function renderTable() {
-            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>Class</th><th>Dist</th></tr>';
+            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X₁</th><th>X₂</th><th>Y</th><th>Score</th><th>SV?</th></tr>';
             document.querySelector('#data-table tbody').innerHTML = data.map((d, i) => {
-                const isSV = supportVectors.includes(i);
-                const dist = Math.abs(w1 * d.x + w2 * d.y + b) / Math.sqrt(w1 * w1 + w2 * w2) || 0;
-                return `<tr class="${isSV ? 'support' : ''}"><td style="font-weight:600">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td><td style="color:${d.label === 1 ? '#10b981' : '#ef4444'}">${d.label === 1 ? '+1' : '-1'}</td><td>${dist.toFixed(3)}</td></tr>`;
+                const score = predict(d), isSV = supportVectors.includes(i);
+                return `<tr class="${hoveredPoint === i ? 'highlighted' : ''} ${isSV ? 'sv' : ''}"><td>${i + 1}</td><td>${d.x1.toFixed(2)}</td><td>${d.x2.toFixed(2)}</td><td style="color:${d.y > 0 ? '#10b981' : '#ef4444'}">${d.y}</td><td>${score.toFixed(3)}</td><td>${isSV ? '✓' : ''}</td></tr>`;
             }).join('');
         }
 
+        function renderEpochTable() {
+            document.querySelector('#epoch-table thead').innerHTML = '<tr><th>Ep</th><th>w₁</th><th>w₂</th><th>b</th><th>Acc</th></tr>';
+            document.querySelector('#epoch-table tbody').innerHTML = epochHistory.map(e =>
+                `<tr><td>${e.epoch}</td><td>${e.w1.toFixed(4)}</td><td>${e.w2.toFixed(4)}</td><td>${e.b.toFixed(4)}</td><td>${(e.acc * 100).toFixed(0)}%</td></tr>`
+            ).join('');
+        }
+
         function generateSteps() {
-            steps = []; supportVectors = [];
+            steps = []; w1 = w2 = b = 0; epochHistory = []; supportVectors = [];
 
-            // Normalize data
-            const xMean = data.reduce((s, d) => s + d.x, 0) / data.length;
-            const yMean = data.reduce((s, d) => s + d.y, 0) / data.length;
-            const xStd = Math.sqrt(data.reduce((s, d) => s + (d.x - xMean) ** 2, 0) / data.length) || 1;
-            const yStd = Math.sqrt(data.reduce((s, d) => s + (d.y - yMean) ** 2, 0) / data.length) || 1;
-            const norm = data.map(d => ({ x: (d.x - xMean) / xStd, y: (d.y - yMean) / yStd, label: d.label }));
+            let dataStr = data.map((d, i) => `P${i + 1}: (${d.x1.toFixed(3)}, ${d.x2.toFixed(3)}) y=${d.y}`).join('\n');
+            steps.push({ title: 'Dataset', content: `<div class="calc-box">${dataStr}</div>`, w1: 0, w2: 0, b: 0, epoch: 0 });
+            steps.push({ title: 'Initialize', content: `<div class="calc-box">w₁ = 0, w₂ = 0, b = 0\n\nHyperplane: 0·x₁ + 0·x₂ + 0 = 0</div>`, w1: 0, w2: 0, b: 0, epoch: 0 });
 
-            steps.push({
-                title: 'Our Binary Classification',
-                content: `<p>We have ${data.length} points in 2 classes:</p>
-                    <div class="calc-box">
-                    Class +1 (green): ${data.filter(d => d.label === 1).length} points<br>
-                    Class -1 (red): ${data.filter(d => d.label === -1).length} points
-                    </div>
-                    <p>Goal: Find a line that separates them with MAXIMUM margin!</p>`,
-                w1: 0, w2: 0, b: 0, sv: []
-            });
+            for (let ep = 1; ep <= params.maxIter; ep++) {
+                // Calculate margins for ALL points
+                let marginCalcs = data.map((d, i) => {
+                    const score = w1 * d.x1 + w2 * d.x2 + b;
+                    const margin = d.y * score;
+                    return `P${i + 1}: score = ${w1.toFixed(4)}×${d.x1.toFixed(2)} + ${w2.toFixed(4)}×${d.x2.toFixed(2)} + ${b.toFixed(4)} = ${score.toFixed(4)}\n      margin = ${d.y} × ${score.toFixed(4)} = ${margin.toFixed(4)} ${margin < 1 ? '< 1 ⚠️' : '≥ 1 ✓'}`;
+                }).join('\n\n');
 
-            steps.push({
-                title: 'SVM Goal: Maximum Margin',
-                content: `<p>We want the widest "street" between classes:</p>
-                    <div class="calc-box">
-                    Decision boundary: w₁x + w₂y + b = 0<br><br>
-                    Margin = 2 / ||w|| = 2 / √(w₁² + w₂²)<br><br>
-                    Wider margin = more confidence in predictions!
-                    </div>`,
-                w1: 0, w2: 0, b: 0, sv: []
-            });
+                steps.push({ title: `Epoch ${ep}: Margins`, content: `<div class="calc-box">${marginCalcs}</div>`, w1, w2, b, epoch: ep });
 
-            // Simple gradient descent for linear SVM
-            let wn1 = 0, wn2 = 0, bn = 0;
-            const lr = 0.01;
-
-            for (let ep = 1; ep <= 30; ep++) {
+                // Update weights with FULL gradient calculations
+                let gradCalcs = '';
                 let dw1 = 0, dw2 = 0, db = 0;
-
-                norm.forEach(d => {
-                    const margin = d.label * (wn1 * d.x + wn2 * d.y + bn);
+                data.forEach((d, i) => {
+                    const margin = d.y * (w1 * d.x1 + w2 * d.x2 + b);
                     if (margin < 1) {
-                        dw1 += -d.label * d.x * params.C;
-                        dw2 += -d.label * d.y * params.C;
-                        db += -d.label * params.C;
+                        dw1 += -params.C * d.y * d.x1;
+                        dw2 += -params.C * d.y * d.x2;
+                        db += -params.C * d.y;
+                        gradCalcs += `P${i + 1}: margin=${margin.toFixed(4)} < 1\n  ∂w₁ += -${params.C}×${d.y}×${d.x1.toFixed(2)} = ${(-params.C * d.y * d.x1).toFixed(4)}\n`;
                     }
                 });
-                dw1 += wn1;
-                dw2 += wn2;
+                dw1 += w1; dw2 += w2; // Regularization
 
-                wn1 -= lr * dw1;
-                wn2 -= lr * dw2;
-                bn -= lr * db;
+                const oldW1 = w1, oldW2 = w2, oldB = b;
+                w1 -= params.lr * dw1;
+                w2 -= params.lr * dw2;
+                b -= params.lr * db;
 
-                if (ep % 5 === 0 || ep === 1) {
-                    // Convert back
-                    w1 = wn1 / xStd;
-                    w2 = wn2 / yStd;
-                    b = bn - w1 * xMean - w2 * yMean;
+                epochHistory.push({ epoch: ep, w1, w2, b, acc: accuracy() });
 
-                    const norm_w = Math.sqrt(wn1 * wn1 + wn2 * wn2);
-                    const marginWidth = norm_w > 0 ? 2 / norm_w : 0;
-
-                    // Find support vectors
-                    supportVectors = [];
-                    data.forEach((d, i) => {
-                        const dist = Math.abs(w1 * d.x + w2 * d.y + b) / Math.sqrt(w1 * w1 + w2 * w2);
-                        if (dist < marginWidth * 0.6) supportVectors.push(i);
-                    });
-
-                    let svDetail = supportVectors.slice(0, 4).map(i => {
-                        const d = data[i];
-                        const dist = Math.abs(w1 * d.x + w2 * d.y + b) / Math.sqrt(w1 * w1 + w2 * w2);
-                        return `Point ${i + 1}: (${d.x.toFixed(2)}, ${d.y.toFixed(2)}) dist=${dist.toFixed(3)}`;
-                    }).join('<br>');
-
-                    steps.push({
-                        title: `Epoch ${ep}: Optimize Margin`,
-                        content: `<p>Update weights to maximize margin:</p>
-                            <div class="calc-box">
-                            w₁ = ${wn1.toFixed(4)}<br>
-                            w₂ = ${wn2.toFixed(4)}<br>
-                            b = ${bn.toFixed(4)}<br><br>
-                            ||w|| = √(${wn1.toFixed(3)}² + ${wn2.toFixed(3)}²) = ${norm_w.toFixed(4)}<br>
-                            Margin = 2 / ${norm_w.toFixed(4)} = <strong>${marginWidth.toFixed(4)}</strong>
-                            </div>
-                            <p>Support vectors (closest):</p>
-                            <div class="calc-box">${svDetail || 'Finding...'}</div>`,
-                        w1, w2, b, sv: [...supportVectors]
-                    });
-                }
+                steps.push({
+                    title: `Epoch ${ep}: Update`,
+                    content: `<div class="calc-box">${gradCalcs || 'All margins ≥ 1, no hinge loss updates\n'}∂w₁_total = ${dw1.toFixed(4)}, ∂w₂_total = ${dw2.toFixed(4)}\n\nw₁ = ${oldW1.toFixed(4)} - ${params.lr}×${dw1.toFixed(4)} = ${w1.toFixed(4)}\nw₂ = ${oldW2.toFixed(4)} - ${params.lr}×${dw2.toFixed(4)} = ${w2.toFixed(4)}\nb = ${oldB.toFixed(4)} - ${params.lr}×${db.toFixed(4)} = ${b.toFixed(4)}\n\nAccuracy: ${(accuracy() * 100).toFixed(1)}%</div>`,
+                    w1, w2, b, epoch: ep
+                });
             }
 
-            // Final
-            const finalNorm = Math.sqrt(wn1 * wn1 + wn2 * wn2);
-            const finalMargin = finalNorm > 0 ? 2 / finalNorm : 0;
+            // Find support vectors
+            supportVectors = data.map((d, i) => ({ i, margin: Math.abs(d.y * predict(d) - 1) })).filter(x => x.margin < 0.5).map(x => x.i);
 
-            steps.push({
-                title: '✅ SVM Trained!',
-                content: `<p>Final hyperplane:</p>
-                    <div class="calc-box">
-                    ${w1.toFixed(3)}x + ${w2.toFixed(3)}y + ${b.toFixed(3)} = 0<br><br>
-                    Support Vectors: ${supportVectors.length} points
-                    </div>
-                    <div class="calc-result"><span class="calc-result-label">Final Margin</span><span class="calc-result-value">${finalMargin.toFixed(4)}</span></div>`,
-                w1, w2, b, sv: [...supportVectors]
-            });
-
+            steps.push({ title: '✅ Complete!', content: `<div class="calc-box">Hyperplane:\n${w1.toFixed(6)}·x₁ + ${w2.toFixed(6)}·x₂ + ${b.toFixed(6)} = 0\n\nSupport Vectors: ${supportVectors.length}\nAccuracy: ${(accuracy() * 100).toFixed(1)}%</div>`, w1, w2, b, epoch: params.maxIter });
             document.getElementById('total-steps').textContent = steps.length;
         }
 
         const canvas = document.getElementById('viz-canvas');
         const ctx = canvas.getContext('2d');
+        const overlay = document.getElementById('graph-overlay');
 
         function resizeCanvas() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
+
+        function toScreen(x, y) {
+            const ww = canvas.width, hh = canvas.height, pad = 40;
+            return { x: pad + ((x - view.x) / 10 * view.scale) * (ww - 2 * pad), y: hh - pad - ((y - view.y) / 10 * view.scale) * (hh - 2 * pad) };
+        }
+        function toWorld(sx, sy) {
+            const ww = canvas.width, hh = canvas.height, pad = 40;
+            return { x: view.x + ((sx - pad) / (ww - 2 * pad)) * 10 / view.scale, y: view.y + ((hh - pad - sy) / (hh - 2 * pad)) * 10 / view.scale };
+        }
 
         function render(step = null) {
             const ww = canvas.width, hh = canvas.height;
             ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, ww, hh);
-            const pad = 50;
-            const scaleX = v => pad + (v / 10) * (ww - 2 * pad);
-            const scaleY = v => hh - pad - (v / 10) * (hh - 2 * pad);
-
             const cw1 = step?.w1 ?? w1, cw2 = step?.w2 ?? w2, cb = step?.b ?? b;
-            const csv = step?.sv ?? supportVectors;
-
-            // Grid
-            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-            ctx.fillStyle = '#666';
-            ctx.font = '10px Inter';
-            for (let i = 0; i <= 10; i += 2) {
-                ctx.beginPath(); ctx.moveTo(scaleX(i), pad); ctx.lineTo(scaleX(i), hh - pad); ctx.stroke();
-                ctx.textAlign = 'center';
-                ctx.fillText(i, scaleX(i), hh - 20);
-            }
+            pointPositions = [];
 
             // Decision regions
             if (cw1 !== 0 || cw2 !== 0) {
-                for (let px = pad; px < ww - pad; px += 4) {
-                    for (let py = pad; py < hh - pad; py += 4) {
-                        const rx = ((px - pad) / (ww - 2 * pad)) * 10;
-                        const ry = ((hh - pad - py) / (hh - 2 * pad)) * 10;
-                        const val = cw1 * rx + cw2 * ry + cb;
-                        ctx.fillStyle = val > 0 ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)';
-                        ctx.fillRect(px, py, 4, 4);
+                for (let px = 0; px < ww; px += 6) {
+                    for (let py = 0; py < hh; py += 6) {
+                        const world = toWorld(px, py);
+                        const score = cw1 * world.x + cw2 * world.y + cb;
+                        ctx.fillStyle = score >= 0 ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)';
+                        ctx.fillRect(px, py, 6, 6);
                     }
-                }
-
-                // Decision boundary and margins
-                const norm = Math.sqrt(cw1 * cw1 + cw2 * cw2);
-                if (norm > 0) {
-                    const margin = 1 / norm;
-
-                    // Draw boundary and margin lines
-                    [0, margin, -margin].forEach((offset, idx) => {
-                        ctx.strokeStyle = idx === 0 ? '#6366f1' : 'rgba(99,102,241,0.5)';
-                        ctx.lineWidth = idx === 0 ? 3 : 2;
-                        ctx.setLineDash(idx === 0 ? [] : [5, 5]);
-                        ctx.beginPath();
-
-                        for (let x = 0; x <= 10; x += 0.5) {
-                            if (cw2 !== 0) {
-                                const y = (-cw1 * x - cb + offset * norm) / cw2;
-                                if (y >= 0 && y <= 10) {
-                                    if (x === 0) ctx.moveTo(scaleX(x), scaleY(y));
-                                    else ctx.lineTo(scaleX(x), scaleY(y));
-                                }
-                            }
-                        }
-                        ctx.stroke();
-                    });
-                    ctx.setLineDash([]);
                 }
             }
 
-            // Data points
+            // Hyperplane and margins
+            if (cw2 !== 0) {
+                [-1, 0, 1].forEach(offset => {
+                    ctx.strokeStyle = offset === 0 ? '#6366f1' : 'rgba(99,102,241,0.3)';
+                    ctx.lineWidth = offset === 0 ? 3 : 1;
+                    ctx.setLineDash(offset === 0 ? [] : [5, 5]);
+                    ctx.beginPath();
+                    for (let x = 0; x <= 10; x += 0.2) { const y = (-cb - cw1 * x + offset) / cw2; const p = toScreen(x, y); if (x === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); }
+                    ctx.stroke();
+                });
+                ctx.setLineDash([]);
+            }
+
+            // Points
             data.forEach((d, i) => {
-                const px = scaleX(d.x), py = scaleY(d.y);
-                const isSV = csv.includes(i);
-
+                const p = toScreen(d.x1, d.x2);
+                const isSV = supportVectors.includes(i);
+                pointPositions.push({ x: p.x, y: p.y, idx: i, x1: d.x1, x2: d.x2, label: d.y });
                 ctx.beginPath();
-                ctx.arc(px, py, isSV ? 14 : 12, 0, Math.PI * 2);
-                ctx.fillStyle = d.label === 1 ? '#10b981' : '#ef4444';
+                ctx.arc(p.x, p.y, isSV ? 13 : (hoveredPoint === i ? 12 : 9), 0, Math.PI * 2);
+                ctx.fillStyle = d.y > 0 ? '#10b981' : '#ef4444';
                 ctx.fill();
-                ctx.strokeStyle = isSV ? '#f59e0b' : '#fff';
-                ctx.lineWidth = isSV ? 3 : 2;
-                ctx.stroke();
-
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 9px Inter';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(i + 1, px, py);
+                ctx.strokeStyle = isSV ? '#f59e0b' : (hoveredPoint === i ? '#fff' : 'rgba(255,255,255,0.5)');
+                ctx.lineWidth = isSV ? 3 : 2; ctx.stroke();
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 7px Inter'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(i + 1, p.x, p.y);
             });
         }
+
+        canvas.addEventListener('mousemove', e => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+            if (isDragging) { const dx = (mx - dragStart.x) / canvas.width * 10 / view.scale; const dy = -(my - dragStart.y) / canvas.height * 10 / view.scale; view.x -= dx; view.y -= dy; dragStart = { x: mx, y: my }; render(); return; }
+            const world = toWorld(mx, my);
+            overlay.style.display = 'block';
+            overlay.innerHTML = `x₁: ${world.x.toFixed(2)}, x₂: ${world.y.toFixed(2)}`;
+            let found = -1;
+            pointPositions.forEach(p => { if (Math.hypot(p.x - mx, p.y - my) < 12) found = p.idx; });
+            if (found !== -1) {
+                const pp = pointPositions[found], score = predict(data[found]), margin = pp.label * score;
+                overlay.innerHTML = `P${found + 1}: (${pp.x1.toFixed(3)}, ${pp.x2.toFixed(3)})<br>y=${pp.label}, score=${score.toFixed(4)}<br>margin=${margin.toFixed(4)}`;
+            }
+            if (found !== hoveredPoint) { hoveredPoint = found; renderTable(); render(); }
+        });
+        canvas.addEventListener('mouseleave', () => { overlay.style.display = 'none'; if (hoveredPoint !== -1) { hoveredPoint = -1; renderTable(); render(); } });
+        canvas.addEventListener('mousedown', e => { isDragging = true; dragStart = { x: e.offsetX, y: e.offsetY }; canvas.style.cursor = 'grabbing'; });
+        canvas.addEventListener('mouseup', () => { isDragging = false; canvas.style.cursor = 'crosshair'; });
+        canvas.addEventListener('wheel', e => { e.preventDefault(); view.scale *= e.deltaY > 0 ? 0.9 : 1.1; render(); });
+        function zoomIn() { view.scale *= 1.2; render(); }
+        function zoomOut() { view.scale *= 0.8; render(); }
+        function resetView() { view = { x: 0, y: 0, scale: 1 }; render(); }
+
+        function openFullscreen(type) {
+            const o = document.getElementById('fullscreen-overlay'), t = document.getElementById('fullscreen-title'), c = document.getElementById('fullscreen-content');
+            o.classList.add('active');
+            if (type === 'data') {
+                t.textContent = '📊 Training Data';
+                c.innerHTML = `<table class="data-table" style="font-size:0.9rem"><thead><tr><th>#</th><th>X₁</th><th>X₂</th><th>Y</th><th>Score</th><th>Margin</th><th>SV?</th></tr></thead><tbody>${data.map((d, i) => { const s = predict(d), m = d.y * s; return `<tr><td>${i + 1}</td><td>${d.x1.toFixed(6)}</td><td>${d.x2.toFixed(6)}</td><td>${d.y}</td><td>${s.toFixed(6)}</td><td>${m.toFixed(6)}</td><td>${supportVectors.includes(i) ? '✓' : ''}</td></tr>`; }).join('')}</tbody></table>`;
+            } else if (type === 'epoch') {
+                t.textContent = '📉 Training Progress';
+                c.innerHTML = `<table class="data-table" style="font-size:0.9rem"><thead><tr><th>Epoch</th><th>w₁</th><th>w₂</th><th>b</th><th>Accuracy</th></tr></thead><tbody>${epochHistory.map(e => `<tr><td>${e.epoch}</td><td>${e.w1.toFixed(8)}</td><td>${e.w2.toFixed(8)}</td><td>${e.b.toFixed(8)}</td><td>${(e.acc * 100).toFixed(1)}%</td></tr>`).join('')}</tbody></table>`;
+            } else if (type === 'calc') { t.textContent = '📐 All Steps'; c.innerHTML = document.getElementById('calc-steps').innerHTML; }
+        }
+        function closeFullscreen() { document.getElementById('fullscreen-overlay').classList.remove('active'); }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFullscreen(); });
 
         function displayStep(step) {
             const container = document.getElementById('calc-steps');
             container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
             container.querySelector('.calc-placeholder')?.remove();
-
-            const div = document.createElement('div');
-            div.className = 'calc-step active';
+            const div = document.createElement('div'); div.className = 'calc-step active';
             div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
-            container.appendChild(div);
-            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
-
+            container.appendChild(div); div.scrollIntoView({ behavior: 'smooth', block: 'end' });
             w1 = step.w1; w2 = step.w2; b = step.b;
-            supportVectors = step.sv;
-            renderTable();
-            render(step);
-
-            const norm = Math.sqrt(w1 * w1 + w2 * w2);
-            document.getElementById('viz-margin').textContent = norm > 0 ? (2 / norm).toFixed(4) : '-';
+            render(step); renderTable(); renderEpochTable();
+            document.getElementById('viz-iter').textContent = step.epoch;
+            document.getElementById('viz-acc').textContent = (accuracy() * 100).toFixed(0) + '%';
             document.getElementById('viz-sv').textContent = supportVectors.length;
         }
 
         function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
-        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 600); }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 400); }
         function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
-        function reset() { stopAuto(); currentStep = 0; w1 = w2 = b = 0; supportVectors = []; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to find the margin</p></div>'; generateSteps(); renderTable(); render(); }
+        function reset() { stopAuto(); currentStep = 0; w1 = w2 = b = 0; epochHistory = []; supportVectors = []; hoveredPoint = -1; view = { x: 0, y: 0, scale: 1 }; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong></p></div>'; generateSteps(); renderTable(); renderEpochTable(); render(); }
 
         document.getElementById('step-btn').addEventListener('click', step);
         document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
         document.getElementById('reset-btn').addEventListener('click', reset);
         document.getElementById('apply-btn').addEventListener('click', reset);
         document.getElementById('random-btn').addEventListener('click', () => { data = generateData(); reset(); });
-        document.getElementById('c-slider').addEventListener('input', e => { params.C = parseFloat(e.target.value); document.getElementById('c-value').textContent = params.C; });
+        document.getElementById('c-slider').addEventListener('input', e => { params.C = parseFloat(e.target.value); document.getElementById('c-value').textContent = params.C.toFixed(1); });
+        document.getElementById('lr-slider').addEventListener('input', e => { params.lr = parseFloat(e.target.value); document.getElementById('lr-value').textContent = params.lr; });
+        document.getElementById('iter-slider').addEventListener('input', e => { params.maxIter = parseInt(e.target.value); document.getElementById('iter-value').textContent = params.maxIter; });
 
         window.addEventListener('resize', resizeCanvas);
-        renderTable();
-        resizeCanvas();
-        generateSteps();
+        renderTable(); renderEpochTable(); resizeCanvas(); generateSteps();
     </script>
 </body>
 

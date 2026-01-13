@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K-Means Clustering - ML Visualizer</title>
+    <title>K-Means - ML Visualizer</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
@@ -47,6 +47,17 @@
             overflow: hidden;
         }
 
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .left-column .panel {
+            flex: 1;
+            min-height: 0;
+        }
+
         .panel {
             display: flex;
             flex-direction: column;
@@ -60,13 +71,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-bottom: 1px solid var(--border-color);
             background: rgba(0, 0, 0, 0.2);
         }
 
         .panel-header h2 {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
@@ -75,44 +86,50 @@
         .panel-body {
             flex: 1;
             overflow: auto;
-            padding: 12px;
+            padding: 10px;
         }
 
         .panel-footer {
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-top: 1px solid var(--border-color);
         }
 
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
         }
 
         .data-table th {
             background: var(--bg-secondary);
-            padding: 6px;
+            padding: 4px;
             text-align: left;
             border-bottom: 2px solid var(--accent-primary);
+            position: sticky;
+            top: 0;
         }
 
         .data-table td {
-            padding: 5px 6px;
+            padding: 3px 4px;
             border-bottom: 1px solid var(--border-color);
             font-family: var(--font-mono);
+        }
+
+        .data-table tr.highlighted td {
+            background: rgba(99, 102, 241, 0.4) !important;
         }
 
         .calc-steps {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .calc-placeholder {
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 200px;
+            height: 100px;
             color: var(--text-muted);
             text-align: center;
         }
@@ -120,8 +137,8 @@
         .calc-step {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px;
+            border-radius: 6px;
+            padding: 8px;
             animation: fadeIn 0.3s;
         }
 
@@ -136,71 +153,51 @@
         .calc-step-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
+            gap: 6px;
+            margin-bottom: 4px;
         }
 
         .calc-step-number {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             background: var(--accent-gradient);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: white;
         }
 
         .calc-step-title {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
 
         .calc-step-content {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-secondary);
             line-height: 1.5;
         }
 
         .calc-box {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            padding: 8px;
-            margin: 6px 0;
+            border-radius: 4px;
+            padding: 6px;
+            margin: 4px 0;
             font-family: var(--font-mono);
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             overflow-x: auto;
-            line-height: 1.5;
-            max-height: 180px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            max-height: 250px;
             overflow-y: auto;
-        }
-
-        .calc-result {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 10px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 6px;
-            margin-top: 6px;
-        }
-
-        .calc-result-label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .calc-result-value {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--success);
         }
 
         .viz-panel .panel-body {
             padding: 0;
+            position: relative;
         }
 
         .viz-panel canvas {
@@ -211,15 +208,15 @@
 
         .viz-stats {
             display: flex;
-            gap: 16px;
+            gap: 12px;
             justify-content: center;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
         }
 
         .param-section {
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 10px;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
         }
 
         .param-section:last-child {
@@ -227,59 +224,131 @@
         }
 
         .param-section-title {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .param-item {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .param-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
+            font-size: 0.7rem;
         }
 
         .param-name code {
             font-family: var(--font-mono);
             background: rgba(0, 0, 0, 0.3);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.65rem;
         }
 
         .param-value {
             font-family: var(--font-mono);
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--accent-primary);
-        }
-
-        .taming-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .taming-list li {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            padding: 3px 0 3px 14px;
-            position: relative;
-        }
-
-        .taming-list li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: var(--success);
         }
 
         .btn-block {
             width: 100%;
-            margin-top: 6px;
+            margin-top: 4px;
+        }
+
+        .btn-fs {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .btn-fs:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .graph-overlay {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            pointer-events: none;
+            display: none;
+            z-index: 10;
+        }
+
+        .graph-controls {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            display: flex;
+            gap: 4px;
+            z-index: 10;
+        }
+
+        .graph-controls button {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .graph-controls button:hover {
+            background: var(--accent-primary);
+        }
+
+        .fullscreen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .fullscreen-overlay.active {
+            display: flex;
+        }
+
+        .fullscreen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .fullscreen-header h2 {
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .fullscreen-content {
+            flex: 1;
+            overflow: auto;
+            background: var(--bg-panel);
+            border-radius: 8px;
+            padding: 16px;
         }
 
         @keyframes fadeIn {
@@ -297,7 +366,7 @@
 <body>
     <div class="app-container">
         <header class="app-header">
-            <h1 class="app-title">🔵 K-Means Clustering - Step by Step</h1>
+            <h1 class="app-title">🎯 K-Means Clustering - Step by Step</h1>
             <div class="header-right">
                 <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
                 <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
@@ -305,334 +374,321 @@
             </div>
         </header>
         <main class="main-content">
+            <div class="left-column">
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>📊 Points & Clusters</h2>
+                        <button class="btn-fs" onclick="openFullscreen('data')">⛶</button>
+                    </div>
+                    <div class="panel-body">
+                        <table id="data-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>📍 Centroid History</h2>
+                        <button class="btn-fs" onclick="openFullscreen('centroid')">⛶</button>
+                    </div>
+                    <div class="panel-body">
+                        <table id="centroid-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>📊 Data Points</h2>
-                </div>
-                <div class="panel-body">
-                    <table id="data-table" class="data-table">
-                        <thead></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <div class="panel-footer" style="font-size:0.65rem;color:var(--text-muted)">
-                    Point # shown on graph. Assigned cluster shown in color.
-                </div>
-            </section>
-            <section class="panel">
-                <div class="panel-header">
-                    <h2>📐 Full Clustering Steps</h2>
-                    <span style="font-size:0.7rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
-                            id="total-steps">0</span></span>
+                    <h2>📐 Full Calculations</h2>
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <span style="font-size:0.65rem;color:var(--text-muted)"><span id="current-step">0</span>/<span
+                                id="total-steps">0</span></span>
+                        <button class="btn-fs" onclick="openFullscreen('calc')">⛶</button>
+                    </div>
                 </div>
                 <div class="panel-body">
                     <div id="calc-steps" class="calc-steps">
                         <div class="calc-placeholder">
-                            <p>Click <strong>Step</strong> to run K-Means</p>
+                            <p>Click <strong>Step</strong></p>
                         </div>
                     </div>
                 </div>
             </section>
             <section class="panel viz-panel">
                 <div class="panel-header">
-                    <h2>🎨 Visualization</h2>
+                    <h2>🎨 Clustering</h2>
                 </div>
-                <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
+                <div class="panel-body">
+                    <canvas id="viz-canvas"></canvas>
+                    <div id="graph-overlay" class="graph-overlay"></div>
+                    <div class="graph-controls">
+                        <button onclick="zoomIn()">+</button>
+                        <button onclick="zoomOut()">−</button>
+                        <button onclick="resetView()">⌂</button>
+                    </div>
+                </div>
                 <div class="panel-footer">
                     <div class="viz-stats">
-                        <span>Iteration: <strong id="viz-iter">0</strong></span>
-                        <span>Inertia: <strong id="viz-inertia">-</strong></span>
+                        <span>Iter: <strong id="viz-iter">0</strong></span>
+                        <span>WCSS: <strong id="viz-wcss">-</strong></span>
                     </div>
                 </div>
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>⚙️ Hyperparameters</h2>
+                    <h2>⚙️ Params</h2>
                 </div>
                 <div class="panel-body">
                     <div class="param-section">
                         <div class="param-item">
-                            <div class="param-header">
-                                <span class="param-name"><code>n_clusters (k)</code></span>
-                                <span class="param-value" id="k-value">3</span>
-                            </div>
-                            <input type="range" id="k-slider" class="slider" min="2" max="5" value="3"
+                            <div class="param-header"><span class="param-name"><code>k</code></span><span
+                                    class="param-value" id="k-value">3</span></div>
+                            <input type="range" id="k-slider" class="slider" min="2" max="5" step="1" value="3"
+                                style="width:100%">
+                        </div>
+                        <div class="param-item">
+                            <div class="param-header"><span class="param-name"><code>max_iter</code></span><span
+                                    class="param-value" id="iter-value">10</span></div>
+                            <input type="range" id="iter-slider" class="slider" min="5" max="20" step="5" value="10"
                                 style="width:100%">
                         </div>
                     </div>
                     <div class="param-section">
-                        <div class="param-section-title">💡 Algorithm Steps</div>
-                        <ul class="taming-list">
-                            <li>1. Pick k random centroids</li>
-                            <li>2. Assign each point to nearest centroid</li>
-                            <li>3. Move centroid to mean of assigned points</li>
-                            <li>4. Repeat until converged</li>
-                        </ul>
+                        <div class="param-section-title">Algorithm</div>
+                        <div style="font-size:0.55rem;color:var(--text-muted)">1. Init random centroids<br>2. Assign
+                            points to nearest<br>3. Update centroids to mean<br>4. Repeat until converge</div>
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button id="random-btn" class="btn btn-primary btn-block">🎲 Random Data</button>
-                    <button id="apply-btn" class="btn btn-secondary btn-block">Apply & Restart</button>
+                    <button id="random-btn" class="btn btn-primary btn-block">🎲 Random</button>
+                    <button id="apply-btn" class="btn btn-secondary btn-block">Apply</button>
                 </div>
             </section>
         </main>
     </div>
+    <div id="fullscreen-overlay" class="fullscreen-overlay">
+        <div class="fullscreen-header">
+            <h2 id="fullscreen-title">Fullscreen</h2><button class="btn btn-ghost" onclick="closeFullscreen()">✕
+                Close</button>
+        </div>
+        <div class="fullscreen-content" id="fullscreen-content"></div>
+    </div>
     <script>
         const colors = ['#ef4444', '#10b981', '#6366f1', '#f59e0b', '#ec4899'];
-
         function generateData() {
-            const data = [];
-            const centers = [[2, 2], [7, 3], [4, 7]];
-            centers.forEach(c => {
-                for (let i = 0; i < 6; i++) {
-                    data.push({ x: c[0] + (Math.random() - 0.5) * 3, y: c[1] + (Math.random() - 0.5) * 3 });
-                }
-            });
-            return data;
+            const d = [];
+            const centers = [[3, 7], [7, 3], [5, 5]];
+            centers.forEach(c => { for (let i = 0; i < 5; i++) d.push({ x: c[0] + (Math.random() - 0.5) * 2, y: c[1] + (Math.random() - 0.5) * 2 }); });
+            return d;
         }
-
         let data = generateData();
-        let params = { k: 3 };
-        let centroids = [], assignments = [];
+        let params = { k: 3, maxIter: 10 };
+        let centroids = [], assignments = [], centroidHistory = [];
         let steps = [], currentStep = 0;
         let isAutoRunning = false, autoInterval = null;
+        let hoveredPoint = -1, pointPositions = [];
+        let view = { x: 0, y: 0, scale: 1 };
+        let isDragging = false, dragStart = { x: 0, y: 0 };
 
-        function distance(a, b) { return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2); }
+        function dist(a, b) { return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2); }
+        function wcss() {
+            if (assignments.length === 0) return 0;
+            return data.reduce((s, d, i) => s + dist(d, centroids[assignments[i]]) ** 2, 0);
+        }
 
         function renderTable() {
-            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>Cluster</th></tr>';
+            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>C</th><th>Dist</th></tr>';
             document.querySelector('#data-table tbody').innerHTML = data.map((d, i) => {
-                const c = assignments[i];
-                return `<tr><td style="font-weight:600">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td><td style="color:${c !== undefined ? colors[c] : '#666'}">${c !== undefined ? `C${c + 1}` : '-'}</td></tr>`;
+                const c = assignments[i] ?? '-', dv = centroids[c] ? dist(d, centroids[c]).toFixed(3) : '-';
+                return `<tr class="${hoveredPoint === i ? 'highlighted' : ''}"><td>${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td><td style="color:${colors[c] || '#fff'}">${c !== '-' ? c + 1 : c}</td><td>${dv}</td></tr>`;
             }).join('');
         }
 
-        function inertia() {
-            return data.reduce((s, d, i) => {
-                if (assignments[i] !== undefined && centroids[assignments[i]]) {
-                    return s + distance(d, centroids[assignments[i]]) ** 2;
-                }
-                return s;
-            }, 0);
+        function renderCentroidTable() {
+            document.querySelector('#centroid-table thead').innerHTML = '<tr><th>Iter</th><th>C1</th><th>C2</th><th>C3</th></tr>';
+            document.querySelector('#centroid-table tbody').innerHTML = centroidHistory.map(h =>
+                `<tr><td>${h.iter}</td>${h.centroids.map((c, j) => `<td style="color:${colors[j]}">(${c.x.toFixed(2)},${c.y.toFixed(2)})</td>`).join('')}</tr>`
+            ).join('');
         }
 
         function generateSteps() {
-            steps = []; centroids = []; assignments = [];
+            steps = []; centroids = []; assignments = []; centroidHistory = [];
 
-            steps.push({
-                title: 'Our Dataset',
-                content: `<p>We have <strong>${data.length} unlabeled points</strong>.</p>
-                    <div class="calc-box">
-                    Goal: Group into ${params.k} clusters!<br>
-                    We don't know the labels beforehand.
-                    </div>`,
-                centroids: [], assignments: [], iteration: 0
-            });
+            // Dataset
+            let dataStr = data.map((d, i) => `P${i + 1}: (${d.x.toFixed(3)}, ${d.y.toFixed(3)})`).join('\n');
+            steps.push({ title: 'Dataset', content: `<div class="calc-box">${dataStr}</div>`, centroids: [], assignments: [], iter: 0 });
 
-            // Initialize centroids randomly
-            const indices = [];
-            while (indices.length < params.k) {
-                const i = Math.floor(Math.random() * data.length);
-                if (!indices.includes(i)) indices.push(i);
-            }
+            // Initialize random centroids
+            const indices = [...Array(data.length).keys()].sort(() => Math.random() - 0.5).slice(0, params.k);
             centroids = indices.map(i => ({ x: data[i].x, y: data[i].y }));
+            centroidHistory.push({ iter: 0, centroids: [...centroids] });
+            let initStr = centroids.map((c, i) => `C${i + 1}: (${c.x.toFixed(4)}, ${c.y.toFixed(4)})`).join('\n');
+            steps.push({ title: 'Init Centroids', content: `<div class="calc-box">${initStr}</div>`, centroids: [...centroids], assignments: [], iter: 0 });
 
-            let initDetail = centroids.map((c, i) => `Centroid ${i + 1}: (${c.x.toFixed(2)}, ${c.y.toFixed(2)}) [picked point ${indices[i] + 1}]`).join('<br>');
-            steps.push({
-                title: 'Initialize Centroids',
-                content: `<p>Pick ${params.k} random points as initial centroids:</p>
-                    <div class="calc-box">${initDetail}</div>`,
-                centroids: centroids.map(c => ({ ...c })), assignments: [], iteration: 0
-            });
-
-            // Run iterations
-            for (let iter = 1; iter <= 10; iter++) {
-                // Assignment step - show EVERY distance calculation
-                let assignDetail = '';
-                const newAssignments = [];
-
-                data.forEach((d, i) => {
-                    const dists = centroids.map(c => distance(d, c));
-                    const minDist = Math.min(...dists);
-                    const cluster = dists.indexOf(minDist);
-                    newAssignments.push(cluster);
-
-                    if (i < 6) { // Show first 6 in detail
-                        assignDetail += `<strong>Point ${i + 1}</strong> (${d.x.toFixed(2)}, ${d.y.toFixed(2)}):<br>`;
-                        dists.forEach((dist, ci) => {
-                            const c = centroids[ci];
-                            assignDetail += `  → C${ci + 1}: √[(${d.x.toFixed(2)}-${c.x.toFixed(2)})² + (${d.y.toFixed(2)}-${c.y.toFixed(2)})²] = ${dist.toFixed(3)}${ci === cluster ? ' ✓' : ''}<br>`;
-                        });
-                    }
-                });
-                if (data.length > 6) assignDetail += `... (${data.length - 6} more points)`;
-
-                assignments = newAssignments;
-
-                steps.push({
-                    title: `Iter ${iter}: Assign Points`,
-                    content: `<p>Calculate distance from each point to each centroid:</p>
-                        <div class="calc-box">${assignDetail}</div>`,
-                    centroids: centroids.map(c => ({ ...c })), assignments: [...assignments], iteration: iter
-                });
-
-                // Update step
-                const oldCentroids = centroids.map(c => ({ ...c }));
-                const newCentroids = [];
-                let updateDetail = '';
-
-                for (let ci = 0; ci < params.k; ci++) {
-                    const clusterPoints = data.filter((_, i) => assignments[i] === ci);
-                    if (clusterPoints.length > 0) {
-                        const newX = clusterPoints.reduce((s, p) => s + p.x, 0) / clusterPoints.length;
-                        const newY = clusterPoints.reduce((s, p) => s + p.y, 0) / clusterPoints.length;
-                        newCentroids.push({ x: newX, y: newY });
-
-                        updateDetail += `<strong>Centroid ${ci + 1}</strong> (${clusterPoints.length} points):<br>`;
-                        updateDetail += `  x = (${clusterPoints.map(p => p.x.toFixed(1)).join(' + ')}) / ${clusterPoints.length} = ${newX.toFixed(3)}<br>`;
-                        updateDetail += `  y = (${clusterPoints.map(p => p.y.toFixed(1)).join(' + ')}) / ${clusterPoints.length} = ${newY.toFixed(3)}<br>`;
-                    } else {
-                        newCentroids.push(oldCentroids[ci]);
-                    }
-                }
-
-                centroids = newCentroids;
-
-                steps.push({
-                    title: `Iter ${iter}: Update Centroids`,
-                    content: `<p>Move each centroid to mean of its points:</p>
-                        <div class="calc-box">${updateDetail}</div>
-                        <div class="calc-result"><span class="calc-result-label">Inertia</span><span class="calc-result-value">${inertia().toFixed(2)}</span></div>`,
-                    centroids: centroids.map(c => ({ ...c })), assignments: [...assignments], iteration: iter
-                });
-
-                // Check convergence
-                const moved = centroids.some((c, i) => distance(c, oldCentroids[i]) > 0.001);
-                if (!moved) {
-                    steps.push({
-                        title: '✅ Converged!',
-                        content: `<p>Centroids stopped moving!</p>
-                            <div class="calc-box">
-                            ${centroids.map((c, i) => `Cluster ${i + 1}: ${assignments.filter(a => a === i).length} points`).join('<br>')}
-                            </div>
-                            <div class="calc-result"><span class="calc-result-label">Final Inertia</span><span class="calc-result-value">${inertia().toFixed(2)}</span></div>`,
-                        centroids: centroids.map(c => ({ ...c })), assignments: [...assignments], iteration: iter
+            for (let iter = 1; iter <= params.maxIter; iter++) {
+                // Assign each point with FULL distance calculations
+                let assignCalcs = data.map((d, i) => {
+                    let dists = centroids.map((c, j) => {
+                        const dx = d.x - c.x, dy = d.y - c.y;
+                        return { j, dist: Math.sqrt(dx * dx + dy * dy) };
                     });
-                    break;
+                    let distStr = dists.map(x => `C${x.j + 1}: ${x.dist.toFixed(4)}`).join(', ');
+                    let nearest = dists.reduce((a, b) => a.dist < b.dist ? a : b);
+                    return `P${i + 1}: [${distStr}] → C${nearest.j + 1}`;
+                }).join('\n');
+                assignments = data.map(d => centroids.map((c, j) => ({ j, dist: dist(d, c) })).reduce((a, b) => a.dist < b.dist ? a : b).j);
+                steps.push({ title: `Iter ${iter}: Assign`, content: `<div class="calc-box">${assignCalcs}</div>`, centroids: [...centroids], assignments: [...assignments], iter });
+
+                // Update centroids with FULL mean calculations
+                let newCentroids = [];
+                let updateCalcs = '';
+                for (let j = 0; j < params.k; j++) {
+                    const pts = data.filter((_, i) => assignments[i] === j);
+                    if (pts.length === 0) { newCentroids.push(centroids[j]); continue; }
+                    const meanX = pts.reduce((s, p) => s + p.x, 0) / pts.length;
+                    const meanY = pts.reduce((s, p) => s + p.y, 0) / pts.length;
+                    newCentroids.push({ x: meanX, y: meanY });
+                    updateCalcs += `C${j + 1}: ${pts.length} points\n  mean_x = (${pts.map(p => p.x.toFixed(2)).join('+')})/${pts.length} = ${meanX.toFixed(4)}\n  mean_y = (${pts.map(p => p.y.toFixed(2)).join('+')})/${pts.length} = ${meanY.toFixed(4)}\n\n`;
                 }
+                centroids = newCentroids;
+                centroidHistory.push({ iter, centroids: [...centroids] });
+                steps.push({ title: `Iter ${iter}: Update`, content: `<div class="calc-box">${updateCalcs}WCSS = ${wcss().toFixed(4)}</div>`, centroids: [...centroids], assignments: [...assignments], iter });
             }
 
+            steps.push({ title: '✅ Complete!', content: `<div class="calc-box">Final Centroids:\n${centroids.map((c, i) => `C${i + 1}: (${c.x.toFixed(6)}, ${c.y.toFixed(6)})`).join('\n')}\n\nWCSS = ${wcss().toFixed(6)}</div>`, centroids: [...centroids], assignments: [...assignments], iter: params.maxIter });
             document.getElementById('total-steps').textContent = steps.length;
         }
 
         const canvas = document.getElementById('viz-canvas');
         const ctx = canvas.getContext('2d');
+        const overlay = document.getElementById('graph-overlay');
 
         function resizeCanvas() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
 
-        function render(step = null) {
-            const w = canvas.width, h = canvas.height;
-            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, w, h);
-            const pad = 50;
-            const scaleX = v => pad + (v / 10) * (w - 2 * pad);
-            const scaleY = v => h - pad - (v / 10) * (h - 2 * pad);
+        function toScreen(x, y) {
+            const ww = canvas.width, hh = canvas.height, pad = 40;
+            return { x: pad + ((x - view.x) / 10 * view.scale) * (ww - 2 * pad), y: hh - pad - ((y - view.y) / 10 * view.scale) * (hh - 2 * pad) };
+        }
+        function toWorld(sx, sy) {
+            const ww = canvas.width, hh = canvas.height, pad = 40;
+            return { x: view.x + ((sx - pad) / (ww - 2 * pad)) * 10 / view.scale, y: view.y + ((hh - pad - sy) / (hh - 2 * pad)) * 10 / view.scale };
+        }
 
-            const currCentroids = step?.centroids || centroids;
-            const currAssign = step?.assignments || assignments;
+        function render(step = null) {
+            const ww = canvas.width, hh = canvas.height;
+            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, ww, hh);
+            const currCentroids = step?.centroids ?? centroids;
+            const currAssign = step?.assignments ?? assignments;
+            pointPositions = [];
 
             // Grid
-            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-            ctx.fillStyle = '#666';
-            ctx.font = '10px Inter';
-            for (let i = 0; i <= 10; i += 2) {
-                ctx.beginPath(); ctx.moveTo(scaleX(i), pad); ctx.lineTo(scaleX(i), h - pad); ctx.stroke();
-                ctx.beginPath(); ctx.moveTo(pad, scaleY(i)); ctx.lineTo(w - pad, scaleY(i)); ctx.stroke();
-                ctx.textAlign = 'center';
-                ctx.fillText(i, scaleX(i), h - 20);
+            ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
+            for (let i = 0; i <= 10; i += 2) { const p = toScreen(i, 0); ctx.beginPath(); ctx.moveTo(p.x, 40); ctx.lineTo(p.x, hh - 40); ctx.stroke(); }
+
+            // Lines to centroids
+            if (currAssign.length > 0 && currCentroids.length > 0) {
+                data.forEach((d, i) => {
+                    const c = currCentroids[currAssign[i]];
+                    if (!c) return;
+                    const pd = toScreen(d.x, d.y), pc = toScreen(c.x, c.y);
+                    ctx.strokeStyle = colors[currAssign[i]] + '40'; ctx.lineWidth = 1;
+                    ctx.beginPath(); ctx.moveTo(pd.x, pd.y); ctx.lineTo(pc.x, pc.y); ctx.stroke();
+                });
             }
 
-            // Data points with numbers
+            // Data points
             data.forEach((d, i) => {
-                const px = scaleX(d.x), py = scaleY(d.y);
-                const c = currAssign[i];
-
+                const p = toScreen(d.x, d.y);
+                const c = currAssign[i] ?? -1;
+                pointPositions.push({ x: p.x, y: p.y, idx: i, dataX: d.x, dataY: d.y, cluster: c });
                 ctx.beginPath();
-                ctx.arc(px, py, 12, 0, Math.PI * 2);
-                ctx.fillStyle = c !== undefined ? colors[c] : '#666';
+                ctx.arc(p.x, p.y, hoveredPoint === i ? 11 : 8, 0, Math.PI * 2);
+                ctx.fillStyle = c >= 0 ? colors[c] : '#888';
                 ctx.fill();
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 9px Inter';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(i + 1, px, py);
+                ctx.strokeStyle = hoveredPoint === i ? '#fff' : 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 2; ctx.stroke();
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 6px Inter'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(i + 1, p.x, p.y);
             });
 
-            // Centroids (stars)
+            // Centroids
             currCentroids.forEach((c, i) => {
-                const cx = scaleX(c.x), cy = scaleY(c.y);
-
-                // Draw star
+                const p = toScreen(c.x, c.y);
                 ctx.beginPath();
-                for (let j = 0; j < 10; j++) {
-                    const r = j % 2 === 0 ? 15 : 7;
-                    const angle = (j * Math.PI / 5) - Math.PI / 2;
-                    const x = cx + r * Math.cos(angle);
-                    const y = cy + r * Math.sin(angle);
-                    if (j === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                }
-                ctx.closePath();
-                ctx.fillStyle = colors[i];
-                ctx.fill();
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                // Label
-                ctx.font = 'bold 10px Inter';
-                ctx.fillText(`C${i + 1}`, cx, cy + 25);
+                ctx.moveTo(p.x, p.y - 12); ctx.lineTo(p.x + 10, p.y + 8); ctx.lineTo(p.x - 10, p.y + 8); ctx.closePath();
+                ctx.fillStyle = colors[i]; ctx.fill();
+                ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
             });
         }
+
+        canvas.addEventListener('mousemove', e => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+            if (isDragging) { const dx = (mx - dragStart.x) / canvas.width * 10 / view.scale; const dy = -(my - dragStart.y) / canvas.height * 10 / view.scale; view.x -= dx; view.y -= dy; dragStart = { x: mx, y: my }; render(); return; }
+            const world = toWorld(mx, my);
+            overlay.style.display = 'block';
+            overlay.innerHTML = `x: ${world.x.toFixed(2)}, y: ${world.y.toFixed(2)}`;
+            let found = -1;
+            pointPositions.forEach(p => { if (Math.hypot(p.x - mx, p.y - my) < 10) found = p.idx; });
+            if (found !== -1) {
+                const pp = pointPositions[found], c = centroids[pp.cluster];
+                overlay.innerHTML = `P${found + 1}: (${pp.dataX.toFixed(3)}, ${pp.dataY.toFixed(3)})<br>Cluster: ${pp.cluster + 1}${c ? `, Dist: ${dist({ x: pp.dataX, y: pp.dataY }, c).toFixed(4)}` : ''}`;
+            }
+            if (found !== hoveredPoint) { hoveredPoint = found; renderTable(); render(); }
+        });
+        canvas.addEventListener('mouseleave', () => { overlay.style.display = 'none'; if (hoveredPoint !== -1) { hoveredPoint = -1; renderTable(); render(); } });
+        canvas.addEventListener('mousedown', e => { isDragging = true; dragStart = { x: e.offsetX, y: e.offsetY }; canvas.style.cursor = 'grabbing'; });
+        canvas.addEventListener('mouseup', () => { isDragging = false; canvas.style.cursor = 'crosshair'; });
+        canvas.addEventListener('wheel', e => { e.preventDefault(); view.scale *= e.deltaY > 0 ? 0.9 : 1.1; render(); });
+        function zoomIn() { view.scale *= 1.2; render(); }
+        function zoomOut() { view.scale *= 0.8; render(); }
+        function resetView() { view = { x: 0, y: 0, scale: 1 }; render(); }
+
+        function openFullscreen(type) {
+            const o = document.getElementById('fullscreen-overlay'), t = document.getElementById('fullscreen-title'), c = document.getElementById('fullscreen-content');
+            o.classList.add('active');
+            if (type === 'data') {
+                t.textContent = '📊 Points & Clusters';
+                c.innerHTML = `<table class="data-table" style="font-size:0.9rem"><thead><tr><th>#</th><th>X</th><th>Y</th><th>Cluster</th><th>Dist to Centroid</th></tr></thead><tbody>${data.map((d, i) => { const cl = assignments[i] ?? -1, dv = centroids[cl] ? dist(d, centroids[cl]).toFixed(6) : '-'; return `<tr><td>${i + 1}</td><td>${d.x.toFixed(6)}</td><td>${d.y.toFixed(6)}</td><td>${cl >= 0 ? cl + 1 : '-'}</td><td>${dv}</td></tr>`; }).join('')}</tbody></table>`;
+            } else if (type === 'centroid') {
+                t.textContent = '📍 Centroid History';
+                c.innerHTML = `<table class="data-table" style="font-size:0.9rem"><thead><tr><th>Iteration</th>${centroids.map((_, i) => `<th>C${i + 1}</th>`).join('')}</tr></thead><tbody>${centroidHistory.map(h => `<tr><td>${h.iter}</td>${h.centroids.map((ct, j) => `<td>(${ct.x.toFixed(6)}, ${ct.y.toFixed(6)})</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+            } else if (type === 'calc') { t.textContent = '📐 All Steps'; c.innerHTML = document.getElementById('calc-steps').innerHTML; }
+        }
+        function closeFullscreen() { document.getElementById('fullscreen-overlay').classList.remove('active'); }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFullscreen(); });
 
         function displayStep(step) {
             const container = document.getElementById('calc-steps');
             container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
             container.querySelector('.calc-placeholder')?.remove();
-
-            const div = document.createElement('div');
-            div.className = 'calc-step active';
+            const div = document.createElement('div'); div.className = 'calc-step active';
             div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
-            container.appendChild(div);
-            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
-
-            centroids = step.centroids.map(c => ({ ...c }));
-            assignments = [...step.assignments];
-            renderTable();
-            render(step);
-            document.getElementById('viz-iter').textContent = step.iteration;
-            document.getElementById('viz-inertia').textContent = inertia().toFixed(2);
+            container.appendChild(div); div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            centroids = step.centroids; assignments = step.assignments;
+            renderTable(); renderCentroidTable(); render(step);
+            document.getElementById('viz-iter').textContent = step.iter;
+            document.getElementById('viz-wcss').textContent = wcss().toFixed(2);
         }
 
         function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
-        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 600); }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 500); }
         function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
-        function reset() { stopAuto(); currentStep = 0; centroids = []; assignments = []; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to run K-Means</p></div>'; generateSteps(); renderTable(); render(); }
+        function reset() { stopAuto(); currentStep = 0; centroids = []; assignments = []; centroidHistory = []; hoveredPoint = -1; view = { x: 0, y: 0, scale: 1 }; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong></p></div>'; generateSteps(); renderTable(); renderCentroidTable(); render(); }
 
         document.getElementById('step-btn').addEventListener('click', step);
         document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
         document.getElementById('reset-btn').addEventListener('click', reset);
         document.getElementById('apply-btn').addEventListener('click', reset);
         document.getElementById('random-btn').addEventListener('click', () => { data = generateData(); reset(); });
-        document.getElementById('k-slider').addEventListener('input', e => { params.k = parseInt(e.target.value); document.getElementById('k-value').textContent = params.k; reset(); });
+        document.getElementById('k-slider').addEventListener('input', e => { params.k = parseInt(e.target.value); document.getElementById('k-value').textContent = params.k; });
+        document.getElementById('iter-slider').addEventListener('input', e => { params.maxIter = parseInt(e.target.value); document.getElementById('iter-value').textContent = params.maxIter; });
 
         window.addEventListener('resize', resizeCanvas);
-        renderTable();
-        resizeCanvas();
-        generateSteps();
+        renderTable(); renderCentroidTable(); resizeCanvas(); generateSteps();
     </script>
 </body>
 

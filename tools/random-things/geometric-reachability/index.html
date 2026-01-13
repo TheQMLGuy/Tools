@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometric Reachability | QML Hub</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <link rel="stylesheet" href="../../../styles/shared.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 16px 32px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            gap: 16px;
+        }
+
+        .title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .content {
+            flex: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 32px;
+        }
+
+        .intro {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 40px;
+        }
+
+        .intro-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--accent-primary);
+        }
+
+        .intro p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .grid-section {
+            margin-bottom: 40px;
+        }
+
+        .grid-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .grid-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.15);
+        }
+
+        .grid-card-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.1));
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .grid-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            background: var(--bg-primary);
+            border-radius: 10px;
+        }
+
+        .grid-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .grid-card-body {
+            padding: 24px;
+        }
+
+        .property {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .property-label {
+            font-weight: 600;
+            color: var(--accent-primary);
+            min-width: 140px;
+            flex-shrink: 0;
+        }
+
+        .property-value {
+            color: var(--text-secondary);
+        }
+
+        .note {
+            margin-top: 16px;
+            padding: 14px 18px;
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 3px solid #10b981;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .note strong {
+            color: #10b981;
+        }
+
+        /* Summary Table */
+        .summary-section {
+            margin-top: 48px;
+        }
+
+        .summary-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-panel);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .summary-table th {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.15));
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-bottom: 2px solid var(--accent-primary);
+        }
+
+        .summary-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .summary-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .summary-table tr:hover td {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .summary-table code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-primary);
+        }
+
+        /* KaTeX styling */
+        .katex {
+            font-size: 1.1em;
+        }
+
+        .formula-highlight {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(99, 102, 241, 0.15);
+            border-radius: 6px;
+            margin: 2px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content {
+                padding: 24px 16px;
+            }
+
+            .property {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .property-label {
+                min-width: auto;
+            }
+
+            .grid-card-header {
+                padding: 16px;
+            }
+
+            .grid-card-body {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <header class="header">
+            <div>
+                <h1 class="title">🗺️ Geometric Reachability</h1>
+                <p class="subtitle">Exploring territory expansion patterns in geometric grids</p>
+            </div>
+        </header>
+
+        <main class="content">
+            <div class="intro">
+                <div class="intro-title">💡 The Concept</div>
+                <p>
+                    Imagine a road map where the streets form a repeating geometric grid. If a person travels at a speed
+                    of one edge per minute, how much "territory" do they conquer over time $t$?
+                </p>
+            </div>
+
+            <!-- Square Grid -->
+            <div class="grid-section">
+                <div class="grid-card">
+                    <div class="grid-card-header">
+                        <div class="grid-icon">🔷</div>
+                        <div>
+                            <h2 class="grid-title">1. The Square Grid (Manhattan Growth)</h2>
+                        </div>
+                    </div>
+                    <div class="grid-card-body">
+                        <div class="property">
+                            <span class="property-label">Expansion:</span>
+                            <span class="property-value">Grows in a diamond shape</span>
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Distance:</span>
+                            <span class="property-value">The number of blocks from the origin is $t$</span>
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Reachable Area:</span>
+                            <span class="property-value formula-highlight">$A \approx 2t^2$</span>
+                        </div>
+                        <div class="note">
+                            <strong>Note:</strong> This is the classic "Taxicab geometry" expansion.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hexagonal Grid -->
+            <div class="grid-section">
+                <div class="grid-card">
+                    <div class="grid-card-header">
+                        <div class="grid-icon">⬡</div>
+                        <div>
+                            <h2 class="grid-title">2. The Hexagonal Grid (Honeycomb Growth)</h2>
+                        </div>
+                    </div>
+                    <div class="grid-card-body">
+                        <div class="property">
+                            <span class="property-label">Expansion:</span>
+                            <span class="property-value">Grows in a larger concentric hexagon</span>
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Distance:</span>
+                            <span class="property-value">Reaches $t$ rings of hexagons</span>
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Reachable Area:</span>
+                            <span class="property-value formula-highlight">$A \approx \frac{3\sqrt{3}}{2} (3t^2)$</span>
+                        </div>
+                        <div class="note">
+                            <strong>Note:</strong> This is the most efficient natural packing for coverage.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Triangular Grid -->
+            <div class="grid-section">
+                <div class="grid-card">
+                    <div class="grid-card-header">
+                        <div class="grid-icon">🔺</div>
+                        <div>
+                            <h2 class="grid-title">3. The Triangular Grid (Star Growth)</h2>
+                        </div>
+                    </div>
+                    <div class="grid-card-body">
+                        <div class="property">
+                            <span class="property-label">Expansion:</span>
+                            <span class="property-value">Grows in a hexagonal or star-like pattern depending on vertex
+                                orientation</span>
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Distance:</span>
+                            <span class="property-value">Each minute expands the boundary by $t$ units</span>
+                        </div>
+                        <div class="property">
+                            <span class="property-label">Reachable Area:</span>
+                            <span class="property-value formula-highlight">$A \approx \frac{3\sqrt{3}}{2} t^2$</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Table -->
+            <div class="summary-section">
+                <h2 class="summary-title">📊 Summary Table for Comparison</h2>
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>Grid Shape</th>
+                            <th>Boundary Growth</th>
+                            <th>Area Complexity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>🔷 Square</td>
+                            <td>Linear <code>$4t$</code></td>
+                            <td>Quadratic <code>$t^2$</code></td>
+                        </tr>
+                        <tr>
+                            <td>⬡ Hexagon</td>
+                            <td>Linear <code>$6t$</code></td>
+                            <td>High-Density Quadratic</td>
+                        </tr>
+                        <tr>
+                            <td>🔺 Triangle</td>
+                            <td>Linear <code>$3t$</code></td>
+                            <td>Low-Density Quadratic</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Render LaTeX equations
+        document.addEventListener("DOMContentLoaded", function () {
+            if (typeof renderMathInElement !== 'undefined') {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        { left: '$$', right: '$$', display: true },
+                        { left: '$', right: '$', display: false }
+                    ],
+                    throwOnError: false
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

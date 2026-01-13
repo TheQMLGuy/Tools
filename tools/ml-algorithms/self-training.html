@@ -398,7 +398,8 @@
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button id="apply-btn" class="btn btn-primary btn-block">Reset</button>
+                    <button id="random-btn" class="btn btn-primary btn-block">🎲 Random Data</button>
+                    <button id="apply-btn" class="btn btn-secondary btn-block" style="margin-top:6px">Reset</button>
                 </div>
             </section>
         </main>
@@ -545,10 +546,11 @@
             }
 
             // Points
-            currentData.forEach(d => {
+            currentData.forEach((d, i) => {
                 ctx.beginPath();
-                const radius = d.status === 'labeled' ? 10 : d.status === 'pseudo' ? 8 : 6;
-                ctx.arc(scale(d.x), h - scale(d.y), radius, 0, Math.PI * 2);
+                const radius = d.status === 'labeled' ? 12 : d.status === 'pseudo' ? 10 : 8;
+                const px = scale(d.x), py = h - scale(d.y);
+                ctx.arc(px, py, radius, 0, Math.PI * 2);
 
                 if (d.label >= 0) ctx.fillStyle = colors[d.label];
                 else ctx.fillStyle = '#555';
@@ -563,6 +565,13 @@
                     ctx.lineWidth = 2;
                     ctx.stroke();
                 }
+
+                // Point number
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 8px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(i + 1, px, py);
             });
         }
 
@@ -593,6 +602,7 @@
         document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
         document.getElementById('reset-btn').addEventListener('click', reset);
         document.getElementById('apply-btn').addEventListener('click', reset);
+        document.getElementById('random-btn').addEventListener('click', () => { data = generateData(); reset(); });
         document.getElementById('thresh-slider').addEventListener('input', e => { params.threshold = parseFloat(e.target.value); document.getElementById('thresh-value').textContent = params.threshold; });
 
         window.addEventListener('resize', resizeCanvas);

@@ -41,10 +41,21 @@
 
         .main-content {
             display: grid;
-            grid-template-columns: 300px 1fr 1fr 260px;
+            grid-template-columns: 280px 1fr 1.2fr 280px;
             gap: 12px;
             padding: 12px;
             overflow: hidden;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .left-column .panel {
+            flex: 1;
+            min-height: 0;
         }
 
         .panel {
@@ -60,13 +71,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-bottom: 1px solid var(--border-color);
             background: rgba(0, 0, 0, 0.2);
         }
 
         .panel-header h2 {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
@@ -75,76 +86,45 @@
         .panel-body {
             flex: 1;
             overflow: auto;
-            padding: 12px;
+            padding: 10px;
         }
 
         .panel-footer {
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-top: 1px solid var(--border-color);
         }
 
-        .bandit-stats {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.65rem;
         }
 
-        .bandit-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
+        .data-table th {
+            background: var(--bg-secondary);
+            padding: 4px;
+            text-align: center;
+            border-bottom: 2px solid var(--accent-primary);
         }
 
-        .bandit-emoji {
-            font-size: 1.5rem;
-        }
-
-        .bandit-info {
-            flex: 1;
-        }
-
-        .bandit-name {
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .bandit-bar {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            margin-top: 4px;
-        }
-
-        .bandit-bar-fill {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.3s;
-        }
-
-        .bandit-count {
-            font-size: 0.75rem;
-            color: var(--text-muted);
+        .data-table td {
+            padding: 3px 4px;
+            border-bottom: 1px solid var(--border-color);
             font-family: var(--font-mono);
-        }
-
-        .bandit-row.selected {
-            border: 2px solid var(--accent-primary);
+            text-align: center;
         }
 
         .calc-steps {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
         }
 
         .calc-placeholder {
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 200px;
+            height: 100px;
             color: var(--text-muted);
             text-align: center;
         }
@@ -152,8 +132,8 @@
         .calc-step {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
+            border-radius: 6px;
+            padding: 8px;
             animation: fadeIn 0.3s;
         }
 
@@ -162,115 +142,97 @@
         }
 
         .calc-step.completed {
-            opacity: 0.7;
+            opacity: 0.6;
         }
 
         .calc-step-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
+            gap: 6px;
+            margin-bottom: 4px;
         }
 
         .calc-step-number {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             background: var(--accent-gradient);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
+            font-weight: 600;
             color: white;
         }
 
         .calc-step-title {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
 
         .calc-step-content {
-            font-size: 0.8rem;
+            font-size: 0.65rem;
             color: var(--text-secondary);
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
-        .calc-equation {
+        .calc-box {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            padding: 10px;
-            margin: 8px 0;
+            border-radius: 4px;
+            padding: 6px;
+            margin: 4px 0;
             font-family: var(--font-mono);
-            text-align: center;
-            font-size: 0.8rem;
-        }
-
-        .calc-result {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 12px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 6px;
-            margin-top: 8px;
-        }
-
-        .calc-result-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .calc-result-value {
-            font-family: var(--font-mono);
-            font-weight: 600;
-            color: var(--success);
-        }
-
-        .feature-comparison {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .feature-card {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
-            padding: 8px;
-            text-align: center;
-        }
-
-        .feature-card.best {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.4);
-        }
-
-        .feature-name {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .feature-value {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.55rem;
+            overflow-x: auto;
+            line-height: 1.4;
+            white-space: pre-wrap;
         }
 
         .viz-panel .panel-body {
-            padding: 0;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: flex-end;
+            height: calc(100% - 40px);
         }
 
-        .viz-panel canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
+        .arm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .arm-bar {
+            width: 60px;
+            background: var(--accent-gradient);
+            border-radius: 4px 4px 0 0;
+            transition: height 0.3s;
+        }
+
+        .arm-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .arm-stats {
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .viz-stats {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            font-size: 0.65rem;
         }
 
         .param-section {
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
-            margin-bottom: 12px;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
         }
 
         .param-section:last-child {
@@ -278,22 +240,22 @@
         }
 
         .param-section-title {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
         }
 
         .param-item {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .param-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 4px;
-            font-size: 0.75rem;
+            margin-bottom: 3px;
+            font-size: 0.7rem;
         }
 
         .param-name code {
@@ -301,30 +263,70 @@
             background: rgba(0, 0, 0, 0.3);
             padding: 2px 4px;
             border-radius: 3px;
+            font-size: 0.65rem;
         }
 
         .param-value {
             font-family: var(--font-mono);
+            font-size: 0.7rem;
             color: var(--accent-primary);
         }
 
-        .taming-list {
-            list-style: none;
-            padding: 0;
+        .btn-block {
+            width: 100%;
+            margin-top: 4px;
         }
 
-        .taming-list li {
-            font-size: 0.7rem;
+        .btn-fs {
+            background: transparent;
+            border: none;
             color: var(--text-muted);
-            padding: 3px 0 3px 14px;
-            position: relative;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 2px 4px;
+            border-radius: 3px;
         }
 
-        .taming-list li::before {
-            content: '→';
-            position: absolute;
+        .btn-fs:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .fullscreen-overlay {
+            position: fixed;
+            top: 0;
             left: 0;
-            color: var(--success);
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .fullscreen-overlay.active {
+            display: flex;
+        }
+
+        .fullscreen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .fullscreen-header h2 {
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .fullscreen-content {
+            flex: 1;
+            overflow: auto;
+            background: var(--bg-panel);
+            border-radius: 8px;
+            padding: 16px;
         }
 
         @keyframes fadeIn {
@@ -342,7 +344,7 @@
 <body>
     <div class="app-container">
         <header class="app-header">
-            <h1 class="app-title">🎰 Multi-Armed Bandit</h1>
+            <h1 class="app-title">🎰 Multi-Armed Bandit - Step by Step</h1>
             <div class="header-right">
                 <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
                 <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
@@ -350,247 +352,215 @@
             </div>
         </header>
         <main class="main-content">
+            <div class="left-column">
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>📊 Arm Statistics</h2>
+                        <button class="btn-fs" onclick="openFullscreen('arms')">⛶</button>
+                    </div>
+                    <div class="panel-body">
+                        <table id="arm-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>📈 Pull History</h2>
+                        <button class="btn-fs" onclick="openFullscreen('history')">⛶</button>
+                    </div>
+                    <div class="panel-body">
+                        <table id="history-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>🎰 Bandit Arms</h2>
-                </div>
-                <div class="panel-body">
-                    <div id="bandit-stats" class="bandit-stats"></div>
-                </div>
-                <div class="panel-footer" style="font-size:0.7rem;color:var(--text-muted)">
-                    True probs hidden - agent must explore!
-                </div>
-            </section>
-            <section class="panel">
-                <div class="panel-header">
-                    <h2>📐 Selection Strategy</h2>
-                    <span style="font-size:0.75rem;color:var(--text-muted)">Round <span
-                            id="current-step">0</span></span>
+                    <h2>📐 UCB Calculations</h2>
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <span style="font-size:0.65rem;color:var(--text-muted)"><span id="current-step">0</span>/<span
+                                id="total-steps">0</span></span>
+                        <button class="btn-fs" onclick="openFullscreen('calc')">⛶</button>
+                    </div>
                 </div>
                 <div class="panel-body">
                     <div id="calc-steps" class="calc-steps">
                         <div class="calc-placeholder">
-                            <p>Click <strong>Step</strong> to pull arms</p>
+                            <p>Click <strong>Step</strong></p>
                         </div>
                     </div>
                 </div>
             </section>
             <section class="panel viz-panel">
                 <div class="panel-header">
-                    <h2>🎨 Regret Over Time</h2>
+                    <h2>🎨 Arms</h2>
                 </div>
-                <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
-                <div class="panel-footer" style="font-size:0.75rem;text-align:center">
-                    Total Reward: <strong id="viz-reward">0</strong> | Regret: <strong id="viz-regret">0</strong>
+                <div class="panel-body" id="arms-container"></div>
+                <div class="panel-footer">
+                    <div class="viz-stats">
+                        <span>Pulls: <strong id="viz-pulls">0</strong></span>
+                        <span>Total: <strong id="viz-total">0</strong></span>
+                        <span>Regret: <strong id="viz-regret">0</strong></span>
+                    </div>
                 </div>
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>⚙️ Strategy</h2>
+                    <h2>⚙️ Params</h2>
                 </div>
                 <div class="panel-body">
                     <div class="param-section">
-                        <div class="param-section-title">Algorithm</div>
-                        <select id="strategy-select" class="select" style="width:100%;margin-bottom:10px">
-                            <option value="epsilon">ε-Greedy</option>
-                            <option value="ucb">UCB</option>
-                        </select>
                         <div class="param-item">
-                            <div class="param-header"><span class="param-name"><code>ε / c</code></span><span
-                                    class="param-value" id="param-value">0.1</span></div>
-                            <input type="range" id="param-slider" class="slider" min="0.05" max="0.5" step="0.05"
-                                value="0.1" style="width:100%">
+                            <div class="param-header"><span class="param-name"><code>c (exploration)</code></span><span
+                                    class="param-value" id="c-value">2</span></div>
+                            <input type="range" id="c-slider" class="slider" min="0.5" max="3" step="0.5" value="2"
+                                style="width:100%">
+                        </div>
+                        <div class="param-item">
+                            <div class="param-header"><span class="param-name"><code>rounds</code></span><span
+                                    class="param-value" id="rounds-value">20</span></div>
+                            <input type="range" id="rounds-slider" class="slider" min="10" max="50" step="5" value="20"
+                                style="width:100%">
                         </div>
                     </div>
                     <div class="param-section">
-                        <div class="param-section-title">💡 Explore vs Exploit</div>
-                        <ul class="taming-list">
-                            <li><b>ε-Greedy:</b> Random with prob ε</li>
-                            <li><b>UCB:</b> Bonus for uncertainty</li>
-                            <li>Regret = optimal - actual reward</li>
-                        </ul>
+                        <div class="param-section-title">UCB Formula</div>
+                        <div style="font-size:0.5rem;color:var(--text-muted)">UCB = Q̂(a) + c×√(ln(t)/N(a))</div>
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button id="apply-btn" class="btn btn-primary btn-block">Reset</button>
+                    <button id="random-btn" class="btn btn-primary btn-block">🎲 New Arms</button>
                 </div>
             </section>
         </main>
     </div>
+    <div id="fullscreen-overlay" class="fullscreen-overlay">
+        <div class="fullscreen-header">
+            <h2 id="fullscreen-title">Fullscreen</h2><button class="btn btn-ghost" onclick="closeFullscreen()">✕
+                Close</button>
+        </div>
+        <div class="fullscreen-content" id="fullscreen-content"></div>
+    </div>
     <script>
-        const ARMS = [
-            { name: 'Arm 1', emoji: '🍒', trueProb: 0.3, color: '#ef4444' },
-            { name: 'Arm 2', emoji: '🍋', trueProb: 0.5, color: '#f59e0b' },
-            { name: 'Arm 3', emoji: '🍇', trueProb: 0.7, color: '#8b5cf6' },
-            { name: 'Arm 4', emoji: '🍀', trueProb: 0.4, color: '#10b981' }
-        ];
-
-        let params = { epsilon: 0.1, strategy: 'epsilon' };
-        let counts = [], rewards = [], estimates = [];
-        let totalReward = 0, regretHistory = [];
+        const NUM_ARMS = 5;
+        const colors = ['#ef4444', '#10b981', '#6366f1', '#f59e0b', '#ec4899'];
+        let trueProbs = [];
+        let params = { c: 2, rounds: 20 };
+        let armStats = [], pullHistory = [];
         let steps = [], currentStep = 0;
         let isAutoRunning = false, autoInterval = null;
 
-        function initBandits() {
-            counts = ARMS.map(() => 0);
-            rewards = ARMS.map(() => 0);
-            estimates = ARMS.map(() => 0);
-            totalReward = 0;
-            regretHistory = [];
+        function initArms() {
+            trueProbs = Array(NUM_ARMS).fill(0).map(() => 0.2 + Math.random() * 0.6);
+            armStats = Array(NUM_ARMS).fill(0).map(() => ({ pulls: 0, wins: 0, mean: 0 }));
         }
 
-        function ucbValue(i, t) {
-            if (counts[i] === 0) return Infinity;
-            return estimates[i] + params.epsilon * Math.sqrt(Math.log(t + 1) / counts[i]);
+        function renderArmTable() {
+            document.querySelector('#arm-table thead').innerHTML = '<tr><th>Arm</th><th>Pulls</th><th>Wins</th><th>Q̂</th><th>True p</th></tr>';
+            document.querySelector('#arm-table tbody').innerHTML = armStats.map((a, i) =>
+                `<tr><td style="color:${colors[i]}">●</td><td>${a.pulls}</td><td>${a.wins}</td><td>${a.mean.toFixed(3)}</td><td>${trueProbs[i].toFixed(3)}</td></tr>`
+            ).join('');
         }
 
-        function selectArm(t) {
-            if (params.strategy === 'epsilon') {
-                if (Math.random() < params.epsilon) return Math.floor(Math.random() * ARMS.length);
-                return estimates.indexOf(Math.max(...estimates));
-            } else {
-                const ucbs = estimates.map((_, i) => ucbValue(i, t));
-                return ucbs.indexOf(Math.max(...ucbs));
-            }
+        function renderHistoryTable() {
+            document.querySelector('#history-table thead').innerHTML = '<tr><th>t</th><th>Arm</th><th>Reward</th><th>Cum</th></tr>';
+            document.querySelector('#history-table tbody').innerHTML = pullHistory.slice(-10).map(h =>
+                `<tr><td>${h.t}</td><td style="color:${colors[h.arm]}">●</td><td>${h.reward}</td><td>${h.cumReward.toFixed(1)}</td></tr>`
+            ).join('');
         }
 
-        function pullArm(idx) {
-            const reward = Math.random() < ARMS[idx].trueProb ? 1 : 0;
-            counts[idx]++;
-            rewards[idx] += reward;
-            estimates[idx] = rewards[idx] / counts[idx];
-            totalReward += reward;
-
-            const optimalReward = Math.max(...ARMS.map(a => a.trueProb));
-            const regret = (regretHistory.length > 0 ? regretHistory[regretHistory.length - 1] : 0) + (optimalReward - ARMS[idx].trueProb);
-            regretHistory.push(regret);
-
-            return reward;
-        }
-
-        function renderBanditStats(selectedIdx = -1) {
-            const container = document.getElementById('bandit-stats');
-            container.innerHTML = ARMS.map((arm, i) => `
-                <div class="bandit-row ${selectedIdx === i ? 'selected' : ''}">
-                    <span class="bandit-emoji">${arm.emoji}</span>
-                    <div class="bandit-info">
-                        <div class="bandit-name">${arm.name}</div>
-                        <div class="bandit-bar">
-                            <div class="bandit-bar-fill" style="width:${estimates[i] * 100}%;background:${arm.color}"></div>
-                        </div>
-                    </div>
-                    <div class="bandit-count">${counts[i]}×<br>${estimates[i].toFixed(2)}</div>
+        function renderArms() {
+            const container = document.getElementById('arms-container');
+            const maxPulls = Math.max(1, ...armStats.map(a => a.pulls));
+            container.innerHTML = armStats.map((a, i) => `
+                <div class="arm">
+                    <div class="arm-bar" style="height: ${Math.max(10, (a.pulls / maxPulls) * 150)}px; background: ${colors[i]}"></div>
+                    <div class="arm-label" style="color:${colors[i]}">Arm ${i + 1}</div>
+                    <div class="arm-stats">Pulls: ${a.pulls}<br>Q̂: ${a.mean.toFixed(2)}</div>
                 </div>
             `).join('');
         }
 
         function generateSteps() {
-            steps = [];
-            initBandits();
+            steps = []; armStats = Array(NUM_ARMS).fill(0).map(() => ({ pulls: 0, wins: 0, mean: 0 })); pullHistory = [];
+            steps.push({ title: 'Initialize', content: `<div class="calc-box">Arms: ${NUM_ARMS}\nTrue probabilities (hidden): [${trueProbs.map(p => p.toFixed(3)).join(', ')}]\nExploration constant c = ${params.c}</div>`, armStats: armStats.map(a => ({ ...a })), pullHistory: [] });
 
-            steps.push({
-                title: 'Problem Setup',
-                content: `<p>${ARMS.length} slot machines with unknown probabilities</p>
-                    <p style="margin-top:8px">Goal: Maximize total reward over time</p>
-                    <div class="calc-equation">${params.strategy === 'epsilon' ? 'ε-Greedy: Explore with prob ε' : 'UCB: Q(a) + c√(ln(t)/N(a))'}</div>`,
-                selectedArm: -1
-            });
+            let totalReward = 0;
+            for (let t = 1; t <= params.rounds; t++) {
+                // Calculate UCB for each arm
+                let ucbCalcs = armStats.map((a, i) => {
+                    if (a.pulls === 0) return { arm: i, ucb: Infinity, calc: `Arm ${i + 1}: never pulled → UCB = ∞` };
+                    const exploitation = a.mean;
+                    const exploration = params.c * Math.sqrt(Math.log(t) / a.pulls);
+                    const ucb = exploitation + exploration;
+                    return { arm: i, ucb, calc: `Arm ${i + 1}: UCB = ${exploitation.toFixed(3)} + ${params.c}×√(ln(${t})/${a.pulls}) = ${exploitation.toFixed(3)} + ${exploration.toFixed(3)} = ${ucb.toFixed(4)}` };
+                });
 
-            for (let t = 0; t < 30; t++) {
-                const arm = selectArm(t);
-                const reward = pullArm(arm);
+                const bestArm = ucbCalcs.reduce((a, b) => a.ucb > b.ucb ? a : b).arm;
+                const reward = Math.random() < trueProbs[bestArm] ? 1 : 0;
 
-                if (t < 5 || t % 5 === 0 || t === 29) {
-                    steps.push({
-                        title: `Round ${t + 1}: Pull ${ARMS[arm].emoji}`,
-                        content: `<div class="feature-comparison">
-                                ${ARMS.map((a, i) => `<div class="feature-card ${arm === i ? 'best' : ''}"><div class="feature-name">${a.emoji}</div><div class="feature-value">${estimates[i].toFixed(2)}</div></div>`).join('')}
-                            </div>
-                            <div class="calc-result"><span class="calc-result-label">Reward</span><span class="calc-result-value">${reward}</span></div>`,
-                        selectedArm: arm
-                    });
-                }
-            }
-        }
+                armStats[bestArm].pulls++;
+                armStats[bestArm].wins += reward;
+                armStats[bestArm].mean = armStats[bestArm].wins / armStats[bestArm].pulls;
+                totalReward += reward;
+                pullHistory.push({ t, arm: bestArm, reward, cumReward: totalReward });
 
-        const canvas = document.getElementById('viz-canvas');
-        const ctx = canvas.getContext('2d');
-
-        function resizeCanvas() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
-
-        function render() {
-            const w = canvas.width, h = canvas.height;
-            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, w, h);
-            if (regretHistory.length < 2) return;
-
-            const pad = 40;
-            const maxR = Math.max(...regretHistory) * 1.2 || 1;
-            const scaleX = i => pad + (i / (regretHistory.length - 1)) * (w - 2 * pad);
-            const scaleY = r => h - pad - (r / maxR) * (h - 2 * pad);
-
-            // Grid
-            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-            for (let i = 0; i <= 5; i++) {
-                const y = pad + (i / 5) * (h - 2 * pad);
-                ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(w - pad, y); ctx.stroke();
+                let calcStr = `Round ${t}:\n\n${ucbCalcs.map(u => u.calc).join('\n')}\n\n→ Pull Arm ${bestArm + 1}\nReward: ${reward}\nNew Q̂(${bestArm + 1}) = ${armStats[bestArm].wins}/${armStats[bestArm].pulls} = ${armStats[bestArm].mean.toFixed(4)}`;
+                steps.push({ title: `Round ${t}`, content: `<div class="calc-box">${calcStr}</div>`, armStats: armStats.map(a => ({ ...a })), pullHistory: [...pullHistory] });
             }
 
-            // Line
-            ctx.strokeStyle = '#ef4444';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            regretHistory.forEach((r, i) => {
-                if (i === 0) ctx.moveTo(scaleX(i), scaleY(r));
-                else ctx.lineTo(scaleX(i), scaleY(r));
-            });
-            ctx.stroke();
-
-            // Labels
-            ctx.fillStyle = '#606070';
-            ctx.font = '10px Inter';
-            ctx.textAlign = 'center';
-            ctx.fillText('Rounds', w / 2, h - 10);
-            ctx.save();
-            ctx.translate(12, h / 2);
-            ctx.rotate(-Math.PI / 2);
-            ctx.fillText('Cumulative Regret', 0, 0);
-            ctx.restore();
+            const optimalProb = Math.max(...trueProbs);
+            const regret = params.rounds * optimalProb - totalReward;
+            steps.push({ title: '✅ Complete!', content: `<div class="calc-box">Total pulls: ${params.rounds}\nTotal reward: ${totalReward}\nOptimal expected: ${(params.rounds * optimalProb).toFixed(1)}\nRegret: ${regret.toFixed(1)}</div>`, armStats: armStats.map(a => ({ ...a })), pullHistory: [...pullHistory] });
+            document.getElementById('total-steps').textContent = steps.length;
         }
+
+        function openFullscreen(type) {
+            const o = document.getElementById('fullscreen-overlay'), t = document.getElementById('fullscreen-title'), c = document.getElementById('fullscreen-content');
+            o.classList.add('active');
+            if (type === 'arms') {
+                t.textContent = '📊 Arm Statistics';
+                c.innerHTML = `<table class="data-table" style="font-size:0.9rem"><thead><tr><th>Arm</th><th>Pulls</th><th>Wins</th><th>Estimated Q̂</th><th>True Probability</th></tr></thead><tbody>${armStats.map((a, i) => `<tr><td>${i + 1}</td><td>${a.pulls}</td><td>${a.wins}</td><td>${a.mean.toFixed(6)}</td><td>${trueProbs[i].toFixed(6)}</td></tr>`).join('')}</tbody></table>`;
+            } else if (type === 'history') {
+                t.textContent = '📈 Pull History';
+                c.innerHTML = `<table class="data-table" style="font-size:0.9rem"><thead><tr><th>Round</th><th>Arm</th><th>Reward</th><th>Cumulative</th></tr></thead><tbody>${pullHistory.map(h => `<tr><td>${h.t}</td><td>${h.arm + 1}</td><td>${h.reward}</td><td>${h.cumReward.toFixed(1)}</td></tr>`).join('')}</tbody></table>`;
+            } else if (type === 'calc') { t.textContent = '📐 All Steps'; c.innerHTML = document.getElementById('calc-steps').innerHTML; }
+        }
+        function closeFullscreen() { document.getElementById('fullscreen-overlay').classList.remove('active'); }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFullscreen(); });
 
         function displayStep(step) {
             const container = document.getElementById('calc-steps');
             container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
             container.querySelector('.calc-placeholder')?.remove();
-
-            const div = document.createElement('div');
-            div.className = 'calc-step active';
+            const div = document.createElement('div'); div.className = 'calc-step active';
             div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
-            container.appendChild(div);
-            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
-
-            renderBanditStats(step.selectedArm);
-            render();
-            document.getElementById('viz-reward').textContent = totalReward;
-            document.getElementById('viz-regret').textContent = (regretHistory[regretHistory.length - 1] || 0).toFixed(2);
+            container.appendChild(div); div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            armStats = step.armStats; pullHistory = step.pullHistory;
+            renderArmTable(); renderHistoryTable(); renderArms();
+            document.getElementById('viz-pulls').textContent = pullHistory.length;
+            document.getElementById('viz-total').textContent = pullHistory.length ? pullHistory[pullHistory.length - 1].cumReward : 0;
+            const optP = Math.max(...trueProbs);
+            document.getElementById('viz-regret').textContent = (pullHistory.length * optP - (pullHistory.length ? pullHistory[pullHistory.length - 1].cumReward : 0)).toFixed(1);
         }
 
         function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
-        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 500); }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 400); }
         function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
-        function reset() { stopAuto(); currentStep = 0; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to pull arms</p></div>'; initBandits(); generateSteps(); renderBanditStats(); render(); }
+        function reset() { stopAuto(); currentStep = 0; armStats = Array(NUM_ARMS).fill(0).map(() => ({ pulls: 0, wins: 0, mean: 0 })); pullHistory = []; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong></p></div>'; generateSteps(); renderArmTable(); renderHistoryTable(); renderArms(); }
 
         document.getElementById('step-btn').addEventListener('click', step);
         document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
         document.getElementById('reset-btn').addEventListener('click', reset);
-        document.getElementById('apply-btn').addEventListener('click', reset);
-        document.getElementById('strategy-select').addEventListener('change', e => { params.strategy = e.target.value; reset(); });
-        document.getElementById('param-slider').addEventListener('input', e => { params.epsilon = parseFloat(e.target.value); document.getElementById('param-value').textContent = params.epsilon; });
+        document.getElementById('random-btn').addEventListener('click', () => { initArms(); reset(); });
+        document.getElementById('c-slider').addEventListener('input', e => { params.c = parseFloat(e.target.value); document.getElementById('c-value').textContent = params.c; });
+        document.getElementById('rounds-slider').addEventListener('input', e => { params.rounds = parseInt(e.target.value); document.getElementById('rounds-value').textContent = params.rounds; });
 
-        window.addEventListener('resize', resizeCanvas);
-        initBandits();
-        renderBanditStats();
-        resizeCanvas();
-        generateSteps();
+        initArms(); renderArmTable(); renderHistoryTable(); renderArms(); generateSteps();
     </script>
 </body>
 

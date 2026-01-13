@@ -90,6 +90,13 @@ const CATEGORIES = {
                 icon: '🌊',
                 description: 'Explore eigenvalues, Laplacian matrices, Fiedler vectors, and graph connectivity.',
                 path: 'tools/spectral-graph/index.html'
+            },
+            {
+                id: 'probability',
+                name: 'Probability Distributions',
+                icon: '🎲',
+                description: 'Interactive visualizer for Normal, Binomial, Poisson, Exponential, Uniform, and Beta distributions.',
+                path: 'tools/probability/index.html'
             }
         ]
     },
@@ -403,6 +410,20 @@ const CATEGORIES = {
                 icon: '🔜',
                 description: 'Problem solving tools are under development. Stay tuned!',
                 path: '#'
+            }
+        ]
+    },
+    'random-things': {
+        name: 'Random Things',
+        icon: '🎲',
+        description: 'A collection of interesting mathematical concepts and explorations.',
+        tools: [
+            {
+                id: 'geometric-reachability',
+                name: 'Geometric Reachability',
+                icon: '🗺️',
+                description: 'Explore how territory expands over time in different geometric grids.',
+                path: 'tools/random-things/geometric-reachability/index.html'
             }
         ]
     }

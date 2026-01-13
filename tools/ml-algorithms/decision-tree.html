@@ -41,10 +41,21 @@
 
         .main-content {
             display: grid;
-            grid-template-columns: 300px 1fr 1fr 260px;
+            grid-template-columns: 280px 1fr 1.2fr 280px;
             gap: 12px;
             padding: 12px;
             overflow: hidden;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .left-column .panel {
+            flex: 1;
+            min-height: 0;
         }
 
         .panel {
@@ -60,13 +71,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-bottom: 1px solid var(--border-color);
             background: rgba(0, 0, 0, 0.2);
         }
 
         .panel-header h2 {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
@@ -75,11 +86,11 @@
         .panel-body {
             flex: 1;
             overflow: auto;
-            padding: 12px;
+            padding: 10px;
         }
 
         .panel-footer {
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-top: 1px solid var(--border-color);
         }
 
@@ -91,40 +102,34 @@
 
         .data-table th {
             background: var(--bg-secondary);
-            padding: 5px;
+            padding: 4px;
             text-align: left;
             border-bottom: 2px solid var(--accent-primary);
+            position: sticky;
+            top: 0;
         }
 
         .data-table td {
-            padding: 4px 5px;
+            padding: 3px 4px;
             border-bottom: 1px solid var(--border-color);
             font-family: var(--font-mono);
         }
 
-        .data-table tr.highlight td {
-            background: rgba(99, 102, 241, 0.2);
-        }
-
-        .data-table tr.yes td {
-            background: rgba(16, 185, 129, 0.15);
-        }
-
-        .data-table tr.no td {
-            background: rgba(239, 68, 68, 0.15);
+        .data-table tr.highlighted td {
+            background: rgba(99, 102, 241, 0.4) !important;
         }
 
         .calc-steps {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .calc-placeholder {
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 200px;
+            height: 100px;
             color: var(--text-muted);
             text-align: center;
         }
@@ -132,8 +137,8 @@
         .calc-step {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px;
+            border-radius: 6px;
+            padding: 8px;
             animation: fadeIn 0.3s;
         }
 
@@ -148,69 +153,51 @@
         .calc-step-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
+            gap: 6px;
+            margin-bottom: 4px;
         }
 
         .calc-step-number {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             background: var(--accent-gradient);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: white;
         }
 
         .calc-step-title {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
 
         .calc-step-content {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-secondary);
             line-height: 1.5;
         }
 
         .calc-box {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            padding: 8px;
-            margin: 6px 0;
+            border-radius: 4px;
+            padding: 6px;
+            margin: 4px 0;
             font-family: var(--font-mono);
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             overflow-x: auto;
-            line-height: 1.6;
-        }
-
-        .calc-result {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 10px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 6px;
-            margin-top: 6px;
-        }
-
-        .calc-result-label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .calc-result-value {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--success);
+            line-height: 1.4;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
         }
 
         .viz-panel .panel-body {
             padding: 0;
+            position: relative;
         }
 
         .viz-panel canvas {
@@ -221,15 +208,15 @@
 
         .viz-stats {
             display: flex;
-            gap: 16px;
+            gap: 12px;
             justify-content: center;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
         }
 
         .param-section {
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 10px;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
         }
 
         .param-section:last-child {
@@ -237,11 +224,11 @@
         }
 
         .param-section-title {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .param-item {
@@ -251,45 +238,93 @@
         .param-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
+            font-size: 0.7rem;
         }
 
         .param-name code {
             font-family: var(--font-mono);
             background: rgba(0, 0, 0, 0.3);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.65rem;
         }
 
         .param-value {
             font-family: var(--font-mono);
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--accent-primary);
-        }
-
-        .taming-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .taming-list li {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            padding: 3px 0 3px 14px;
-            position: relative;
-        }
-
-        .taming-list li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: var(--success);
         }
 
         .btn-block {
             width: 100%;
-            margin-top: 6px;
+            margin-top: 4px;
+        }
+
+        .btn-fs {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .btn-fs:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .graph-overlay {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            pointer-events: none;
+            display: none;
+            z-index: 10;
+        }
+
+        .fullscreen-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .fullscreen-overlay.active {
+            display: flex;
+        }
+
+        .fullscreen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .fullscreen-header h2 {
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .fullscreen-content {
+            flex: 1;
+            overflow: auto;
+            background: var(--bg-panel);
+            border-radius: 8px;
+            padding: 16px;
         }
 
         @keyframes fadeIn {
@@ -315,379 +350,283 @@
             </div>
         </header>
         <main class="main-content">
+            <div class="left-column">
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>📊 Training Data</h2>
+                        <button class="btn-fs" onclick="openFullscreen('data')">⛶</button>
+                    </div>
+                    <div class="panel-body">
+                        <table id="data-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>📈 Split History</h2>
+                        <button class="btn-fs" onclick="openFullscreen('splits')">⛶</button>
+                    </div>
+                    <div class="panel-body">
+                        <table id="split-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>📊 Training Data</h2>
-                </div>
-                <div class="panel-body">
-                    <table id="data-table" class="data-table">
-                        <thead></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <div class="panel-footer" style="font-size:0.65rem;color:var(--text-muted)">
-                    <span style="color:#10b981">Yes</span> = Play Tennis | <span style="color:#ef4444">No</span> = Don't
-                    Play
-                </div>
-            </section>
-            <section class="panel">
-                <div class="panel-header">
-                    <h2>📐 Full Gini Calculations</h2>
-                    <span style="font-size:0.7rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
-                            id="total-steps">0</span></span>
+                    <h2>📐 Gini/Entropy Calculations</h2>
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <span style="font-size:0.65rem;color:var(--text-muted)"><span id="current-step">0</span>/<span
+                                id="total-steps">0</span></span>
+                        <button class="btn-fs" onclick="openFullscreen('calc')">⛶</button>
+                    </div>
                 </div>
                 <div class="panel-body">
                     <div id="calc-steps" class="calc-steps">
                         <div class="calc-placeholder">
-                            <p>Click <strong>Step</strong> to see every Gini calculation</p>
+                            <p>Click <strong>Step</strong></p>
                         </div>
                     </div>
                 </div>
             </section>
             <section class="panel viz-panel">
                 <div class="panel-header">
-                    <h2>🎨 Decision Tree</h2>
+                    <h2>🎨 Tree Structure</h2>
                 </div>
-                <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
+                <div class="panel-body">
+                    <canvas id="viz-canvas"></canvas>
+                    <div id="graph-overlay" class="graph-overlay"></div>
+                </div>
                 <div class="panel-footer">
                     <div class="viz-stats">
-                        <span>Nodes: <strong id="viz-nodes">0</strong></span>
                         <span>Depth: <strong id="viz-depth">0</strong></span>
+                        <span>Nodes: <strong id="viz-nodes">0</strong></span>
                     </div>
                 </div>
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>⚙️ Parameters</h2>
+                    <h2>⚙️ Params</h2>
                 </div>
                 <div class="panel-body">
                     <div class="param-section">
                         <div class="param-item">
-                            <div class="param-header">
-                                <span class="param-name"><code>criterion</code></span>
-                                <span class="param-value">gini</span>
-                            </div>
-                            <div style="font-size:0.65rem;color:var(--text-muted);margin-top:2px">Impurity measure</div>
-                        </div>
-                        <div class="param-item">
-                            <div class="param-header">
-                                <span class="param-name"><code>max_depth</code></span>
-                                <span class="param-value" id="depth-value">3</span>
-                            </div>
-                            <input type="range" id="depth-slider" class="slider" min="1" max="4" value="3"
+                            <div class="param-header"><span class="param-name"><code>max_depth</code></span><span
+                                    class="param-value" id="depth-value">3</span></div>
+                            <input type="range" id="depth-slider" class="slider" min="1" max="5" step="1" value="3"
                                 style="width:100%">
                         </div>
                     </div>
                     <div class="param-section">
-                        <div class="param-section-title">💡 Gini Formula</div>
-                        <div class="calc-box">Gini = 1 - Σ(pᵢ)²</div>
-                        <ul class="taming-list">
-                            <li>pᵢ = fraction of class i</li>
-                            <li>Gini = 0 means pure (one class)</li>
-                            <li>Gini = 0.5 means max impurity (50/50)</li>
-                        </ul>
+                        <div class="param-section-title">Gini Impurity</div>
+                        <div style="font-size:0.55rem;color:var(--text-muted)">G = 1 - Σpᵢ²<br><br>Info Gain = G(parent)
+                            - Σ(nⱼ/n)×G(childⱼ)</div>
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button id="random-btn" class="btn btn-primary btn-block">🎲 Random Data</button>
-                    <button id="apply-btn" class="btn btn-secondary btn-block">Apply & Restart</button>
+                    <button id="random-btn" class="btn btn-primary btn-block">🎲 Random</button>
+                    <button id="apply-btn" class="btn btn-secondary btn-block">Apply</button>
                 </div>
             </section>
         </main>
     </div>
+    <div id="fullscreen-overlay" class="fullscreen-overlay">
+        <div class="fullscreen-header">
+            <h2 id="fullscreen-title">Fullscreen</h2><button class="btn btn-ghost" onclick="closeFullscreen()">✕
+                Close</button>
+        </div>
+        <div class="fullscreen-content" id="fullscreen-content"></div>
+    </div>
     <script>
-        // Tennis dataset
         function generateData() {
-            const outlooks = ['Sunny', 'Overcast', 'Rain'];
-            const temps = ['Hot', 'Mild', 'Cool'];
-            const humids = ['High', 'Normal'];
-            const winds = ['Weak', 'Strong'];
-
-            const data = [];
-            for (let i = 0; i < 14; i++) {
-                const outlook = outlooks[Math.floor(Math.random() * 3)];
-                const temp = temps[Math.floor(Math.random() * 3)];
-                const humidity = humids[Math.floor(Math.random() * 2)];
-                const wind = winds[Math.floor(Math.random() * 2)];
-
-                // Simple rules for play decision
-                let play;
-                if (outlook === 'Overcast') play = 'Yes';
-                else if (outlook === 'Rain' && wind === 'Strong') play = 'No';
-                else if (outlook === 'Sunny' && humidity === 'High') play = 'No';
-                else play = Math.random() > 0.3 ? 'Yes' : 'No';
-
-                data.push({ id: i + 1, outlook, temp, humidity, wind, play });
-            }
-            return data;
+            const d = [];
+            for (let i = 0; i < 8; i++) d.push({ x1: 1 + Math.random() * 4, x2: 5 + Math.random() * 4, y: 0 });
+            for (let i = 0; i < 8; i++) d.push({ x1: 5 + Math.random() * 4, x2: 1 + Math.random() * 4, y: 1 });
+            return d;
         }
-
         let data = generateData();
         let params = { maxDepth: 3 };
-        let tree = null;
+        let tree = null, splitHistory = [];
         let steps = [], currentStep = 0;
         let isAutoRunning = false, autoInterval = null;
+        let hoveredPoint = -1;
 
-        const features = ['outlook', 'temp', 'humidity', 'wind'];
-
-        function renderTable(highlightIds = []) {
-            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>Outlook</th><th>Temp</th><th>Humid</th><th>Wind</th><th>Play?</th></tr>';
-            document.querySelector('#data-table tbody').innerHTML = data.map(d => {
-                const cls = highlightIds.includes(d.id) ? 'highlight' : (d.play === 'Yes' ? 'yes' : 'no');
-                return `<tr class="${cls}"><td style="font-weight:600">${d.id}</td><td>${d.outlook}</td><td>${d.temp}</td><td>${d.humidity}</td><td>${d.wind}</td><td style="color:${d.play === 'Yes' ? '#10b981' : '#ef4444'};font-weight:600">${d.play}</td></tr>`;
-            }).join('');
+        function gini(pts) {
+            if (pts.length === 0) return 0;
+            const p0 = pts.filter(p => p.y === 0).length / pts.length;
+            const p1 = 1 - p0;
+            return 1 - p0 * p0 - p1 * p1;
         }
 
-        function gini(subset) {
-            if (subset.length === 0) return 0;
-            const yes = subset.filter(d => d.play === 'Yes').length;
-            const no = subset.length - yes;
-            const pYes = yes / subset.length;
-            const pNo = no / subset.length;
-            return 1 - (pYes * pYes) - (pNo * pNo);
+        function renderTable() {
+            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X₁</th><th>X₂</th><th>Y</th></tr>';
+            document.querySelector('#data-table tbody').innerHTML = data.map((d, i) =>
+                `<tr class="${hoveredPoint === i ? 'highlighted' : ''}"><td>${i + 1}</td><td>${d.x1.toFixed(2)}</td><td>${d.x2.toFixed(2)}</td><td style="color:${d.y ? '#10b981' : '#ef4444'}">${d.y}</td></tr>`
+            ).join('');
         }
 
-        function getUniqueValues(subset, feature) {
-            return [...new Set(subset.map(d => d[feature]))];
+        function renderSplitTable() {
+            document.querySelector('#split-table thead').innerHTML = '<tr><th>Node</th><th>Feature</th><th>Thresh</th><th>Gain</th></tr>';
+            document.querySelector('#split-table tbody').innerHTML = splitHistory.map(s =>
+                `<tr><td>${s.node}</td><td>X${s.feature + 1}</td><td>${s.threshold.toFixed(2)}</td><td>${s.gain.toFixed(4)}</td></tr>`
+            ).join('');
         }
 
         function generateSteps() {
-            steps = [];
-            tree = { nodes: [], edges: [] };
+            steps = []; tree = null; splitHistory = [];
 
-            const yesCount = data.filter(d => d.play === 'Yes').length;
-            const noCount = data.length - yesCount;
-            const pYes = yesCount / data.length;
-            const pNo = noCount / data.length;
-            const rootGini = gini(data);
+            let dataStr = data.map((d, i) => `P${i + 1}: X₁=${d.x1.toFixed(2)}, X₂=${d.x2.toFixed(2)}, y=${d.y}`).join('\n');
+            steps.push({ title: 'Dataset', content: `<div class="calc-box">${dataStr}</div>`, tree: null });
 
-            // Step 1: Show dataset
-            steps.push({
-                title: 'Our Dataset',
-                content: `<p>We have <strong>${data.length} examples</strong> of whether to play tennis:</p>
-                    <div class="calc-box">
-                    Yes (play): ${yesCount} examples<br>
-                    No (don't play): ${noCount} examples
-                    </div>
-                    <p>Each row in the table is numbered - find them in the tree later!</p>`,
-                tree: { nodes: [], edges: [] }, highlightIds: []
-            });
+            // Build tree recursively
+            function buildNode(pts, depth, nodeId) {
+                const n0 = pts.filter(p => p.y === 0).length;
+                const n1 = pts.length - n0;
+                const nodeGini = gini(pts);
 
-            // Step 2: Calculate root Gini with FULL calculation
-            steps.push({
-                title: 'Calculate Root Gini Impurity',
-                content: `<p>How "impure" is our starting data?</p>
-                    <div class="calc-box">
-                    Total: ${data.length} samples<br>
-                    Yes: ${yesCount}, No: ${noCount}<br><br>
-                    P(Yes) = ${yesCount}/${data.length} = ${pYes.toFixed(4)}<br>
-                    P(No) = ${noCount}/${data.length} = ${pNo.toFixed(4)}<br><br>
-                    <strong>Gini = 1 - P(Yes)² - P(No)²</strong><br>
-                    Gini = 1 - ${pYes.toFixed(4)}² - ${pNo.toFixed(4)}²<br>
-                    Gini = 1 - ${(pYes * pYes).toFixed(4)} - ${(pNo * pNo).toFixed(4)}<br>
-                    <strong>Gini = ${rootGini.toFixed(4)}</strong>
-                    </div>
-                    <p>${rootGini < 0.3 ? 'Already fairly pure!' : 'Mixed - we need to split!'}</p>`,
-                tree: { nodes: [{ id: 0, label: 'Root', gini: rootGini, samples: data.length, yesCount, noCount, x: 0.5, y: 0.1 }], edges: [] },
-                highlightIds: []
-            });
-
-            // Step 3+: Try each feature
-            let bestFeature = null, bestGain = -1, bestSplits = null;
-
-            for (const feature of features) {
-                const values = getUniqueValues(data, feature);
-                let weightedGini = 0;
-                const splits = {};
-
-                let calcDetail = `Trying to split on: <strong>${feature.toUpperCase()}</strong><br><br>`;
-
-                for (const val of values) {
-                    const subset = data.filter(d => d[feature] === val);
-                    const subGini = gini(subset);
-                    const subYes = subset.filter(d => d.play === 'Yes').length;
-                    const subNo = subset.length - subYes;
-                    const subPYes = subset.length > 0 ? subYes / subset.length : 0;
-                    const subPNo = subset.length > 0 ? subNo / subset.length : 0;
-
-                    splits[val] = { subset, gini: subGini, yes: subYes, no: subNo };
-                    weightedGini += (subset.length / data.length) * subGini;
-
-                    calcDetail += `<strong>${feature}="${val}":</strong> ${subset.length} samples<br>`;
-                    calcDetail += `  Yes: ${subYes}, No: ${subNo}<br>`;
-                    calcDetail += `  P(Yes) = ${subYes}/${subset.length} = ${subPYes.toFixed(3)}<br>`;
-                    calcDetail += `  P(No) = ${subNo}/${subset.length} = ${subPNo.toFixed(3)}<br>`;
-                    calcDetail += `  Gini = 1 - ${subPYes.toFixed(3)}² - ${subPNo.toFixed(3)}² = <strong>${subGini.toFixed(4)}</strong><br><br>`;
+                if (depth >= params.maxDepth || nodeGini === 0 || pts.length < 2) {
+                    return { isLeaf: true, prediction: n1 > n0 ? 1 : 0, points: pts, gini: nodeGini, n0, n1 };
                 }
 
-                const infoGain = rootGini - weightedGini;
-                calcDetail += `Weighted Gini = `;
-                calcDetail += values.map(v => `(${splits[v].subset.length}/${data.length})×${splits[v].gini.toFixed(3)}`).join(' + ');
-                calcDetail += ` = ${weightedGini.toFixed(4)}<br><br>`;
-                calcDetail += `<strong>Information Gain = ${rootGini.toFixed(4)} - ${weightedGini.toFixed(4)} = ${infoGain.toFixed(4)}</strong>`;
+                // Find best split with FULL calculations
+                let bestGain = 0, bestFeature = 0, bestThresh = 0, bestLeft = [], bestRight = [];
+                let splitCalcs = `Node ${nodeId}: ${pts.length} points (${n0} class 0, ${n1} class 1)\nGini = 1 - (${n0}/${pts.length})² - (${n1}/${pts.length})² = ${nodeGini.toFixed(4)}\n\n`;
 
-                steps.push({
-                    title: `Try Split: ${feature}`,
-                    content: `<div class="calc-box" style="max-height:200px;overflow-y:auto">${calcDetail}</div>`,
-                    tree: { nodes: [{ id: 0, label: 'Root', gini: rootGini, samples: data.length, x: 0.5, y: 0.1, feature: feature + '?' }], edges: [] },
-                    highlightIds: []
+                [0, 1].forEach(f => {
+                    const vals = [...new Set(pts.map(p => f === 0 ? p.x1 : p.x2))].sort((a, b) => a - b);
+                    vals.slice(0, -1).forEach((v, i) => {
+                        const thresh = (v + vals[i + 1]) / 2;
+                        const left = pts.filter(p => (f === 0 ? p.x1 : p.x2) <= thresh);
+                        const right = pts.filter(p => (f === 0 ? p.x1 : p.x2) > thresh);
+                        const giniLeft = gini(left), giniRight = gini(right);
+                        const gain = nodeGini - (left.length / pts.length) * giniLeft - (right.length / pts.length) * giniRight;
+                        splitCalcs += `X${f + 1} ≤ ${thresh.toFixed(2)}: L=${left.length}(G=${giniLeft.toFixed(3)}), R=${right.length}(G=${giniRight.toFixed(3)}), Gain=${gain.toFixed(4)}\n`;
+                        if (gain > bestGain) {
+                            bestGain = gain; bestFeature = f; bestThresh = thresh; bestLeft = left; bestRight = right;
+                        }
+                    });
                 });
 
-                if (infoGain > bestGain) {
-                    bestGain = infoGain;
-                    bestFeature = feature;
-                    bestSplits = splits;
+                if (bestGain === 0) {
+                    return { isLeaf: true, prediction: n1 > n0 ? 1 : 0, points: pts, gini: nodeGini, n0, n1 };
                 }
+
+                splitCalcs += `\nBest: X${bestFeature + 1} ≤ ${bestThresh.toFixed(2)} (Gain = ${bestGain.toFixed(4)})`;
+                steps.push({ title: `Split Node ${nodeId}`, content: `<div class="calc-box">${splitCalcs}</div>`, tree: null });
+                splitHistory.push({ node: nodeId, feature: bestFeature, threshold: bestThresh, gain: bestGain });
+
+                return {
+                    isLeaf: false, feature: bestFeature, threshold: bestThresh, gain: bestGain,
+                    left: buildNode(bestLeft, depth + 1, nodeId * 2),
+                    right: buildNode(bestRight, depth + 1, nodeId * 2 + 1),
+                    points: pts, gini: nodeGini, n0, n1
+                };
             }
 
-            // Step: Show best split
-            steps.push({
-                title: `Best Split: ${bestFeature}!`,
-                content: `<p>Comparing all features:</p>
-                    <div class="calc-box">
-                    ${features.map(f => `${f}: Information Gain = ${(f === bestFeature ? bestGain : Math.random() * bestGain * 0.8).toFixed(4)} ${f === bestFeature ? '✓ BEST' : ''}`).join('<br>')}
-                    </div>
-                    <div class="calc-result"><span class="calc-result-label">Split on</span><span class="calc-result-value">${bestFeature.toUpperCase()}</span></div>`,
-                tree: { nodes: [{ id: 0, label: bestFeature, gini: rootGini, samples: data.length, x: 0.5, y: 0.1 }], edges: [] },
-                highlightIds: []
-            });
+            tree = buildNode(data, 0, 1);
+            steps.forEach(s => s.tree = tree);
 
-            // Build tree visualization
-            const values = Object.keys(bestSplits);
-            const finalNodes = [{ id: 0, label: bestFeature, samples: data.length, x: 0.5, y: 0.1 }];
-            const finalEdges = [];
+            const countNodes = n => n.isLeaf ? 1 : 1 + countNodes(n.left) + countNodes(n.right);
+            const maxDepth = function getDepth(n) { return n.isLeaf ? 1 : 1 + Math.max(getDepth(n.left), getDepth(n.right)); };
 
-            values.forEach((val, i) => {
-                const sp = bestSplits[val];
-                const nodeId = i + 1;
-                const x = 0.2 + (i * 0.3);
-                const prediction = sp.yes >= sp.no ? 'Yes' : 'No';
-
-                finalNodes.push({
-                    id: nodeId,
-                    label: `${prediction}`,
-                    samples: sp.subset.length,
-                    gini: sp.gini,
-                    x,
-                    y: 0.5,
-                    isLeaf: true,
-                    prediction,
-                    yes: sp.yes,
-                    no: sp.no
-                });
-                finalEdges.push({ from: 0, to: nodeId, label: val });
-
-                steps.push({
-                    title: `Leaf: ${bestFeature}="${val}"`,
-                    content: `<p>Samples where ${bestFeature}="${val}":</p>
-                        <div class="calc-box">
-                        Samples: ${sp.subset.map(d => '#' + d.id).join(', ')}<br><br>
-                        Yes: ${sp.yes}, No: ${sp.no}<br>
-                        Gini: ${sp.gini.toFixed(4)}<br><br>
-                        <strong>Prediction: ${prediction}</strong> (majority class)
-                        </div>`,
-                    tree: { nodes: [...finalNodes], edges: [...finalEdges] },
-                    highlightIds: sp.subset.map(d => d.id)
-                });
-            });
-
-            // Final tree
-            steps.push({
-                title: '✅ Tree Complete!',
-                content: `<p>Our decision tree is built!</p>
-                    <div class="calc-box">
-                    Root splits on: ${bestFeature}<br>
-                    ${values.map(v => `If ${bestFeature}="${v}" → ${bestSplits[v].yes >= bestSplits[v].no ? 'Yes' : 'No'}`).join('<br>')}
-                    </div>
-                    <p>Check the tree visualization to see the full structure!</p>`,
-                tree: { nodes: finalNodes, edges: finalEdges },
-                highlightIds: []
-            });
-
-            tree = { nodes: finalNodes, edges: finalEdges };
+            steps.push({ title: '✅ Complete!', content: `<div class="calc-box">Tree built!\n\nNodes: ${countNodes(tree)}\nDepth: ${maxDepth(tree)}</div>`, tree });
             document.getElementById('total-steps').textContent = steps.length;
         }
 
         const canvas = document.getElementById('viz-canvas');
         const ctx = canvas.getContext('2d');
+        const overlay = document.getElementById('graph-overlay');
 
         function resizeCanvas() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
 
         function render(step = null) {
-            const w = canvas.width, h = canvas.height;
-            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, w, h);
+            const ww = canvas.width, hh = canvas.height;
+            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, ww, hh);
+            const t = step?.tree ?? tree;
+            if (!t) return;
 
-            const currentTree = step?.tree || tree;
-            if (!currentTree || !currentTree.nodes) return;
-
-            // Draw edges
-            ctx.strokeStyle = 'rgba(255,255,255,0.4)';
-            ctx.lineWidth = 2;
-            currentTree.edges.forEach(e => {
-                const from = currentTree.nodes.find(n => n.id === e.from);
-                const to = currentTree.nodes.find(n => n.id === e.to);
-                if (from && to) {
-                    ctx.beginPath();
-                    ctx.moveTo(from.x * w, from.y * h + 25);
-                    ctx.lineTo(to.x * w, to.y * h - 25);
-                    ctx.stroke();
-
-                    // Edge label
-                    ctx.fillStyle = '#f59e0b';
-                    ctx.font = 'bold 11px Inter';
-                    ctx.textAlign = 'center';
-                    const midX = (from.x + to.x) / 2 * w;
-                    const midY = (from.y + to.y) / 2 * h;
-                    ctx.fillText(e.label, midX, midY);
-                }
-            });
-
-            // Draw nodes
-            currentTree.nodes.forEach(node => {
-                const nx = node.x * w, ny = node.y * h;
-
+            const drawNode = (node, x, y, w, depth) => {
                 // Node box
-                ctx.fillStyle = node.isLeaf ? (node.prediction === 'Yes' ? '#10b981' : '#ef4444') : '#6366f1';
-                const boxW = 80, boxH = 50;
-                ctx.beginPath();
-                ctx.roundRect(nx - boxW / 2, ny - boxH / 2, boxW, boxH, 8);
-                ctx.fill();
+                ctx.fillStyle = node.isLeaf ? (node.prediction ? '#10b981' : '#ef4444') : '#1e1e2e';
+                ctx.strokeStyle = '#6366f1';
+                ctx.lineWidth = 2;
+                const boxW = 80, boxH = 40;
+                ctx.fillRect(x - boxW / 2, y - boxH / 2, boxW, boxH);
+                ctx.strokeRect(x - boxW / 2, y - boxH / 2, boxW, boxH);
 
                 // Node text
                 ctx.fillStyle = '#fff';
-                ctx.font = 'bold 12px Inter';
+                ctx.font = 'bold 9px Inter';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(node.label, nx, ny - 8);
+                if (node.isLeaf) {
+                    ctx.fillText(`Class ${node.prediction}`, x, y - 6);
+                    ctx.font = '7px Inter';
+                    ctx.fillText(`(${node.n0}:${node.n1})`, x, y + 8);
+                } else {
+                    ctx.fillText(`X${node.feature + 1} ≤ ${node.threshold.toFixed(1)}`, x, y - 6);
+                    ctx.font = '7px Inter';
+                    ctx.fillText(`G=${node.gini.toFixed(2)}`, x, y + 8);
+                }
 
-                ctx.font = '10px Inter';
-                ctx.fillText(`n=${node.samples}`, nx, ny + 10);
-            });
+                // Children
+                if (!node.isLeaf) {
+                    const childY = y + 80;
+                    const lx = x - w / 4, rx = x + w / 4;
+                    ctx.strokeStyle = 'rgba(99,102,241,0.5)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath(); ctx.moveTo(x, y + boxH / 2); ctx.lineTo(lx, childY - boxH / 2); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(x, y + boxH / 2); ctx.lineTo(rx, childY - boxH / 2); ctx.stroke();
+                    ctx.fillStyle = '#10b981'; ctx.font = '8px Inter';
+                    ctx.fillText('≤', (x + lx) / 2 - 8, (y + childY) / 2);
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillText('>', (x + rx) / 2 + 8, (y + childY) / 2);
+                    drawNode(node.left, lx, childY, w / 2, depth + 1);
+                    drawNode(node.right, rx, childY, w / 2, depth + 1);
+                }
+            };
+
+            drawNode(t, ww / 2, 50, ww, 0);
         }
+
+        function openFullscreen(type) {
+            const o = document.getElementById('fullscreen-overlay'), t = document.getElementById('fullscreen-title'), c = document.getElementById('fullscreen-content');
+            o.classList.add('active');
+            if (type === 'data') {
+                t.textContent = '📊 Training Data';
+                c.innerHTML = `<table class="data-table" style="font-size:0.9rem"><thead><tr><th>#</th><th>X₁</th><th>X₂</th><th>Y</th></tr></thead><tbody>${data.map((d, i) => `<tr><td>${i + 1}</td><td>${d.x1.toFixed(6)}</td><td>${d.x2.toFixed(6)}</td><td>${d.y}</td></tr>`).join('')}</tbody></table>`;
+            } else if (type === 'splits') {
+                t.textContent = '📈 Split History';
+                c.innerHTML = `<table class="data-table" style="font-size:0.9rem"><thead><tr><th>Node</th><th>Feature</th><th>Threshold</th><th>Info Gain</th></tr></thead><tbody>${splitHistory.map(s => `<tr><td>${s.node}</td><td>X${s.feature + 1}</td><td>${s.threshold.toFixed(6)}</td><td>${s.gain.toFixed(8)}</td></tr>`).join('')}</tbody></table>`;
+            } else if (type === 'calc') { t.textContent = '📐 All Steps'; c.innerHTML = document.getElementById('calc-steps').innerHTML; }
+        }
+        function closeFullscreen() { document.getElementById('fullscreen-overlay').classList.remove('active'); }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFullscreen(); });
 
         function displayStep(step) {
             const container = document.getElementById('calc-steps');
             container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
             container.querySelector('.calc-placeholder')?.remove();
-
-            const div = document.createElement('div');
-            div.className = 'calc-step active';
+            const div = document.createElement('div'); div.className = 'calc-step active';
             div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
-            container.appendChild(div);
-            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
-
-            renderTable(step.highlightIds || []);
-            render(step);
-
-            const nodeCount = step.tree?.nodes?.length || 0;
-            document.getElementById('viz-nodes').textContent = nodeCount;
-            document.getElementById('viz-depth').textContent = nodeCount > 1 ? 1 : 0;
+            container.appendChild(div); div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            renderTable(); renderSplitTable(); render(step);
+            if (tree) {
+                const cd = function d(n) { return n.isLeaf ? 1 : 1 + Math.max(d(n.left), d(n.right)); };
+                const cn = function n(nd) { return nd.isLeaf ? 1 : 1 + n(nd.left) + n(nd.right); };
+                document.getElementById('viz-depth').textContent = cd(tree);
+                document.getElementById('viz-nodes').textContent = cn(tree);
+            }
         }
 
         function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
         function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 800); }
         function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
-        function reset() { stopAuto(); currentStep = 0; tree = null; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to see every Gini calculation</p></div>'; renderTable(); generateSteps(); render(); }
+        function reset() { stopAuto(); currentStep = 0; tree = null; splitHistory = []; hoveredPoint = -1; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong></p></div>'; generateSteps(); renderTable(); renderSplitTable(); render(); }
 
         document.getElementById('step-btn').addEventListener('click', step);
         document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
@@ -697,9 +636,7 @@
         document.getElementById('depth-slider').addEventListener('input', e => { params.maxDepth = parseInt(e.target.value); document.getElementById('depth-value').textContent = params.maxDepth; });
 
         window.addEventListener('resize', resizeCanvas);
-        renderTable();
-        resizeCanvas();
-        generateSteps();
+        renderTable(); renderSplitTable(); resizeCanvas(); generateSteps();
     </script>
 </body>
 

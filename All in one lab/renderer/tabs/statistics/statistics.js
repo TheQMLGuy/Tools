@@ -10,6 +10,18 @@ const StatisticsTab = {
     init() {
         console.log('Statistics Tab initialized');
         this.setupEventListeners();
+        // Initial render of normal distribution curve - wait for Plotly to be available
+        const tryInit = () => {
+            if (typeof Plotly !== 'undefined') {
+                const panel = document.getElementById('panel-normal');
+                if (panel && panel.classList.contains('active')) {
+                    this.calcNormal();
+                }
+            } else {
+                setTimeout(tryInit, 100);
+            }
+        };
+        setTimeout(tryInit, 200);
     },
 
     setupEventListeners() {
@@ -43,7 +55,12 @@ const StatisticsTab = {
                 document.querySelectorAll('[data-dist]').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 document.querySelectorAll('.dist-panel').forEach(p => p.classList.remove('active'));
-                document.getElementById(`panel-${e.target.dataset.dist}`)?.classList.add('active');
+                const panel = document.getElementById(`panel-${e.target.dataset.dist}`);
+                panel?.classList.add('active');
+                // Auto-calculate when switching to normal distribution
+                if (e.target.dataset.dist === 'normal') {
+                    setTimeout(() => this.calcNormal(), 100);
+                }
             });
         });
 
@@ -492,12 +509,15 @@ const StatisticsTab = {
 
     // ==================== PROBABILITY DISTRIBUTIONS ====================
     calcNormal() {
-        const mu = parseFloat(document.getElementById('norm-mean').value);
-        const sigma = parseFloat(document.getElementById('norm-std').value);
-        const x = parseFloat(document.getElementById('norm-x').value);
+        const mu = parseFloat(document.getElementById('norm-mean').value) || 0;
+        const sigma = parseFloat(document.getElementById('norm-std').value) || 1;
+        const x = parseFloat(document.getElementById('norm-x').value) || 1.96;
         const type = document.getElementById('norm-type').value;
 
-        if (isNaN(mu) || isNaN(sigma) || isNaN(x) || sigma <= 0) return;
+        if (isNaN(mu) || isNaN(sigma) || isNaN(x) || sigma <= 0) {
+            console.warn('Invalid normal distribution parameters');
+            return;
+        }
 
         const z = (x - mu) / sigma;
         let prob;
@@ -508,9 +528,15 @@ const StatisticsTab = {
             prob = 1 - this.normalCDF(z);
         } else {
             const b = parseFloat(document.getElementById('norm-b').value);
-            if (isNaN(b)) return;
-            const z2 = (b - mu) / sigma;
-            prob = this.normalCDF(z2) - this.normalCDF(z);
+            if (isNaN(b)) {
+                // Default to x + 1 if b is not set
+                const bDefault = x + 1;
+                const z2 = (bDefault - mu) / sigma;
+                prob = this.normalCDF(z2) - this.normalCDF(z);
+            } else {
+                const z2 = (b - mu) / sigma;
+                prob = this.normalCDF(z2) - this.normalCDF(z);
+            }
         }
 
         const pdf = this.normalPDF(z) / sigma;
@@ -542,6 +568,15 @@ const StatisticsTab = {
 
     drawNormalCurve(mu, sigma, x, type) {
         const container = document.getElementById('normal-curve');
+        if (!container) return;
+        
+        // Check if Plotly is available
+        if (typeof Plotly === 'undefined') {
+            console.warn('Plotly not loaded, cannot draw normal curve');
+            container.innerHTML = '<p style="color: #888; padding: 20px; text-align: center;">Plotly library not loaded. Please refresh the page.</p>';
+            return;
+        }
+
         const xVals = [], yVals = [], fillX = [], fillY = [];
 
         const minX = mu - 4 * sigma;
@@ -577,6 +612,37 @@ const StatisticsTab = {
                 x: fillX, y: fillY, type: 'scatter', fill: 'toself',
                 fillcolor: 'rgba(255, 0, 170, 0.3)', line: { width: 0 }
             };
+        } else if (type === 'greater') {
+            for (let i = 0; i <= 200; i++) {
+                const xVal = minX + (maxX - minX) * i / 200;
+                if (xVal >= x) {
+                    fillX.push(xVal);
+                    fillY.push(this.normalPDF((xVal - mu) / sigma) / sigma);
+                }
+            }
+            fillX.push(x, maxX);
+            fillY.push(0, 0);
+            fillTrace = {
+                x: fillX, y: fillY, type: 'scatter', fill: 'toself',
+                fillcolor: 'rgba(255, 0, 170, 0.3)', line: { width: 0 }
+            };
+        } else if (type === 'between') {
+            const b = parseFloat(document.getElementById('norm-b').value);
+            if (!isNaN(b)) {
+                for (let i = 0; i <= 200; i++) {
+                    const xVal = minX + (maxX - minX) * i / 200;
+                    if (xVal >= x && xVal <= b) {
+                        fillX.push(xVal);
+                        fillY.push(this.normalPDF((xVal - mu) / sigma) / sigma);
+                    }
+                }
+                fillX.push(b, x);
+                fillY.push(0, 0);
+                fillTrace = {
+                    x: fillX, y: fillY, type: 'scatter', fill: 'toself',
+                    fillcolor: 'rgba(255, 0, 170, 0.3)', line: { width: 0 }
+                };
+            }
         }
 
         const layout = this.getPlotLayout('X', 'Density');

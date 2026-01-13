@@ -41,10 +41,16 @@
 
         .main-content {
             display: grid;
-            grid-template-columns: 280px 1fr 1.2fr 280px;
+            grid-template-columns: 280px 1fr 1.2fr 260px;
             gap: 12px;
             padding: 12px;
             overflow: hidden;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
         .panel {
@@ -60,13 +66,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-bottom: 1px solid var(--border-color);
             background: rgba(0, 0, 0, 0.2);
         }
 
         .panel-header h2 {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
@@ -75,11 +81,11 @@
         .panel-body {
             flex: 1;
             overflow: auto;
-            padding: 12px;
+            padding: 10px;
         }
 
         .panel-footer {
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-top: 1px solid var(--border-color);
         }
 
@@ -91,46 +97,38 @@
 
         .data-table th {
             background: var(--bg-secondary);
-            padding: 6px;
+            padding: 6px 8px;
             text-align: left;
             border-bottom: 2px solid var(--accent-primary);
+            position: sticky;
+            top: 0;
         }
 
         .data-table td {
-            padding: 5px 6px;
+            padding: 6px 8px;
             border-bottom: 1px solid var(--border-color);
             font-family: var(--font-mono);
+        }
+
+        .data-table tr.highlighted td {
+            background: rgba(99, 102, 241, 0.3) !important;
         }
 
         .calc-steps {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-        }
-
-        .calc-placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 200px;
-            color: var(--text-muted);
-            text-align: center;
+            gap: 8px;
         }
 
         .calc-step {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 6px;
             padding: 10px;
-            animation: fadeIn 0.3s;
         }
 
         .calc-step.active {
             border-color: var(--accent-primary);
-        }
-
-        .calc-step.completed {
-            opacity: 0.6;
         }
 
         .calc-step-header {
@@ -141,8 +139,8 @@
         }
 
         .calc-step-number {
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             background: var(--accent-gradient);
             border-radius: 50%;
             display: flex;
@@ -150,7 +148,6 @@
             justify-content: center;
             font-size: 0.7rem;
             font-weight: 600;
-            color: white;
         }
 
         .calc-step-title {
@@ -161,75 +158,41 @@
         .calc-step-content {
             font-size: 0.7rem;
             color: var(--text-secondary);
-            line-height: 1.5;
         }
 
         .calc-box {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
+            border-radius: 4px;
             padding: 8px;
             margin: 6px 0;
             font-family: var(--font-mono);
             font-size: 0.65rem;
-            overflow-x: auto;
-            line-height: 1.6;
+            white-space: pre-wrap;
+            max-height: 180px;
+            overflow-y: auto;
         }
 
-        .calc-result {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 10px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 6px;
-            margin-top: 6px;
-        }
-
-        .calc-result-label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .calc-result-value {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--success);
+        .viz-panel {
+            flex: 1;
         }
 
         .viz-panel .panel-body {
             padding: 0;
+            position: relative;
         }
 
         .viz-panel canvas {
             width: 100%;
             height: 100%;
             display: block;
+            background: #0a0a0f;
         }
 
         .viz-stats {
             display: flex;
             gap: 16px;
             justify-content: center;
-            font-size: 0.7rem;
-        }
-
-        .param-section {
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-        }
-
-        .param-section:last-child {
-            border-bottom: none;
-        }
-
-        .param-section-title {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            margin-bottom: 8px;
+            font-size: 0.75rem;
         }
 
         .param-item {
@@ -240,39 +203,12 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 4px;
-        }
-
-        .param-name code {
-            font-family: var(--font-mono);
-            background: rgba(0, 0, 0, 0.3);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
         }
 
         .param-value {
             font-family: var(--font-mono);
-            font-size: 0.75rem;
             color: var(--accent-primary);
-        }
-
-        .taming-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .taming-list li {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            padding: 3px 0 3px 14px;
-            position: relative;
-        }
-
-        .taming-list li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: var(--success);
         }
 
         .btn-block {
@@ -280,14 +216,89 @@
             margin-top: 6px;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
+        .btn-view {
+            background: var(--accent-gradient);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+        }
 
-            to {
-                opacity: 1;
-            }
+        .btn-view:hover {
+            opacity: 0.9;
+        }
+
+        .graph-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            pointer-events: none;
+            display: none;
+            z-index: 10;
+        }
+
+        .graph-controls {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .graph-controls button {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .graph-controls button:hover {
+            background: var(--accent-primary);
+        }
+
+        .fullscreen-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            padding: 24px;
+        }
+
+        .fullscreen-overlay.active {
+            display: flex;
+        }
+
+        .fullscreen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .fullscreen-header h2 {
+            font-size: 1.2rem;
+        }
+
+        .fullscreen-content {
+            flex: 1;
+            overflow: auto;
+            background: var(--bg-panel);
+            border-radius: 8px;
+            padding: 20px;
         }
     </style>
 </head>
@@ -303,39 +314,43 @@
             </div>
         </header>
         <main class="main-content">
+            <div class="left-column">
+                <section class="panel" style="flex:1">
+                    <div class="panel-header">
+                        <h2>📊 Training Data</h2>
+                    </div>
+                    <div class="panel-body">
+                        <table id="data-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+                <button class="btn-view" onclick="openFullscreen('epoch')">📉 View Epoch Metrics</button>
+            </div>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>📊 Training Data</h2>
-                </div>
-                <div class="panel-body">
-                    <table id="data-table" class="data-table">
-                        <thead></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <div class="panel-footer" style="font-size:0.65rem;color:var(--text-muted)">
-                    Point # shown on graph. Find your points!
-                </div>
-            </section>
-            <section class="panel">
-                <div class="panel-header">
-                    <h2>📐 Full Calculations</h2>
-                    <span style="font-size:0.7rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
+                    <h2>📐 Calculations</h2>
+                    <span style="font-size:0.7rem;color:var(--text-muted)"><span id="current-step">0</span>/<span
                             id="total-steps">0</span></span>
                 </div>
                 <div class="panel-body">
-                    <div id="calc-steps" class="calc-steps">
-                        <div class="calc-placeholder">
-                            <p>Click <strong>Step</strong> to see every gradient descent step</p>
-                        </div>
-                    </div>
+                    <div id="calc-steps" class="calc-steps"></div>
                 </div>
             </section>
             <section class="panel viz-panel">
                 <div class="panel-header">
-                    <h2>🎨 Regression Line</h2>
+                    <h2>🎨 Visualization</h2>
                 </div>
-                <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
+                <div class="panel-body">
+                    <canvas id="viz-canvas"></canvas>
+                    <div id="graph-overlay" class="graph-overlay"></div>
+                    <div class="graph-controls">
+                        <button onclick="zoomIn()">+</button>
+                        <button onclick="zoomOut()">−</button>
+                        <button onclick="resetView()">⌂</button>
+                    </div>
+                </div>
                 <div class="panel-footer">
                     <div class="viz-stats">
                         <span>Epoch: <strong id="viz-epoch">0</strong></span>
@@ -346,273 +361,172 @@
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>⚙️ Hyperparameters</h2>
+                    <h2>⚙️ Parameters</h2>
                 </div>
                 <div class="panel-body">
-                    <div class="param-section">
-                        <div class="param-item">
-                            <div class="param-header">
-                                <span class="param-name"><code>learning_rate</code></span>
-                                <span class="param-value" id="lr-value">0.1</span>
-                            </div>
-                            <input type="range" id="lr-slider" class="slider" min="0.01" max="0.5" step="0.01"
-                                value="0.1" style="width:100%">
-                        </div>
-                        <div class="param-item">
-                            <div class="param-header">
-                                <span class="param-name"><code>max_iter</code></span>
-                                <span class="param-value" id="iter-value">30</span>
-                            </div>
-                            <input type="range" id="iter-slider" class="slider" min="10" max="100" step="10" value="30"
-                                style="width:100%">
-                            <div style="font-size:0.6rem;color:var(--text-muted)">ALL epochs shown!</div>
-                        </div>
+                    <div class="param-item">
+                        <div class="param-header"><span>Learning Rate</span><span class="param-value"
+                                id="lr-val">0.1</span></div>
+                        <input type="range" id="lr-slider" min="0.01" max="0.5" step="0.01" value="0.1"
+                            style="width:100%">
                     </div>
-                    <div class="param-section">
-                        <div class="param-section-title">💡 Key Formulas</div>
-                        <ul class="taming-list">
-                            <li>ŷ = w·x + b (prediction)</li>
-                            <li>MSE = (1/n)Σ(y - ŷ)²</li>
-                            <li>∂MSE/∂w = -(2/n)Σx(y - ŷ)</li>
-                        </ul>
+                    <div class="param-item">
+                        <div class="param-header"><span>Epochs</span><span class="param-value" id="ep-val">10</span>
+                        </div>
+                        <input type="range" id="ep-slider" min="5" max="30" step="5" value="10" style="width:100%">
+                    </div>
+                    <div
+                        style="margin-top:16px;padding:12px;background:rgba(0,0,0,0.3);border-radius:6px;font-size:0.65rem;color:var(--text-muted)">
+                        <strong>Model:</strong> y = wx + b<br><br>
+                        <strong>MSE:</strong> Σ(y - ŷ)² / n<br><br>
+                        <strong>Gradients:</strong><br>
+                        ∂w = -2/n × Σ(y - ŷ)x<br>
+                        ∂b = -2/n × Σ(y - ŷ)
                     </div>
                 </div>
                 <div class="panel-footer">
                     <button id="random-btn" class="btn btn-primary btn-block">🎲 Random Data</button>
-                    <button id="apply-btn" class="btn btn-secondary btn-block">Apply & Restart</button>
                 </div>
             </section>
         </main>
     </div>
+    <div id="fullscreen-overlay" class="fullscreen-overlay">
+        <div class="fullscreen-header">
+            <h2 id="fs-title">Epoch Metrics</h2><button class="btn btn-ghost" onclick="closeFullscreen()">✕
+                Close</button>
+        </div>
+        <div class="fullscreen-content" id="fs-content"></div>
+    </div>
     <script>
-        function generateData() {
-            const data = [];
-            const slope = 1.5 + Math.random();
-            const intercept = Math.random() * 2;
-            for (let i = 0; i < 12; i++) {
-                const x = 1 + Math.random() * 8;
-                const y = slope * x + intercept + (Math.random() - 0.5) * 3;
-                data.push({ x, y });
-            }
-            return data;
-        }
+        let data = [], params = { lr: 0.1, epochs: 10 }, w = 0, b = 0;
+        let epochHistory = [], steps = [], currentStep = 0;
+        let isAuto = false, autoTimer = null;
+        let view = { x: 0, y: 0, scale: 1 }, dragging = false, dragStart = {};
+        let hovered = -1, pointPos = [];
 
-        let data = generateData();
-        let params = { lr: 0.1, maxIter: 30 };
-        let w = 0, b = 0;
-        let steps = [], currentStep = 0;
-        let isAutoRunning = false, autoInterval = null;
-
-        function renderTable() {
-            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th></tr>';
-            document.querySelector('#data-table tbody').innerHTML = data.map((d, i) =>
-                `<tr><td style="font-weight:600">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td></tr>`
-            ).join('');
-        }
-
+        function genData() { data = []; for (let i = 0; i < 10; i++) { const x = 1 + Math.random() * 8; data.push({ x, y: 2 + 0.8 * x + (Math.random() - 0.5) * 2 }); } }
         function predict(x) { return w * x + b; }
         function mse() { return data.reduce((s, d) => s + (d.y - predict(d.x)) ** 2, 0) / data.length; }
-        function r2() {
-            const yMean = data.reduce((s, d) => s + d.y, 0) / data.length;
-            const ssTot = data.reduce((s, d) => s + (d.y - yMean) ** 2, 0);
-            const ssRes = data.reduce((s, d) => s + (d.y - predict(d.x)) ** 2, 0);
-            return 1 - ssRes / ssTot;
+        function r2() { const mean = data.reduce((s, d) => s + d.y, 0) / data.length; const ssTot = data.reduce((s, d) => s + (d.y - mean) ** 2, 0); const ssRes = data.reduce((s, d) => s + (d.y - predict(d.x)) ** 2, 0); return 1 - ssRes / ssTot; }
+
+        function renderTable() {
+            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>ŷ</th><th>Error</th></tr>';
+            document.querySelector('#data-table tbody').innerHTML = data.map((d, i) => {
+                const pred = predict(d.x), err = d.y - pred;
+                return `<tr class="${hovered === i ? 'highlighted' : ''}"><td>${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td><td>${pred.toFixed(2)}</td><td style="color:${err > 0 ? '#10b981' : '#ef4444'}">${err.toFixed(3)}</td></tr>`;
+            }).join('');
         }
 
-        function generateSteps() {
-            steps = []; w = 0; b = 0;
-            const xMean = data.reduce((s, d) => s + d.x, 0) / data.length;
-            const yMean = data.reduce((s, d) => s + d.y, 0) / data.length;
+        function genSteps() {
+            steps = []; w = 0; b = 0; epochHistory = [];
+            steps.push({ title: 'Initialize', content: `<div class="calc-box">w = 0, b = 0\nModel: y = 0x + 0</div>`, w: 0, b: 0, epoch: 0 });
 
-            steps.push({
-                title: 'Our Dataset',
-                content: `<p>We have <strong>${data.length} points</strong> (x, y):</p>
-                    <div class="calc-box">
-                    Mean X = ${xMean.toFixed(3)}<br>
-                    Mean Y = ${yMean.toFixed(3)}
-                    </div>
-                    <p>Goal: Find line y = w·x + b that fits best!</p>`,
-                w: 0, b: 0, epoch: 0
-            });
-
-            steps.push({
-                title: 'Initialize Weights to 0',
-                content: `<p>We start with:</p>
-                    <div class="calc-box">
-                    w = 0 (slope)<br>
-                    b = 0 (intercept)<br><br>
-                    Line: y = 0·x + 0 = 0<br>
-                    (A flat line at y=0)
-                    </div>`,
-                w: 0, b: 0, epoch: 0
-            });
-
-            // Normalize for gradient descent
-            const xStd = Math.sqrt(data.reduce((s, d) => s + (d.x - xMean) ** 2, 0) / data.length) || 1;
-            const norm = data.map(d => ({ x: (d.x - xMean) / xStd, y: d.y }));
-            let wn = 0, bn = 0;
-
-            for (let ep = 1; ep <= params.maxIter; ep++) {
+            for (let ep = 1; ep <= params.epochs; ep++) {
+                let gradCalc = `Epoch ${ep} Gradients:\n\n`;
                 let dw = 0, db = 0;
-                const errors = [];
-
-                norm.forEach((d, i) => {
-                    const pred = wn * d.x + bn;
-                    const error = pred - d.y;
-                    errors.push({ i: i + 1, x: data[i].x, y: data[i].y, pred: wn * d.x + bn, error });
-                    dw += error * d.x;
-                    db += error;
+                data.forEach((d, i) => {
+                    const pred = w * d.x + b, err = d.y - pred;
+                    dw += -2 * err * d.x / data.length;
+                    db += -2 * err / data.length;
+                    gradCalc += `P${i + 1}: err=${err.toFixed(3)}, ∂w+=${(-2 * err * d.x / data.length).toFixed(4)}\n`;
                 });
-                dw = (2 / norm.length) * dw;
-                db = (2 / norm.length) * db;
-
-                const oldW = wn, oldB = bn;
-                wn -= params.lr * dw;
-                bn -= params.lr * db;
-
-                // Convert back
-                w = wn / xStd;
-                b = bn - w * xMean;
-
-                let errorDetail = '';
-                for (let i = 0; i < Math.min(4, errors.length); i++) {
-                    const e = errors[i];
-                    errorDetail += `Point ${e.i}: pred=${(w * e.x + b).toFixed(2)}, actual=${e.y.toFixed(2)}, error=${(w * e.x + b - e.y).toFixed(3)}<br>`;
-                }
-
-                steps.push({
-                    title: `Epoch ${ep}: Compute Errors`,
-                    content: `<p>For each point, compute prediction error:</p>
-                        <div class="calc-box">${errorDetail}... (${data.length - 4} more)</div>
-                        <div class="calc-result"><span class="calc-result-label">MSE</span><span class="calc-result-value">${mse().toFixed(4)}</span></div>`,
-                    w, b, epoch: ep
-                });
-
-                steps.push({
-                    title: `Epoch ${ep}: Update Weights`,
-                    content: `<p>Gradient descent update:</p>
-                        <div class="calc-box">
-                        ∂MSE/∂w = ${dw.toFixed(4)}<br>
-                        ∂MSE/∂b = ${db.toFixed(4)}<br><br>
-                        w = ${oldW.toFixed(4)} - ${params.lr}×${dw.toFixed(4)}<br>
-                        w = <strong>${wn.toFixed(4)}</strong><br><br>
-                        b = ${oldB.toFixed(4)} - ${params.lr}×${db.toFixed(4)}<br>
-                        b = <strong>${bn.toFixed(4)}</strong>
-                        </div>
-                        <div class="calc-result"><span class="calc-result-label">R²</span><span class="calc-result-value">${(r2() * 100).toFixed(1)}%</span></div>`,
-                    w, b, epoch: ep
-                });
+                const oldW = w, oldB = b;
+                w -= params.lr * dw; b -= params.lr * db;
+                gradCalc += `\n∂w_total = ${dw.toFixed(6)}\n∂b_total = ${db.toFixed(6)}\n\nw = ${oldW.toFixed(4)} - ${params.lr}×${dw.toFixed(4)} = ${w.toFixed(6)}\nb = ${oldB.toFixed(4)} - ${params.lr}×${db.toFixed(4)} = ${b.toFixed(6)}`;
+                epochHistory.push({ epoch: ep, w, b, mse: mse(), r2: r2() });
+                steps.push({ title: `Epoch ${ep}`, content: `<div class="calc-box">${gradCalc}</div>`, w, b, epoch: ep });
             }
-
-            steps.push({
-                title: '✅ Training Complete!',
-                content: `<p>Final model:</p>
-                    <div class="calc-box">
-                    y = ${w.toFixed(4)}·x + ${b.toFixed(4)}
-                    </div>
-                    <div class="calc-result"><span class="calc-result-label">Final R²</span><span class="calc-result-value">${(r2() * 100).toFixed(1)}%</span></div>`,
-                w, b, epoch: params.maxIter
-            });
-
+            steps.push({ title: '✅ Done!', content: `<div class="calc-box">Final Model:\ny = ${w.toFixed(6)}x + ${b.toFixed(6)}\n\nMSE: ${mse().toFixed(6)}\nR²: ${r2().toFixed(6)}</div>`, w, b, epoch: params.epochs });
             document.getElementById('total-steps').textContent = steps.length;
         }
 
-        const canvas = document.getElementById('viz-canvas');
-        const ctx = canvas.getContext('2d');
+        const canvas = document.getElementById('viz-canvas'), ctx = canvas.getContext('2d');
+        function resize() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
+        function toScreen(x, y) { const pad = 50; return { x: pad + ((x - view.x) / 12 * view.scale) * (canvas.width - 2 * pad), y: canvas.height - pad - ((y - view.y) / 12 * view.scale) * (canvas.height - 2 * pad) }; }
+        function toWorld(sx, sy) { const pad = 50; return { x: view.x + ((sx - pad) / (canvas.width - 2 * pad)) * 12 / view.scale, y: view.y + ((canvas.height - pad - sy) / (canvas.height - 2 * pad)) * 12 / view.scale }; }
 
-        function resizeCanvas() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
-
-        function render(step = null) {
-            const ww = canvas.width, hh = canvas.height;
-            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, ww, hh);
-            const pad = 50;
-            const xMax = Math.max(...data.map(d => d.x)) + 1;
-            const yMax = Math.max(...data.map(d => d.y)) + 2;
-            const scaleX = v => pad + (v / xMax) * (ww - 2 * pad);
-            const scaleY = v => hh - pad - (v / yMax) * (hh - 2 * pad);
-
-            const cw = step?.w ?? w, cb = step?.b ?? b;
-
+        function render() {
+            const ww = canvas.width, hh = canvas.height; ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, ww, hh);
+            pointPos = [];
             // Grid
-            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-            for (let i = 0; i <= 10; i++) {
-                const x = pad + (i / 10) * (ww - 2 * pad);
-                ctx.beginPath(); ctx.moveTo(x, pad); ctx.lineTo(x, hh - pad); ctx.stroke();
-                const y = pad + (i / 10) * (hh - 2 * pad);
-                ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(ww - pad, y); ctx.stroke();
-            }
-
-            // Axis labels
-            ctx.fillStyle = '#666';
-            ctx.font = '10px Inter';
-            ctx.textAlign = 'center';
-            for (let i = 0; i <= xMax; i += 2) ctx.fillText(i, scaleX(i), hh - 20);
-            for (let i = 0; i <= yMax; i += 2) { ctx.textAlign = 'right'; ctx.fillText(i, pad - 8, scaleY(i) + 3); }
-
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1;
+            for (let i = 0; i <= 12; i += 2) { const p = toScreen(i, 0); ctx.beginPath(); ctx.moveTo(p.x, 50); ctx.lineTo(p.x, hh - 50); ctx.stroke(); }
+            for (let i = 0; i <= 12; i += 2) { const p = toScreen(0, i); ctx.beginPath(); ctx.moveTo(50, p.y); ctx.lineTo(ww - 50, p.y); ctx.stroke(); }
             // Regression line
-            if (cw !== 0 || cb !== 0) {
-                ctx.strokeStyle = '#6366f1';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.moveTo(scaleX(0), scaleY(cb));
-                ctx.lineTo(scaleX(xMax), scaleY(cw * xMax + cb));
-                ctx.stroke();
-            }
-
-            // Data points with numbers
+            ctx.strokeStyle = '#6366f1'; ctx.lineWidth = 3;
+            const p1 = toScreen(0, predict(0)), p2 = toScreen(12, predict(12));
+            ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+            // Points with error lines
             data.forEach((d, i) => {
-                const px = scaleX(d.x), py = scaleY(d.y);
-                ctx.beginPath();
-                ctx.arc(px, py, 12, 0, Math.PI * 2);
-                ctx.fillStyle = '#10b981';
-                ctx.fill();
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 9px Inter';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(i + 1, px, py);
+                const p = toScreen(d.x, d.y), pp = toScreen(d.x, predict(d.x));
+                pointPos.push({ sx: p.x, sy: p.y, idx: i });
+                // Error line
+                ctx.strokeStyle = 'rgba(239,68,68,0.5)'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(pp.x, pp.y); ctx.stroke();
+                // Point
+                ctx.beginPath(); ctx.arc(p.x, p.y, hovered === i ? 10 : 7, 0, Math.PI * 2);
+                ctx.fillStyle = '#10b981'; ctx.fill();
+                ctx.strokeStyle = hovered === i ? '#fff' : 'rgba(255,255,255,0.5)'; ctx.lineWidth = 2; ctx.stroke();
             });
         }
 
-        function displayStep(step) {
-            const container = document.getElementById('calc-steps');
-            container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
-            container.querySelector('.calc-placeholder')?.remove();
+        const overlay = document.getElementById('graph-overlay');
+        canvas.onmousemove = e => {
+            const r = canvas.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
+            if (dragging) { view.x -= (mx - dragStart.x) / canvas.width * 12 / view.scale; view.y += (my - dragStart.y) / canvas.height * 12 / view.scale; dragStart = { x: mx, y: my }; render(); return; }
+            const world = toWorld(mx, my);
+            overlay.style.display = 'block';
+            let found = -1;
+            pointPos.forEach(p => { if (Math.hypot(p.sx - mx, p.sy - my) < 12) found = p.idx; });
+            if (found >= 0) {
+                const d = data[found], pred = predict(d.x);
+                overlay.innerHTML = `<b>Point ${found + 1}</b><br>x: ${d.x.toFixed(3)}<br>y: ${d.y.toFixed(3)}<br>ŷ: ${pred.toFixed(3)}<br>err: ${(d.y - pred).toFixed(3)}`;
+            } else { overlay.innerHTML = `(${world.x.toFixed(2)}, ${world.y.toFixed(2)})`; }
+            if (found !== hovered) { hovered = found; renderTable(); render(); }
+        };
+        canvas.onmouseleave = () => { overlay.style.display = 'none'; hovered = -1; renderTable(); render(); };
+        canvas.onmousedown = e => { dragging = true; dragStart = { x: e.offsetX, y: e.offsetY }; };
+        canvas.onmouseup = () => dragging = false;
+        canvas.onwheel = e => { e.preventDefault(); view.scale *= e.deltaY > 0 ? 0.9 : 1.1; render(); };
+        function zoomIn() { view.scale *= 1.2; render(); }
+        function zoomOut() { view.scale *= 0.8; render(); }
+        function resetView() { view = { x: 0, y: 0, scale: 1 }; render(); }
 
-            const div = document.createElement('div');
-            div.className = 'calc-step active';
-            div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
-            container.appendChild(div);
-            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        function openFullscreen(type) {
+            document.getElementById('fullscreen-overlay').classList.add('active');
+            document.getElementById('fs-title').textContent = '📉 Epoch Metrics';
+            document.getElementById('fs-content').innerHTML = `<table class="data-table" style="font-size:1rem"><thead><tr><th>Epoch</th><th>w</th><th>b</th><th>MSE</th><th>R²</th></tr></thead><tbody>${epochHistory.map(e => `<tr><td>${e.epoch}</td><td>${e.w.toFixed(8)}</td><td>${e.b.toFixed(8)}</td><td>${e.mse.toFixed(8)}</td><td>${e.r2.toFixed(8)}</td></tr>`).join('')}</tbody></table>`;
+        }
+        function closeFullscreen() { document.getElementById('fullscreen-overlay').classList.remove('active'); }
+        document.onkeydown = e => { if (e.key === 'Escape') closeFullscreen(); };
 
-            w = step.w; b = step.b;
-            render(step);
-            document.getElementById('viz-epoch').textContent = step.epoch;
+        function showStep(s) {
+            const cont = document.getElementById('calc-steps');
+            cont.querySelectorAll('.calc-step').forEach(el => el.classList.remove('active'));
+            const div = document.createElement('div'); div.className = 'calc-step active';
+            div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${s.title}</span></div><div class="calc-step-content">${s.content}</div>`;
+            cont.appendChild(div); div.scrollIntoView({ behavior: 'smooth' });
+            w = s.w; b = s.b;
+            renderTable(); render();
+            document.getElementById('viz-epoch').textContent = s.epoch;
             document.getElementById('viz-mse').textContent = mse().toFixed(4);
-            document.getElementById('viz-r2').textContent = (r2() * 100).toFixed(1) + '%';
+            document.getElementById('viz-r2').textContent = r2().toFixed(4);
         }
 
-        function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
-        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 300); }
-        function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
-        function reset() { stopAuto(); currentStep = 0; w = b = 0; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to see every gradient descent step</p></div>'; generateSteps(); render(); }
+        function step() { if (currentStep >= steps.length) { stopAuto(); return; } showStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
+        function startAuto() { isAuto = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoTimer = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 500); }
+        function stopAuto() { isAuto = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; clearInterval(autoTimer); }
+        function reset() { stopAuto(); currentStep = 0; w = b = 0; epochHistory = []; hovered = -1; view = { x: 0, y: 0, scale: 1 }; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = ''; genSteps(); renderTable(); render(); }
 
-        document.getElementById('step-btn').addEventListener('click', step);
-        document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
-        document.getElementById('reset-btn').addEventListener('click', reset);
-        document.getElementById('apply-btn').addEventListener('click', reset);
-        document.getElementById('random-btn').addEventListener('click', () => { data = generateData(); reset(); renderTable(); });
-        document.getElementById('lr-slider').addEventListener('input', e => { params.lr = parseFloat(e.target.value); document.getElementById('lr-value').textContent = params.lr; });
-        document.getElementById('iter-slider').addEventListener('input', e => { params.maxIter = parseInt(e.target.value); document.getElementById('iter-value').textContent = params.maxIter; });
+        document.getElementById('step-btn').onclick = step;
+        document.getElementById('auto-btn').onclick = () => isAuto ? stopAuto() : startAuto();
+        document.getElementById('reset-btn').onclick = reset;
+        document.getElementById('random-btn').onclick = () => { genData(); reset(); };
+        document.getElementById('lr-slider').oninput = e => { params.lr = +e.target.value; document.getElementById('lr-val').textContent = params.lr; };
+        document.getElementById('ep-slider').oninput = e => { params.epochs = +e.target.value; document.getElementById('ep-val').textContent = params.epochs; };
 
-        window.addEventListener('resize', resizeCanvas);
-        renderTable();
-        resizeCanvas();
-        generateSteps();
+        window.onresize = resize;
+        genData(); genSteps(); renderTable(); resize();
     </script>
 </body>
 

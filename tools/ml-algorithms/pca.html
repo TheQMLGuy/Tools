@@ -41,10 +41,21 @@
 
         .main-content {
             display: grid;
-            grid-template-columns: 260px 1fr 1.2fr 280px;
+            grid-template-columns: 280px 1fr 1.2fr 280px;
             gap: 12px;
             padding: 12px;
             overflow: hidden;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .left-column .panel {
+            flex: 1;
+            min-height: 0;
         }
 
         .panel {
@@ -60,13 +71,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-bottom: 1px solid var(--border-color);
             background: rgba(0, 0, 0, 0.2);
         }
 
         .panel-header h2 {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
@@ -75,43 +86,50 @@
         .panel-body {
             flex: 1;
             overflow: auto;
-            padding: 12px;
+            padding: 10px;
         }
 
         .panel-footer {
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-top: 1px solid var(--border-color);
         }
 
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
         }
 
         .data-table th {
             background: var(--bg-secondary);
-            padding: 8px;
+            padding: 4px;
             text-align: left;
             border-bottom: 2px solid var(--accent-primary);
+            position: sticky;
+            top: 0;
         }
 
         .data-table td {
-            padding: 6px 8px;
+            padding: 3px 4px;
             border-bottom: 1px solid var(--border-color);
+            font-family: var(--font-mono);
+        }
+
+        .data-table tr.highlighted td {
+            background: rgba(99, 102, 241, 0.4) !important;
         }
 
         .calc-steps {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
         }
 
         .calc-placeholder {
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 200px;
+            height: 100px;
             color: var(--text-muted);
             text-align: center;
         }
@@ -119,8 +137,8 @@
         .calc-step {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
+            border-radius: 6px;
+            padding: 8px;
             animation: fadeIn 0.3s;
         }
 
@@ -129,102 +147,57 @@
         }
 
         .calc-step.completed {
-            opacity: 0.7;
+            opacity: 0.6;
         }
 
         .calc-step-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
+            gap: 6px;
+            margin-bottom: 4px;
         }
 
         .calc-step-number {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             background: var(--accent-gradient);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
+            font-weight: 600;
             color: white;
         }
 
         .calc-step-title {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
 
         .calc-step-content {
-            font-size: 0.8rem;
+            font-size: 0.65rem;
             color: var(--text-secondary);
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
-        .calc-equation {
+        .calc-box {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 6px;
-            padding: 10px;
-            margin: 8px 0;
+            border-radius: 4px;
+            padding: 6px;
+            margin: 4px 0;
             font-family: var(--font-mono);
-            text-align: center;
-        }
-
-        .calc-result {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 12px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 6px;
-            margin-top: 8px;
-        }
-
-        .calc-result-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .calc-result-value {
-            font-family: var(--font-mono);
-            font-weight: 600;
-            color: var(--success);
-        }
-
-        .feature-comparison {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .feature-card {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
-            padding: 8px;
-            text-align: center;
-        }
-
-        .feature-card.best {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid rgba(16, 185, 129, 0.4);
-        }
-
-        .feature-name {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .feature-value {
-            font-family: var(--font-mono);
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.55rem;
+            overflow-x: auto;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
         }
 
         .viz-panel .panel-body {
             padding: 0;
+            position: relative;
         }
 
         .viz-panel canvas {
@@ -235,15 +208,15 @@
 
         .viz-stats {
             display: flex;
-            gap: 20px;
+            gap: 12px;
             justify-content: center;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
         }
 
         .param-section {
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
-            margin-bottom: 12px;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
         }
 
         .param-section:last-child {
@@ -251,30 +224,106 @@
         }
 
         .param-section-title {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
         }
 
-        .taming-list {
-            list-style: none;
-            padding: 0;
+        .btn-block {
+            width: 100%;
+            margin-top: 4px;
         }
 
-        .taming-list li {
-            font-size: 0.7rem;
+        .btn-fs {
+            background: transparent;
+            border: none;
             color: var(--text-muted);
-            padding: 4px 0 4px 16px;
-            position: relative;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 2px 4px;
+            border-radius: 3px;
         }
 
-        .taming-list li::before {
-            content: '→';
+        .btn-fs:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .graph-overlay {
             position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            pointer-events: none;
+            display: none;
+            z-index: 10;
+        }
+
+        .graph-controls {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            display: flex;
+            gap: 4px;
+            z-index: 10;
+        }
+
+        .graph-controls button {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .graph-controls button:hover {
+            background: var(--accent-primary);
+        }
+
+        .fullscreen-overlay {
+            position: fixed;
+            top: 0;
             left: 0;
-            color: var(--success);
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .fullscreen-overlay.active {
+            display: flex;
+        }
+
+        .fullscreen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .fullscreen-header h2 {
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .fullscreen-content {
+            flex: 1;
+            overflow: auto;
+            background: var(--bg-panel);
+            border-radius: 8px;
+            padding: 16px;
         }
 
         @keyframes fadeIn {
@@ -292,7 +341,7 @@
 <body>
     <div class="app-container">
         <header class="app-header">
-            <h1 class="app-title">📉 Principal Component Analysis</h1>
+            <h1 class="app-title">📊 PCA - Step by Step</h1>
             <div class="header-right">
                 <button id="step-btn" class="btn btn-secondary">⏭ Step</button>
                 <button id="auto-btn" class="btn btn-primary">▶ Auto Run</button>
@@ -300,275 +349,318 @@
             </div>
         </header>
         <main class="main-content">
+            <div class="left-column">
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>📊 Original Data</h2>
+                        <button class="btn-fs" onclick="openFullscreen('data')">⛶</button>
+                    </div>
+                    <div class="panel-body">
+                        <table id="data-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+                <section class="panel">
+                    <div class="panel-header">
+                        <h2>📈 Transformed Data</h2>
+                        <button class="btn-fs" onclick="openFullscreen('transformed')">⛶</button>
+                    </div>
+                    <div class="panel-body">
+                        <table id="transformed-table" class="data-table">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>📊 Original Data (2D)</h2>
-                </div>
-                <div class="panel-body">
-                    <table id="data-table" class="data-table">
-                        <thead></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </section>
-            <section class="panel">
-                <div class="panel-header">
-                    <h2>📐 PCA Steps</h2>
-                    <span style="font-size:0.75rem;color:var(--text-muted)">Step <span id="current-step">0</span>/<span
-                            id="total-steps">0</span></span>
+                    <h2>📐 Full Calculations</h2>
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <span style="font-size:0.65rem;color:var(--text-muted)"><span id="current-step">0</span>/<span
+                                id="total-steps">0</span></span>
+                        <button class="btn-fs" onclick="openFullscreen('calc')">⛶</button>
+                    </div>
                 </div>
                 <div class="panel-body">
                     <div id="calc-steps" class="calc-steps">
                         <div class="calc-placeholder">
-                            <p>Click <strong>Step</strong> to perform PCA</p>
+                            <p>Click <strong>Step</strong></p>
                         </div>
                     </div>
                 </div>
             </section>
             <section class="panel viz-panel">
                 <div class="panel-header">
-                    <h2>🎨 Visualization</h2>
+                    <h2>🎨 Principal Components</h2>
                 </div>
-                <div class="panel-body"><canvas id="viz-canvas"></canvas></div>
+                <div class="panel-body">
+                    <canvas id="viz-canvas"></canvas>
+                    <div id="graph-overlay" class="graph-overlay"></div>
+                    <div class="graph-controls">
+                        <button onclick="zoomIn()">+</button>
+                        <button onclick="zoomOut()">−</button>
+                        <button onclick="resetView()">⌂</button>
+                    </div>
+                </div>
                 <div class="panel-footer">
                     <div class="viz-stats">
-                        <span>Variance Explained: <strong id="viz-var">-</strong></span>
+                        <span>PC1: <strong id="viz-pc1">-</strong></span>
+                        <span>PC2: <strong id="viz-pc2">-</strong></span>
                     </div>
                 </div>
             </section>
             <section class="panel">
                 <div class="panel-header">
-                    <h2>⚙️ Parameters</h2>
+                    <h2>⚙️ Info</h2>
                 </div>
                 <div class="panel-body">
                     <div class="param-section">
-                        <div class="param-section-title">Components</div>
-                        <div style="padding:8px;background:rgba(0,0,0,0.2);border-radius:6px">
-                            <p style="font-size:0.8rem;color:var(--text-primary)">n_components = 1</p>
-                            <p style="font-size:0.7rem;color:var(--text-muted);margin-top:4px">Reduce 2D → 1D</p>
-                        </div>
+                        <div class="param-section-title">Variance Explained</div>
+                        <div style="font-family:var(--font-mono);font-size:0.7rem" id="var-display">-</div>
                     </div>
                     <div class="param-section">
-                        <div class="param-section-title">💡 Key Concepts</div>
-                        <ul class="taming-list">
-                            <li>Center data (subtract mean)</li>
-                            <li>Find direction of max variance</li>
-                            <li>Eigenvalue = variance along PC</li>
-                            <li>Projection loses least info</li>
-                        </ul>
+                        <div class="param-section-title">Steps</div>
+                        <div style="font-size:0.55rem;color:var(--text-muted)">1. Center data (subtract mean)<br>2.
+                            Compute covariance matrix<br>3. Find eigenvalues/eigenvectors<br>4. Project onto principal
+                            components</div>
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button id="apply-btn" class="btn btn-primary btn-block">Regenerate Data</button>
+                    <button id="random-btn" class="btn btn-primary btn-block">🎲 Random Data</button>
                 </div>
             </section>
         </main>
     </div>
+    <div id="fullscreen-overlay" class="fullscreen-overlay">
+        <div class="fullscreen-header">
+            <h2 id="fullscreen-title">Fullscreen</h2><button class="btn btn-ghost" onclick="closeFullscreen()">✕
+                Close</button>
+        </div>
+        <div class="fullscreen-content" id="fullscreen-content"></div>
+    </div>
     <script>
-        // Generate correlated data
         function generateData() {
-            const data = [];
-            for (let i = 0; i < 20; i++) {
-                const x = Math.random() * 6 + 2;
-                const y = 0.8 * x + (Math.random() - 0.5) * 2 + 1;
-                data.push({ x, y });
+            const d = [], angle = Math.random() * Math.PI / 4;
+            for (let i = 0; i < 15; i++) {
+                const t = Math.random() * 6 - 3;
+                const n = (Math.random() - 0.5) * 1.5;
+                d.push({ x: 5 + t * Math.cos(angle) + n * Math.sin(angle), y: 5 + t * Math.sin(angle) - n * Math.cos(angle) });
             }
-            return data;
+            return d;
         }
-
         let data = generateData();
+        let centered = [], transformed = [];
+        let mean = { x: 0, y: 0 }, cov = [[0, 0], [0, 0]], eigenvalues = [0, 0], eigenvectors = [[0, 0], [0, 0]];
         let steps = [], currentStep = 0;
-        let centered = [], pc1 = null, eigenvalue = 0, projected = [];
         let isAutoRunning = false, autoInterval = null;
+        let hoveredPoint = -1, pointPositions = [];
+        let view = { x: 0, y: 0, scale: 1 };
+        let isDragging = false, dragStart = { x: 0, y: 0 };
+        let showPCs = false;
 
         function renderTable() {
-            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th></tr>';
-            document.querySelector('#data-table tbody').innerHTML = data.map((d, i) =>
-                `<tr><td style="color:var(--text-muted)">${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td></tr>`
+            document.querySelector('#data-table thead').innerHTML = '<tr><th>#</th><th>X</th><th>Y</th><th>X-μ</th><th>Y-μ</th></tr>';
+            document.querySelector('#data-table tbody').innerHTML = data.map((d, i) => {
+                const cx = centered[i]?.x ?? 0, cy = centered[i]?.y ?? 0;
+                return `<tr class="${hoveredPoint === i ? 'highlighted' : ''}"><td>${i + 1}</td><td>${d.x.toFixed(2)}</td><td>${d.y.toFixed(2)}</td><td>${cx.toFixed(2)}</td><td>${cy.toFixed(2)}</td></tr>`;
+            }).join('');
+        }
+
+        function renderTransformedTable() {
+            document.querySelector('#transformed-table thead').innerHTML = '<tr><th>#</th><th>PC1</th><th>PC2</th></tr>';
+            document.querySelector('#transformed-table tbody').innerHTML = transformed.map((d, i) =>
+                `<tr class="${hoveredPoint === i ? 'highlighted' : ''}"><td>${i + 1}</td><td>${d.pc1.toFixed(4)}</td><td>${d.pc2.toFixed(4)}</td></tr>`
             ).join('');
         }
 
-        function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
-
         function generateSteps() {
-            steps = [];
-            const xMean = mean(data.map(d => d.x));
-            const yMean = mean(data.map(d => d.y));
-            centered = data.map(d => ({ x: d.x - xMean, y: d.y - yMean }));
+            steps = []; centered = []; transformed = []; showPCs = false;
 
-            steps.push({
-                title: 'Original Data',
-                content: `<p>${data.length} points in 2D space</p>
-                    <div class="feature-comparison">
-                        <div class="feature-card"><div class="feature-name">Mean X</div><div class="feature-value">${xMean.toFixed(2)}</div></div>
-                        <div class="feature-card"><div class="feature-name">Mean Y</div><div class="feature-value">${yMean.toFixed(2)}</div></div>
-                    </div>`,
-                phase: 'original'
-            });
+            // Dataset
+            let dataStr = data.map((d, i) => `P${i + 1}: (${d.x.toFixed(4)}, ${d.y.toFixed(4)})`).join('\n');
+            steps.push({ title: 'Dataset', content: `<div class="calc-box">${dataStr}</div>`, showPCs: false });
 
-            steps.push({
-                title: 'Center the Data',
-                content: `<p>Subtract mean from each point:</p>
-                    <div class="calc-equation">x' = x - μₓ, y' = y - μᵧ</div>
-                    <p style="margin-top:8px">Data is now centered at origin</p>`,
-                phase: 'center'
-            });
+            // Calculate mean with FULL detail
+            mean.x = data.reduce((s, d) => s + d.x, 0) / data.length;
+            mean.y = data.reduce((s, d) => s + d.y, 0) / data.length;
+            let meanCalc = `μ_x = (${data.map(d => d.x.toFixed(2)).join(' + ')}) / ${data.length}\n    = ${mean.x.toFixed(6)}\n\n`;
+            meanCalc += `μ_y = (${data.map(d => d.y.toFixed(2)).join(' + ')}) / ${data.length}\n    = ${mean.y.toFixed(6)}`;
+            steps.push({ title: 'Calculate Mean', content: `<div class="calc-box">${meanCalc}</div>`, showPCs: false });
+
+            // Center data with FULL detail
+            centered = data.map(d => ({ x: d.x - mean.x, y: d.y - mean.y }));
+            let centerCalc = centered.map((c, i) => `P${i + 1}: (${data[i].x.toFixed(2)}-${mean.x.toFixed(2)}, ${data[i].y.toFixed(2)}-${mean.y.toFixed(2)}) = (${c.x.toFixed(4)}, ${c.y.toFixed(4)})`).join('\n');
+            steps.push({ title: 'Center Data', content: `<div class="calc-box">${centerCalc}</div>`, showPCs: false });
 
             // Covariance matrix
-            const covXX = mean(centered.map(d => d.x * d.x));
-            const covYY = mean(centered.map(d => d.y * d.y));
-            const covXY = mean(centered.map(d => d.x * d.y));
+            const n = data.length;
+            cov[0][0] = centered.reduce((s, c) => s + c.x * c.x, 0) / n;
+            cov[0][1] = cov[1][0] = centered.reduce((s, c) => s + c.x * c.y, 0) / n;
+            cov[1][1] = centered.reduce((s, c) => s + c.y * c.y, 0) / n;
+            let covCalc = `Cov(X,X) = Σ(x-μ_x)²/n = ${cov[0][0].toFixed(6)}\n`;
+            covCalc += `Cov(X,Y) = Σ(x-μ_x)(y-μ_y)/n = ${cov[0][1].toFixed(6)}\n`;
+            covCalc += `Cov(Y,Y) = Σ(y-μ_y)²/n = ${cov[1][1].toFixed(6)}\n\n`;
+            covCalc += `Covariance Matrix:\n[${cov[0][0].toFixed(4)}  ${cov[0][1].toFixed(4)}]\n[${cov[1][0].toFixed(4)}  ${cov[1][1].toFixed(4)}]`;
+            steps.push({ title: 'Covariance Matrix', content: `<div class="calc-box">${covCalc}</div>`, showPCs: false });
 
-            steps.push({
-                title: 'Covariance Matrix',
-                content: `<div class="calc-equation" style="font-size:0.75rem">Σ = [${covXX.toFixed(2)}, ${covXY.toFixed(2)}]<br>[${covXY.toFixed(2)}, ${covYY.toFixed(2)}]</div>
-                    <p>Off-diagonal shows correlation between X and Y</p>`,
-                phase: 'cov'
+            // Eigenvalues (2x2 matrix formula)
+            const trace = cov[0][0] + cov[1][1];
+            const det = cov[0][0] * cov[1][1] - cov[0][1] * cov[1][0];
+            const disc = Math.sqrt(trace * trace - 4 * det);
+            eigenvalues[0] = (trace + disc) / 2;
+            eigenvalues[1] = (trace - disc) / 2;
+
+            let eigenCalc = `Characteristic equation: det(C - λI) = 0\nλ² - ${trace.toFixed(4)}λ + ${det.toFixed(4)} = 0\n\n`;
+            eigenCalc += `λ = (${trace.toFixed(4)} ± √(${(trace * trace).toFixed(4)} - ${(4 * det).toFixed(4)})) / 2\n`;
+            eigenCalc += `λ₁ = ${eigenvalues[0].toFixed(6)}\nλ₂ = ${eigenvalues[1].toFixed(6)}\n\n`;
+            eigenCalc += `Variance explained:\nPC1: ${(eigenvalues[0] / (eigenvalues[0] + eigenvalues[1]) * 100).toFixed(1)}%\nPC2: ${(eigenvalues[1] / (eigenvalues[0] + eigenvalues[1]) * 100).toFixed(1)}%`;
+            steps.push({ title: 'Eigenvalues', content: `<div class="calc-box">${eigenCalc}</div>`, showPCs: false });
+
+            // Eigenvectors
+            eigenvalues.forEach((ev, i) => {
+                const a = cov[0][0] - ev, b = cov[0][1];
+                let v = [-b, a];
+                const norm = Math.sqrt(v[0] * v[0] + v[1] * v[1]);
+                v = [v[0] / norm, v[1] / norm];
+                eigenvectors[i] = v;
             });
 
-            // Eigendecomposition (simplified - power iteration)
-            let v = [1, 1];
-            for (let i = 0; i < 20; i++) {
-                const newV = [covXX * v[0] + covXY * v[1], covXY * v[0] + covYY * v[1]];
-                const norm = Math.sqrt(newV[0] ** 2 + newV[1] ** 2);
-                v = [newV[0] / norm, newV[1] / norm];
-            }
-            pc1 = v;
-            eigenvalue = covXX * v[0] ** 2 + 2 * covXY * v[0] * v[1] + covYY * v[1] ** 2;
-            const totalVar = covXX + covYY;
+            let vecCalc = `For λ₁ = ${eigenvalues[0].toFixed(4)}:\nv₁ = [${eigenvectors[0][0].toFixed(6)}, ${eigenvectors[0][1].toFixed(6)}]\n\n`;
+            vecCalc += `For λ₂ = ${eigenvalues[1].toFixed(4)}:\nv₂ = [${eigenvectors[1][0].toFixed(6)}, ${eigenvectors[1][1].toFixed(6)}]`;
+            steps.push({ title: 'Eigenvectors', content: `<div class="calc-box">${vecCalc}</div>`, showPCs: true });
 
-            steps.push({
-                title: 'Find Principal Component',
-                content: `<p>Direction of maximum variance:</p>
-                    <div class="feature-comparison">
-                        <div class="feature-card best"><div class="feature-name">PC1</div><div class="feature-value">(${pc1[0].toFixed(3)}, ${pc1[1].toFixed(3)})</div></div>
-                    </div>
-                    <div class="calc-result"><span class="calc-result-label">Eigenvalue (λ₁)</span><span class="calc-result-value">${eigenvalue.toFixed(3)}</span></div>`,
-                phase: 'eigen'
-            });
+            // Project data
+            transformed = centered.map((c, i) => ({
+                pc1: c.x * eigenvectors[0][0] + c.y * eigenvectors[0][1],
+                pc2: c.x * eigenvectors[1][0] + c.y * eigenvectors[1][1]
+            }));
+            let projCalc = transformed.map((t, i) => `P${i + 1}: PC1 = ${centered[i].x.toFixed(2)}×${eigenvectors[0][0].toFixed(2)} + ${centered[i].y.toFixed(2)}×${eigenvectors[0][1].toFixed(2)} = ${t.pc1.toFixed(4)}`).join('\n');
+            steps.push({ title: 'Project Data', content: `<div class="calc-box">${projCalc}</div>`, showPCs: true });
 
-            // Project
-            projected = centered.map(d => d.x * pc1[0] + d.y * pc1[1]);
-            const explainedVar = (eigenvalue / totalVar * 100);
-
-            steps.push({
-                title: 'Project onto PC1',
-                content: `<div class="calc-equation">z = x' · PC1</div>
-                    <p>Each point is now a single number!</p>
-                    <div class="calc-result"><span class="calc-result-label">Variance Explained</span><span class="calc-result-value">${explainedVar.toFixed(1)}%</span></div>`,
-                phase: 'project'
-            });
-
+            steps.push({ title: '✅ Complete!', content: `<div class="calc-box">Principal Components Found!\n\nPC1 (${(eigenvalues[0] / (eigenvalues[0] + eigenvalues[1]) * 100).toFixed(1)}% variance): [${eigenvectors[0][0].toFixed(4)}, ${eigenvectors[0][1].toFixed(4)}]\nPC2 (${(eigenvalues[1] / (eigenvalues[0] + eigenvalues[1]) * 100).toFixed(1)}% variance): [${eigenvectors[1][0].toFixed(4)}, ${eigenvectors[1][1].toFixed(4)}]</div>`, showPCs: true });
             document.getElementById('total-steps').textContent = steps.length;
         }
 
         const canvas = document.getElementById('viz-canvas');
         const ctx = canvas.getContext('2d');
+        const overlay = document.getElementById('graph-overlay');
 
         function resizeCanvas() { canvas.width = canvas.parentElement.clientWidth; canvas.height = canvas.parentElement.clientHeight; render(); }
 
-        function render(phase = 'original') {
-            const w = canvas.width, h = canvas.height;
-            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, w, h);
-            const cx = w / 2, cy = h / 2;
+        function toScreen(x, y) {
+            const ww = canvas.width, hh = canvas.height, pad = 40;
+            return { x: pad + ((x - view.x) / 10 * view.scale) * (ww - 2 * pad), y: hh - pad - ((y - view.y) / 10 * view.scale) * (hh - 2 * pad) };
+        }
+        function toWorld(sx, sy) {
+            const ww = canvas.width, hh = canvas.height, pad = 40;
+            return { x: view.x + ((sx - pad) / (ww - 2 * pad)) * 10 / view.scale, y: view.y + ((hh - pad - sy) / (hh - 2 * pad)) * 10 / view.scale };
+        }
 
-            const useData = (phase === 'center' || phase === 'cov' || phase === 'eigen' || phase === 'project') ? centered : data;
-            const maxVal = Math.max(...useData.map(d => Math.max(Math.abs(d.x), Math.abs(d.y)))) * 1.2;
-            const scale = Math.min(w, h) / 2 / maxVal * 0.8;
+        function render(step = null) {
+            const ww = canvas.width, hh = canvas.height;
+            ctx.fillStyle = '#0a0a0f'; ctx.fillRect(0, 0, ww, hh);
+            const currShowPCs = step?.showPCs ?? showPCs;
+            pointPositions = [];
 
             // Grid
-            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-            ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
+            ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
+            for (let i = 0; i <= 10; i += 2) { const p = toScreen(i, 0); ctx.beginPath(); ctx.moveTo(p.x, 40); ctx.lineTo(p.x, hh - 40); ctx.stroke(); }
 
-            // PC1 direction
-            if (pc1 && (phase === 'eigen' || phase === 'project')) {
-                ctx.strokeStyle = '#10b981';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.moveTo(cx - pc1[0] * maxVal * scale, cy + pc1[1] * maxVal * scale);
-                ctx.lineTo(cx + pc1[0] * maxVal * scale, cy - pc1[1] * maxVal * scale);
-                ctx.stroke();
-
-                // Arrow
-                const ax = cx + pc1[0] * maxVal * scale * 0.8;
-                const ay = cy - pc1[1] * maxVal * scale * 0.8;
-                ctx.beginPath();
-                ctx.arc(ax, ay, 8, 0, Math.PI * 2);
-                ctx.fillStyle = '#10b981';
-                ctx.fill();
-            }
-
-            // Points
-            useData.forEach((d, i) => {
-                const px = cx + d.x * scale;
-                const py = cy - d.y * scale;
-
-                // Projection line
-                if (phase === 'project' && pc1) {
-                    const projX = projected[i] * pc1[0];
-                    const projY = projected[i] * pc1[1];
-                    ctx.strokeStyle = 'rgba(99,102,241,0.3)';
-                    ctx.lineWidth = 1;
-                    ctx.setLineDash([3, 3]);
-                    ctx.beginPath();
-                    ctx.moveTo(px, py);
-                    ctx.lineTo(cx + projX * scale, cy - projY * scale);
-                    ctx.stroke();
-                    ctx.setLineDash([]);
-                }
-
-                ctx.beginPath();
-                ctx.arc(px, py, 6, 0, Math.PI * 2);
-                ctx.fillStyle = '#6366f1';
-                ctx.fill();
-            });
-
-            // Projected points on line
-            if (phase === 'project' && pc1) {
-                projected.forEach(p => {
-                    const px = cx + p * pc1[0] * scale;
-                    const py = cy - p * pc1[1] * scale;
-                    ctx.beginPath();
-                    ctx.arc(px, py, 5, 0, Math.PI * 2);
-                    ctx.fillStyle = '#f59e0b';
-                    ctx.fill();
+            // Principal component axes
+            if (currShowPCs && eigenvectors[0][0] !== 0) {
+                [[eigenvectors[0], '#10b981'], [eigenvectors[1], '#f59e0b']].forEach(([v, color]) => {
+                    ctx.strokeStyle = color; ctx.lineWidth = 2;
+                    const p1 = toScreen(mean.x - v[0] * 4, mean.y - v[1] * 4);
+                    const p2 = toScreen(mean.x + v[0] * 4, mean.y + v[1] * 4);
+                    ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
                 });
             }
+
+            // Mean point
+            const pm = toScreen(mean.x, mean.y);
+            ctx.beginPath(); ctx.arc(pm.x, pm.y, 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#6366f1'; ctx.fill();
+
+            // Data points
+            data.forEach((d, i) => {
+                const p = toScreen(d.x, d.y);
+                pointPositions.push({ x: p.x, y: p.y, idx: i, dataX: d.x, dataY: d.y });
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, hoveredPoint === i ? 11 : 8, 0, Math.PI * 2);
+                ctx.fillStyle = '#10b981';
+                ctx.fill();
+                ctx.strokeStyle = hoveredPoint === i ? '#fff' : 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 2; ctx.stroke();
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 6px Inter'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(i + 1, p.x, p.y);
+            });
         }
+
+        canvas.addEventListener('mousemove', e => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+            if (isDragging) { const dx = (mx - dragStart.x) / canvas.width * 10 / view.scale; const dy = -(my - dragStart.y) / canvas.height * 10 / view.scale; view.x -= dx; view.y -= dy; dragStart = { x: mx, y: my }; render(); return; }
+            const world = toWorld(mx, my);
+            overlay.style.display = 'block';
+            overlay.innerHTML = `(${world.x.toFixed(2)}, ${world.y.toFixed(2)})`;
+            let found = -1;
+            pointPositions.forEach(p => { if (Math.hypot(p.x - mx, p.y - my) < 10) found = p.idx; });
+            if (found !== -1 && transformed[found]) {
+                overlay.innerHTML = `P${found + 1}: (${data[found].x.toFixed(3)}, ${data[found].y.toFixed(3)})<br>PC1: ${transformed[found].pc1.toFixed(4)}<br>PC2: ${transformed[found].pc2.toFixed(4)}`;
+            }
+            if (found !== hoveredPoint) { hoveredPoint = found; renderTable(); renderTransformedTable(); render(); }
+        });
+        canvas.addEventListener('mouseleave', () => { overlay.style.display = 'none'; if (hoveredPoint !== -1) { hoveredPoint = -1; renderTable(); render(); } });
+        canvas.addEventListener('mousedown', e => { isDragging = true; dragStart = { x: e.offsetX, y: e.offsetY }; canvas.style.cursor = 'grabbing'; });
+        canvas.addEventListener('mouseup', () => { isDragging = false; canvas.style.cursor = 'crosshair'; });
+        canvas.addEventListener('wheel', e => { e.preventDefault(); view.scale *= e.deltaY > 0 ? 0.9 : 1.1; render(); });
+        function zoomIn() { view.scale *= 1.2; render(); }
+        function zoomOut() { view.scale *= 0.8; render(); }
+        function resetView() { view = { x: 0, y: 0, scale: 1 }; render(); }
+
+        function openFullscreen(type) {
+            const o = document.getElementById('fullscreen-overlay'), t = document.getElementById('fullscreen-title'), c = document.getElementById('fullscreen-content');
+            o.classList.add('active');
+            if (type === 'data') {
+                t.textContent = '📊 Original Data';
+                c.innerHTML = `<table class="data-table" style="font-size:0.9rem"><thead><tr><th>#</th><th>X</th><th>Y</th><th>X-μ</th><th>Y-μ</th></tr></thead><tbody>${data.map((d, i) => `<tr><td>${i + 1}</td><td>${d.x.toFixed(6)}</td><td>${d.y.toFixed(6)}</td><td>${(centered[i]?.x ?? 0).toFixed(6)}</td><td>${(centered[i]?.y ?? 0).toFixed(6)}</td></tr>`).join('')}</tbody></table>`;
+            } else if (type === 'transformed') {
+                t.textContent = '📈 Transformed Data';
+                c.innerHTML = `<table class="data-table" style="font-size:0.9rem"><thead><tr><th>#</th><th>PC1</th><th>PC2</th></tr></thead><tbody>${transformed.map((tr, i) => `<tr><td>${i + 1}</td><td>${tr.pc1.toFixed(8)}</td><td>${tr.pc2.toFixed(8)}</td></tr>`).join('')}</tbody></table>`;
+            } else if (type === 'calc') { t.textContent = '📐 All Steps'; c.innerHTML = document.getElementById('calc-steps').innerHTML; }
+        }
+        function closeFullscreen() { document.getElementById('fullscreen-overlay').classList.remove('active'); }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFullscreen(); });
 
         function displayStep(step) {
             const container = document.getElementById('calc-steps');
             container.querySelectorAll('.calc-step').forEach(s => { s.classList.remove('active'); s.classList.add('completed'); });
             container.querySelector('.calc-placeholder')?.remove();
-
-            const div = document.createElement('div');
-            div.className = 'calc-step active';
+            const div = document.createElement('div'); div.className = 'calc-step active';
             div.innerHTML = `<div class="calc-step-header"><span class="calc-step-number">${currentStep + 1}</span><span class="calc-step-title">${step.title}</span></div><div class="calc-step-content">${step.content}</div>`;
-            container.appendChild(div);
-            div.scrollIntoView({ behavior: 'smooth', block: 'end' });
-
-            render(step.phase);
-            if (step.phase === 'project') {
-                const totalVar = mean(centered.map(d => d.x ** 2)) + mean(centered.map(d => d.y ** 2));
-                document.getElementById('viz-var').textContent = (eigenvalue / totalVar * 100).toFixed(1) + '%';
-            }
+            container.appendChild(div); div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            showPCs = step.showPCs;
+            renderTable(); renderTransformedTable(); render(step);
+            document.getElementById('viz-pc1').textContent = `${(eigenvalues[0] / (eigenvalues[0] + eigenvalues[1]) * 100).toFixed(0)}%`;
+            document.getElementById('viz-pc2').textContent = `${(eigenvalues[1] / (eigenvalues[0] + eigenvalues[1]) * 100).toFixed(0)}%`;
+            document.getElementById('var-display').innerHTML = `PC1: ${(eigenvalues[0] / (eigenvalues[0] + eigenvalues[1]) * 100).toFixed(1)}%<br>PC2: ${(eigenvalues[1] / (eigenvalues[0] + eigenvalues[1]) * 100).toFixed(1)}%`;
         }
 
         function step() { if (currentStep >= steps.length) { stopAuto(); return; } displayStep(steps[currentStep]); currentStep++; document.getElementById('current-step').textContent = currentStep; }
-        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 1200); }
+        function startAuto() { isAutoRunning = true; document.getElementById('auto-btn').textContent = '⏸ Pause'; autoInterval = setInterval(() => { if (currentStep >= steps.length) { stopAuto(); return; } step(); }, 700); }
         function stopAuto() { isAutoRunning = false; document.getElementById('auto-btn').textContent = '▶ Auto Run'; if (autoInterval) clearInterval(autoInterval); }
-        function reset() { stopAuto(); data = generateData(); currentStep = 0; pc1 = null; projected = []; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong> to perform PCA</p></div>'; renderTable(); generateSteps(); render('original'); document.getElementById('viz-var').textContent = '-'; }
+        function reset() { stopAuto(); currentStep = 0; centered = []; transformed = []; showPCs = false; hoveredPoint = -1; view = { x: 0, y: 0, scale: 1 }; document.getElementById('current-step').textContent = 0; document.getElementById('calc-steps').innerHTML = '<div class="calc-placeholder"><p>Click <strong>Step</strong></p></div>'; generateSteps(); renderTable(); renderTransformedTable(); render(); }
 
         document.getElementById('step-btn').addEventListener('click', step);
         document.getElementById('auto-btn').addEventListener('click', () => isAutoRunning ? stopAuto() : startAuto());
         document.getElementById('reset-btn').addEventListener('click', reset);
-        document.getElementById('apply-btn').addEventListener('click', reset);
+        document.getElementById('random-btn').addEventListener('click', () => { data = generateData(); reset(); });
 
         window.addEventListener('resize', resizeCanvas);
-        renderTable();
-        resizeCanvas();
-        generateSteps();
+        renderTable(); renderTransformedTable(); resizeCanvas(); generateSteps();
     </script>
 </body>
 
